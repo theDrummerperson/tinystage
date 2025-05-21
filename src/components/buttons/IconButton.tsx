@@ -19,7 +19,6 @@ const IconButtonVariant = [
 // Heroicons are React.ForwardRefExoticComponent<React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>>
 // LucideIcon is (props: LucideProps) => JSX.Element
 // A common ground is React.ComponentType<{ className?: string; [key: string]: any }>
-type GenericIconType = React.ComponentType<{ className?: string }>;
 
 type IconButtonProps = {
   isLoading?: boolean;
@@ -29,7 +28,9 @@ type IconButtonProps = {
   // If you primarily use Heroicons, you could type it more specifically to them.
   // If you use Lucide, LucideIcon is fine.
   // For flexibility with libraries that take className for styling:
-  icon?: GenericIconType | LucideIcon;
+  icon?:
+    | React.ComponentType<{ className?: string; [key: string]: unknown }>
+    | LucideIcon;
   iconClassName?: string; // Separate prop for icon's className for better control
   // Removed classNames.icon, replaced with iconClassName for simplicity
 } & React.ComponentPropsWithRef<'button'>;

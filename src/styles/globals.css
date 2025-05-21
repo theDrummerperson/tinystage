@@ -1,4 +1,4 @@
-/* globals.css */
+/* src/styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,19 +6,17 @@
 @import './colors.css';
 
 @layer base {
-  /* GLOBAL RESET TO BRAND BACKGROUND & TEXT */
   body {
     background-color: var(--brand-black);
-    color: var(--text-color-inverse);
+    color: var(--text-color); /* Corrected for dark theme */
   }
 
-  /* FORM ELEMENTS */
   input,
   textarea,
   select {
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
-    color: var(--text-color);
+    color: var(--input-text-color);
   }
   input:focus,
   textarea:focus,
@@ -27,55 +25,52 @@
     border-color: var(--input-focus-border);
   }
 
-  /* PLACEHOLDERS */
   ::placeholder {
     color: var(--placeholder-color);
     opacity: 1;
   }
 
-  /* ERROR STATE */
   .error {
     color: var(--error-color);
   }
 }
 
 @layer utilities {
-  /* QUICK UTILITIES FOR BRAND COLORS */
   .bg-black {
-    background-color: var(--brand-black) !important;
+    background-color: var(--brand-black);
   }
   .bg-white {
-    background-color: var(--brand-white) !important;
+    background-color: var(--brand-white);
   }
   .bg-yellow {
-    background-color: var(--brand-yellow) !important;
+    background-color: var(--brand-yellow);
   }
   .bg-gray-light {
-    background-color: var(--brand-gray-light) !important;
+    background-color: var(--brand-gray-light);
   }
   .bg-gray-medium {
-    background-color: var(--brand-gray-medium) !important;
+    background-color: var(--brand-gray-medium);
   }
   .bg-gray-dark {
-    background-color: var(--brand-gray-dark) !important;
+    background-color: var(--brand-gray-dark);
   }
 
   .text-black {
-    color: var(--brand-black) !important;
+    color: var(--brand-black);
   }
   .text-white {
-    color: var(--brand-white) !important;
+    color: var(--brand-white);
   }
   .text-yellow {
-    color: var(--brand-yellow) !important;
+    color: var(--brand-yellow);
   }
   .text-gray-light {
-    color: var(--brand-gray-light) !important;
+    color: var(--brand-gray-light);
   }
   .text-gray-medium {
-    color: var(--brand-gray-medium) !important;
+    color: var(--brand-gray-medium);
   }
   .text-gray-dark {
-    color: var(--brand-gray-dark) !important;
+    color: var(--brand-gray-dark);
   }
 }

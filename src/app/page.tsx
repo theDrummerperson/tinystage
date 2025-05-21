@@ -1,65 +1,47 @@
+// src/app/page.tsx
 'use client';
 
 import Head from 'next/head';
 import * as React from 'react';
-import '@/lib/env';
 
-import Footer from '@/components/Footer'; // Add this import
-import Header from '@/components/Header'; // Add this import
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
-
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-import Logo from '~/svg/Logo.svg';
+// import '@/lib/env'; // Consider if this is truly needed here or can be in layout.tsx
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import Hero from '@/components/Hero'; // Your impressive Hero component
 
 export default function HomePage() {
   return (
-    <main>
+    <>
+      {' '}
+      {/* Use a Fragment or a simple div if no extra layout styling needed at this top level */}
       <Head>
-        <title>Hi</title>
+        <title>TinyStage</title>
       </Head>
-      {/* Add the Header component here */}
       <Header />
-      <section className='bg-white'>
-        <div className='layout relative flex min-h-screen flex-col items-center justify-center py-12 text-center'>
-          <Logo className='w-16' />
-          <h1 className='mt-4'>Next.js + Tailwind CSS + TypeScript Starter</h1>
-          <p className='mt-2 text-sm text-gray-800'>
-            A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-            Import, Seo, Link component, pre-configured with Husky{' '}
-          </p>
-          <p className='mt-2 text-sm text-gray-700'>
-            <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-              See the repository
-            </ArrowLink>
-          </p>
+      <main>
+        {' '}
+        {/* The main content area of the page */}
+        <Hero />{' '}
+        {/* Render Hero directly. It will manage its own full height and background. */}
+        {/* Other sections of your homepage would go here, each in their own <section> tags */}
+        {/* For example: */}
+        {/*
+        <section className="py-16 bg-brand-white text-brand-black">
+          <div className="container mx-auto">
+            <h2>About TinyStage</h2>
+            <p>...</p>
+          </div>
+        </section>
 
-          <ButtonLink className='mt-6' href='/components' variant='light'>
-            See all components
-          </ButtonLink>
-
-          <UnstyledLink
-            href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-            className='mt-4'
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              width='92'
-              height='32'
-              src='https://vercel.com/button'
-              alt='Deploy with Vercel'
-            />
-          </UnstyledLink>
-        </div>
-      </section>
+        <section className="py-16 bg-brand-gray-dark text-brand-gray-light">
+          <div className="container mx-auto">
+            <h2>Upcoming Shows Preview</h2>
+            <p>...</p>
+          </div>
+        </section>
+        */}
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

@@ -13,9 +13,10 @@ module.exports = {
     'prettier',
   ],
   rules: {
+    '@typescript-eslint/no-explicit-any': 'warn', // instead of "error"
     'no-unused-vars': 'off',
     'no-console': 'warn',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
+
     'react/no-unescaped-entities': 'off',
 
     'react/display-name': 'off',
