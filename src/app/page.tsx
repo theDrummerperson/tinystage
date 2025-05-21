@@ -40,6 +40,16 @@ export default function HomePage() {
           </div>
         </section>
         */}
+        <h1
+          style={{
+            color: 'lime',
+            fontSize: '50px',
+            textAlign: 'center',
+            paddingTop: '50px',
+          }}
+        >
+          VISIBLE TEST CHANGE - V1
+        </h1>
       </main>
       <Footer />
     </>
