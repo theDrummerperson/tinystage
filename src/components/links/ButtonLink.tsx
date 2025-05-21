@@ -1,13 +1,12 @@
 import { LucideIcon } from 'lucide-react';
 import * as React from 'react';
-import { IconType } from 'react-icons';
 
+// import { IconType } from 'react-icons'; // REMOVED
 import { cn } from '@/lib/utils';
 
 import UnstyledLink, {
   UnstyledLinkProps,
 } from '@/components/links/UnstyledLink';
-
 const ButtonLinkVariant = [
   'primary',
   'outline',
@@ -21,12 +20,11 @@ type ButtonLinkProps = {
   isDarkBg?: boolean;
   variant?: (typeof ButtonLinkVariant)[number];
   size?: (typeof ButtonLinkSize)[number];
-  leftIcon?: IconType | LucideIcon;
-  rightIcon?: IconType | LucideIcon;
-  classNames?: {
-    leftIcon?: string;
-    rightIcon?: string;
-  };
+  leftIcon?: LucideIcon; // UPDATED TYPE
+  rightIcon?: LucideIcon; // UPDATED TYPE
+  leftIconClassName?: string; // ADDED
+  rightIconClassName?: string; // ADDED
+  // Removed classNames.leftIcon and classNames.rightIcon in favor of direct props
 } & UnstyledLinkProps;
 
 const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
@@ -37,13 +35,19 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
       variant = 'primary',
       size = 'base',
       isDarkBg = false,
-      leftIcon: LeftIcon,
-      rightIcon: RightIcon,
-      classNames,
+      leftIcon: LeftIconComponent, // Renamed
+      rightIcon: RightIconComponent, // Renamed
+      leftIconClassName,
+      rightIconClassName,
       ...rest
     },
     ref,
   ) => {
+    // Determine default icon class based on button size
+    // This aims to make icons roughly proportional to the text size of the button.
+    const iconSizeClass =
+      size === 'sm' ? 'h-[0.875em] w-[0.875em]' : 'h-[1em] w-[1em]'; // Smaller for 'sm', 1em for 'base'
+
     return (
       <UnstyledLink
         ref={ref}
@@ -53,13 +57,10 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
           'shadow-sm',
           'transition-colors duration-75',
-          //#region  //*=========== Size ===========
           [
-            size === 'base' && ['px-3 py-1.5', 'text-sm md:text-base'],
-            size === 'sm' && ['px-2 py-1', 'text-xs md:text-sm'],
+            size === 'base' && ['px-3 py-1.5', 'text-sm md:text-base'], // Text size sets baseline for '1em'
+            size === 'sm' && ['px-2 py-1', 'text-xs md:text-sm'], // Text size sets baseline for '1em'
           ],
-          //#endregion  //*======== Size ===========
-          //#region  //*=========== Variants ===========
           [
             variant === 'primary' && [
               'bg-primary-500 text-white',
@@ -94,46 +95,43 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               'hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-700',
             ],
           ],
-          //#endregion  //*======== Variants ===========
           'disabled:cursor-not-allowed',
           className,
         )}
       >
-        {LeftIcon && (
+        {LeftIconComponent && (
           <div
             className={cn([
-              size === 'base' && 'mr-1',
-              size === 'sm' && 'mr-1.5',
+              // Margin for the icon container
+              size === 'base' && 'mr-1.5', // Adjusted margin slightly
+              size === 'sm' && 'mr-1',
             ])}
           >
-            <LeftIcon
-              size='1em'
+            {/* Pass combined className to the icon */}
+            <LeftIconComponent
               className={cn(
-                [
-                  size === 'base' && 'md:text-md text-md',
-                  size === 'sm' && 'md:text-md text-sm',
-                ],
-                classNames?.leftIcon,
+                iconSizeClass, // Default size based on button size
+                'text-current', // Icon should inherit color from button text
+                leftIconClassName, // Allow overriding with specific classes
               )}
             />
           </div>
         )}
         {children}
-        {RightIcon && (
+        {RightIconComponent && (
           <div
             className={cn([
-              size === 'base' && 'ml-1',
-              size === 'sm' && 'ml-1.5',
+              // Margin for the icon container
+              size === 'base' && 'ml-1.5', // Adjusted margin slightly
+              size === 'sm' && 'ml-1',
             ])}
           >
-            <RightIcon
-              size='1em'
+            {/* Pass combined className to the icon */}
+            <RightIconComponent
               className={cn(
-                [
-                  size === 'base' && 'text-md md:text-md',
-                  size === 'sm' && 'md:text-md text-sm',
-                ],
-                classNames?.rightIcon,
+                iconSizeClass, // Default size based on button size
+                'text-current', // Icon should inherit color from button text
+                rightIconClassName, // Allow overriding with specific classes
               )}
             />
           </div>

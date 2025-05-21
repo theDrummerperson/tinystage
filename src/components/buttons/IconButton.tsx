@@ -1,7 +1,7 @@
-import { LucideIcon } from 'lucide-react';
+// Removed: import { IconType } from 'react-icons'; // Assuming this is problematic
+import { ArrowPathIcon } from '@heroicons/react/20/solid'; // Spinner icon
+import { LucideIcon } from 'lucide-react'; // For type definition
 import * as React from 'react';
-import { IconType } from 'react-icons';
-import { ImSpinner2 } from 'react-icons/im';
 
 import { cn } from '@/lib/utils';
 
@@ -13,14 +13,25 @@ const IconButtonVariant = [
   'dark',
 ] as const;
 
+// Define a more generic type for icons that accept className,
+// or make it specific if you only intend to use Heroicons or Lucide.
+// For this refactor, let's assume icons will be styled primarily via className.
+// Heroicons are React.ForwardRefExoticComponent<React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>>
+// LucideIcon is (props: LucideProps) => JSX.Element
+// A common ground is React.ComponentType<{ className?: string; [key: string]: any }>
+type GenericIconType = React.ComponentType<{ className?: string }>;
+
 type IconButtonProps = {
   isLoading?: boolean;
   isDarkBg?: boolean;
   variant?: (typeof IconButtonVariant)[number];
-  icon?: IconType | LucideIcon;
-  classNames?: {
-    icon?: string;
-  };
+  // Use a more specific or a more generic type for the icon prop.
+  // If you primarily use Heroicons, you could type it more specifically to them.
+  // If you use Lucide, LucideIcon is fine.
+  // For flexibility with libraries that take className for styling:
+  icon?: GenericIconType | LucideIcon;
+  iconClassName?: string; // Separate prop for icon's className for better control
+  // Removed classNames.icon, replaced with iconClassName for simplicity
 } & React.ComponentPropsWithRef<'button'>;
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -31,13 +42,19 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       isLoading,
       variant = 'primary',
       isDarkBg = false,
-      icon: Icon,
-      classNames,
+      icon: IconComponent, // Renamed to avoid conflict if Icon was a global type
+      iconClassName,
       ...rest
     },
     ref,
   ) => {
     const disabled = isLoading || buttonDisabled;
+
+    // Base icon size, can be overridden by iconClassName
+    // Aim for icon to be roughly 70-80% of the button's smallest dimension (padding dependent)
+    // Default min-h/w of button is 28px (p-1), so ~16-20px icon (h-4/w-4 or h-5/w-5)
+    // Default md: min-h/w of button is 34px (p-2), so ~20-24px icon (h-5/w-5 or h-6/w-6)
+    const defaultIconStyling = 'h-[1em] w-[1em]'; // Using 1em to scale with button font-size by default
 
     return (
       <button
@@ -49,8 +66,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
           'shadow-sm',
           'transition-colors duration-75',
-          'min-h-[28px] min-w-[28px] p-1 md:min-h-[34px] md:min-w-[34px] md:p-2',
-          //#region  //*=========== Variants ===========
+          'min-h-[28px] min-w-[28px] p-1 text-sm md:min-h-[34px] md:min-w-[34px] md:p-2 md:text-base', // Added text-sm/md:text-base for '1em' to work
           [
             variant === 'primary' && [
               'bg-primary-500 text-white',
@@ -85,7 +101,6 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
               'hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-700',
             ],
           ],
-          //#endregion  //*======== Variants ===========
           'disabled:cursor-not-allowed',
           isLoading &&
             'relative text-transparent transition-none hover:text-transparent disabled:cursor-wait',
@@ -98,16 +113,28 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
             className={cn(
               'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
               {
+                // Spinner color inherits from button's text color
                 'text-white': ['primary', 'dark'].includes(variant),
-                'text-black': ['light'].includes(variant),
+                'text-black': ['light'].includes(variant), // Or specific gray if text-gray-700 from 'light' variant is too light
                 'text-primary-500': ['outline', 'ghost'].includes(variant),
               },
             )}
           >
-            <ImSpinner2 className='animate-spin' />
+            <ArrowPathIcon
+              className={cn(defaultIconStyling, 'animate-spin', iconClassName)}
+            />
+            {/* Spinner can also use iconClassName if specific spinner styling is needed */}
           </div>
         )}
-        {Icon && <Icon size='1em' className={cn(classNames?.icon)} />}
+
+        {IconComponent && !isLoading && (
+          // Pass the combined className to the icon component
+          // LucideIcon accepts className, Heroicons accept className
+          <IconComponent
+            className={cn(defaultIconStyling, 'relative', iconClassName)}
+          />
+          // Removed 'size' prop as we're standardizing on className for sizing
+        )}
       </button>
     );
   },
