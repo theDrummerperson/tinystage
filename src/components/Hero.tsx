@@ -73,7 +73,7 @@ export default function Hero() {
       <div
         className='absolute inset-0 z-[-2] bg-cover bg-center bg-no-repeat motion-safe:animate-subtleBgDrift'
         style={{
-          backgroundImage: 'url(/svg/bg.svg)',
+          backgroundImage: 'url(/svg/bg.svg',
           opacity: prefersReducedMotion ? 0.02 : 0.04,
           mixBlendMode: 'color-dodge',
         }}
