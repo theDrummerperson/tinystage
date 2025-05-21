@@ -4,9 +4,10 @@ import Head from 'next/head';
 import * as React from 'react';
 import '@/lib/env';
 
+import Footer from '@/components/Footer'; // Add this import
+import Header from '@/components/Header'; // Add this import
 import ArrowLink from '@/components/links/ArrowLink';
 import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
 import UnstyledLink from '@/components/links/UnstyledLink';
 
 /**
@@ -18,16 +19,14 @@ import UnstyledLink from '@/components/links/UnstyledLink';
  */
 import Logo from '~/svg/Logo.svg';
 
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
-
 export default function HomePage() {
   return (
     <main>
       <Head>
         <title>Hi</title>
       </Head>
+      {/* Add the Header component here */}
+      <Header />
       <section className='bg-white'>
         <div className='layout relative flex min-h-screen flex-col items-center justify-center py-12 text-center'>
           <Logo className='w-16' />
@@ -58,15 +57,9 @@ export default function HomePage() {
               alt='Deploy with Vercel'
             />
           </UnstyledLink>
-
-          <footer className='absolute bottom-2 text-gray-700'>
-            © {new Date().getFullYear()} By{' '}
-            <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-              Theodorus Clarence
-            </UnderlineLink>
-          </footer>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

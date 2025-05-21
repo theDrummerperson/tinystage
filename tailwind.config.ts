@@ -2,35 +2,45 @@ import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx,mdx}'],
   theme: {
     extend: {
       fontFamily: {
         primary: ['Inter', ...defaultTheme.fontFamily.sans],
+        display: ['Montserrat', 'sans-serif'],
       },
       colors: {
         primary: {
-          // Customize it on globals.css :root
-          50: 'rgb(var(--tw-color-primary-50) / <alpha-value>)',
-          100: 'rgb(var(--tw-color-primary-100) / <alpha-value>)',
-          200: 'rgb(var(--tw-color-primary-200) / <alpha-value>)',
-          300: 'rgb(var(--tw-color-primary-300) / <alpha-value>)',
-          400: 'rgb(var(--tw-color-primary-400) / <alpha-value>)',
-          500: 'rgb(var(--tw-color-primary-500) / <alpha-value>)',
-          600: 'rgb(var(--tw-color-primary-600) / <alpha-value>)',
-          700: 'rgb(var(--tw-color-primary-700) / <alpha-value>)',
-          800: 'rgb(var(--tw-color-primary-800) / <alpha-value>)',
-          900: 'rgb(var(--tw-color-primary-900) / <alpha-value>)',
-          950: 'rgb(var(--tw-color-primary-950) / <alpha-value>)',
+          // Your custom yellow color (#fddb2f) as primary
+          50: '#fffdf5',
+          100: '#fffae6',
+          200: '#fff5cc',
+          300: '#ffed99',
+          400: '#fddb2f', // Your primary brand color
+          500: '#e5c52a',
+          600: '#ccaf25',
+          700: '#b39920',
+          800: '#997d1b',
+          900: '#806716',
+          950: '#665110',
         },
         dark: '#222222',
+        // Simplified color palette focusing on your brand colors
+        black: '#000000',
+        white: '#ffffff',
+        // You can still keep the orange palette if needed for accents
+        accent: {
+          DEFAULT: '#fddb2f', // Same as primary-400
+          dark: '#e5c52a',
+          light: '#fff5cc',
+        },
       },
       keyframes: {
         flicker: {
           '0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%': {
             opacity: '0.99',
             filter:
-              'drop-shadow(0 0 1px rgba(252, 211, 77)) drop-shadow(0 0 15px rgba(245, 158, 11)) drop-shadow(0 0 1px rgba(252, 211, 77))',
+              'drop-shadow(0 0 1px rgba(253, 219, 47, 0.8)) drop-shadow(0 0 15px rgba(253, 219, 47, 0.5)) drop-shadow(0 0 1px rgba(253, 219, 47, 0.8))',
           },
           '20%, 21.999%, 63%, 63.999%, 65%, 69.999%': {
             opacity: '0.4',
