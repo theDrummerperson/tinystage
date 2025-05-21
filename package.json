@@ -15,10 +15,10 @@
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
-    "prepare": "husky install",
-    "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix && prettier --write \"src/**/*.{js,jsx,ts,tsx,css,json,md}\""
+    "prepare": "husky install"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.438.0",
     "next": "^14.2.23",
