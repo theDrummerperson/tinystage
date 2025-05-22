@@ -41,63 +41,70 @@ module.exports = {
           'fadeInSlideUp 0.4s cubic-bezier(0.25,0.1,0.25,1.5) forwards', // Correctly added
         fadeInSlideRight:
           'fadeInSlideRight 0.5s cubic-bezier(0.25,0.1,0.25,1.5) forwards', // Correctly added
+        dropdownItemEnter:
+          'dropdownItemEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards',
       },
-      keyframes: {
-        // <--- Start of keyframes
-        buttonPulseBase: {
-          /* ... */
+    },
+    keyframes: {
+      // <--- Start of keyframes
+      buttonPulseBase: {
+        /* ... */
+      },
+      subtleSmoke: {
+        /* ... */
+      },
+      subtleBgDrift: {
+        /* ... */
+      },
+      grainAnimate: {
+        /* ... */
+      },
+      hazeEffect: {
+        /* ... */
+      },
+      spotlightFlicker: {
+        /* ... */
+      },
+      lensFlareGlint: {
+        /* ... */
+      },
+      buttonPulseVariantOne: {
+        /* ... */
+      },
+      buttonPulseVariantTwo: {
+        /* ... */
+      },
+      glint: {
+        /* ... */
+      }, // Assuming you renamed glintPlus or want both
+      glintPlus: {
+        // This was in your original, I'm keeping it but ensure you don't have duplicate logic with 'glint'
+        '0%, 100%': { opacity: '0.9', filter: 'saturate(0.9)' },
+        '10%, 30%': {
+          opacity: '1',
+          filter:
+            'saturate(1.1) drop-shadow(0 0 4px rgba(var(--brand-yellow-rgb),0.5))',
         },
-        subtleSmoke: {
-          /* ... */
+        '20%': {
+          opacity: '0.95',
+          filter:
+            'saturate(1) drop-shadow(0 0 8px rgba(var(--brand-yellow-rgb),0.3))',
         },
-        subtleBgDrift: {
-          /* ... */
-        },
-        grainAnimate: {
-          /* ... */
-        },
-        hazeEffect: {
-          /* ... */
-        },
-        spotlightFlicker: {
-          /* ... */
-        },
-        lensFlareGlint: {
-          /* ... */
-        },
-        buttonPulseVariantOne: {
-          /* ... */
-        },
-        buttonPulseVariantTwo: {
-          /* ... */
-        },
-        glint: {
-          /* ... */
-        }, // Assuming you renamed glintPlus or want both
-        glintPlus: {
-          // This was in your original, I'm keeping it but ensure you don't have duplicate logic with 'glint'
-          '0%, 100%': { opacity: '0.9', filter: 'saturate(0.9)' },
-          '10%, 30%': {
-            opacity: '1',
-            filter:
-              'saturate(1.1) drop-shadow(0 0 4px rgba(var(--brand-yellow-rgb),0.5))',
-          },
-          '20%': {
-            opacity: '0.95',
-            filter:
-              'saturate(1) drop-shadow(0 0 8px rgba(var(--brand-yellow-rgb),0.3))',
-          },
-        },
-        fadeInSlideUp: {
-          // Correctly added
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeInSlideRight: {
-          // Correctly added
-          '0%': { opacity: '0', transform: 'translateX(15px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
+      },
+      fadeInSlideUp: {
+        // Correctly added
+        '0%': { opacity: '0', transform: 'translateY(10px)' },
+        '100%': { opacity: '1', transform: 'translateY(0)' },
+      },
+      fadeInSlideRight: {
+        // Correctly added
+        '0%': { opacity: '0', transform: 'translateX(15px)' },
+        '100%': { opacity: '1', transform: 'translateX(0)' },
+      },
+
+      dropdownItemEnter: {
+        '0%': { opacity: '0', transform: 'translateY(10px) scale(0.98)' },
+        '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
       }, // <--- This brace closes 'keyframes'
     }, // <--- This brace closes 'extend'
   }, // <--- This brace closes 'theme'
