@@ -1,7 +1,6 @@
 'use client';
 
 // Corrected Import Order (Example - actual order depends on eslint-plugin-simple-import-sort config)
-import Link from 'next/link'; // Assuming this will be used for Privacy/Terms or if Logo isn't a link
 import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -311,23 +310,6 @@ export default function Footer() {
             © {new Date().getFullYear()} TinyStage Concert Series. All rights
             reserved.
           </p>
-          <nav className='mt-3 space-x-4 text-xs'>
-            <Link // Link component is used here
-              href='/privacy-policy'
-              className='text-[var(--brand-gray-medium)] hover:text-[var(--brand-yellow)] transition-colors duration-150 focus-visible:outline-none focus-visible:text-[var(--brand-yellow)] focus-visible:underline rounded-sm'
-            >
-              Privacy
-            </Link>
-            <span className='text-[var(--brand-gray-dark)]' aria-hidden='true'>
-              |
-            </span>
-            <Link // And here
-              href='/terms-of-service'
-              className='text-[var(--brand-gray-medium)] hover:text-[var(--brand-yellow)] transition-colors duration-150 focus-visible:outline-none focus-visible:text-[var(--brand-yellow)] focus-visible:underline rounded-sm'
-            >
-              Terms
-            </Link>
-          </nav>
         </div>
       </div>
     </footer>
