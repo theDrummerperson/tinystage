@@ -57,25 +57,11 @@ export default function Header(): JSX.Element {
   useEffect(() => {
     const handleScroll = () => {
       const scrollThreshold = 10;
-      const currentScroll = window.scrollY;
-
-      if (currentScroll > scrollThreshold) {
-        setHasScrolled(true);
-        if (headerRef.current) {
-          headerRef.current.style.transform = 'scaleY(1.02)';
-          headerRef.current.style.boxShadow =
-            '0 10px 25px -5px rgba(0, 0, 0, 0.4)';
-        }
-      } else {
-        setHasScrolled(false);
-        if (headerRef.current) {
-          headerRef.current.style.transform = 'scaleY(1)';
-          headerRef.current.style.boxShadow = 'none';
-        }
-      }
+      setHasScrolled(window.scrollY > scrollThreshold);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -216,11 +202,17 @@ export default function Header(): JSX.Element {
       ref={headerRef}
       className={cn(
         'sticky top-0 z-50 transition-all duration-300 ease-out',
-        isMobileMenuOpen
-          ? 'bg-[var(--brand-black)] shadow-xl border-b border-[var(--brand-gray-dark)]/60'
-          : hasScrolled
-            ? 'bg-[var(--brand-black)] shadow-xl border-b border-[var(--brand-yellow)]'
-            : 'bg-transparent shadow-none border-b border-transparent',
+        // Default state (top of page, not scrolled, mobile menu closed)
+        !hasScrolled &&
+          !isMobileMenuOpen &&
+          'bg-transparent shadow-none border-b border-transparent',
+        // Scrolled state (not mobile menu open)
+        hasScrolled &&
+          !isMobileMenuOpen &&
+          'bg-[var(--brand-black)] shadow-xl border-b-2 border-[var(--brand-yellow)] transform scale-y-[1.01]', // Added scaleY and thicker border
+        // Mobile menu open state (overrides others for background and border)
+        isMobileMenuOpen &&
+          'bg-[var(--brand-black)] shadow-xl border-b border-[var(--brand-gray-dark)]/60',
       )}
     >
       <div className='container mx-auto flex items-center justify-between px-4 py-2.5 md:py-3'>
@@ -235,7 +227,7 @@ export default function Header(): JSX.Element {
         >
           <div className='transition-all duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-3deg] motion-safe:group-focus-visible:scale-110'>
             <Image
-              src='/images/Logo2.png'
+              src='/images/Logo2.png' // Ensure this path is correct
               alt='TinyStage Icon'
               width={44}
               height={44}
@@ -243,6 +235,10 @@ export default function Header(): JSX.Element {
               className='object-contain motion-safe:animate-glint'
             />
           </div>
+          {/* Optional: Brand Name Text */}
+          {/* <span className="hidden sm:inline-block text-xl font-bold text-[var(--brand-yellow)] ml-2 tracking-tight group-hover:text-[var(--brand-white)] transition-colors">
+            TinyStage
+          </span> */}
         </Link>
 
         <nav className='hidden md:flex items-center space-x-1 lg:space-x-2'>
@@ -264,18 +260,25 @@ export default function Header(): JSX.Element {
                     aria-expanded={openDropdown === item.href}
                     aria-controls={`dropdown-${item.label.toLowerCase().replace(' ', '-')}`}
                     className={cn(
-                      'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-yellow)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-black)]',
-                      (pathname.startsWith(item.href) ||
+                      'relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-yellow)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-black)]',
+                      pathname.startsWith(item.href) ||
                         (item.href === '/shows' &&
-                          pathname.startsWith('/shows/'))) &&
-                        openDropdown !== item.href
+                          pathname.startsWith('/shows/')) ||
+                        openDropdown === item.href
                         ? 'text-[var(--brand-yellow)]'
                         : 'text-[var(--brand-gray-light)] hover:text-[var(--brand-yellow)]',
                       openDropdown === item.href &&
-                        'bg-[var(--brand-gray-dark)]/70 text-[var(--brand-yellow)]',
+                        'bg-[var(--brand-gray-dark)]/70 text-[var(--brand-yellow)]', // Stays for open dropdown background
                     )}
                   >
                     {item.label}
+                    {/* Active link indicator (underline) for dropdown triggers */}
+                    {(pathname.startsWith(item.href) ||
+                      (item.href === '/shows' &&
+                        pathname.startsWith('/shows/')) ||
+                      openDropdown === item.href) && (
+                      <span className='absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-[var(--brand-yellow)] rounded-full motion-safe:animate-scaleInX' />
+                    )}
                     <span
                       aria-hidden='true'
                       className={cn(
@@ -283,7 +286,11 @@ export default function Header(): JSX.Element {
                         openDropdown === item.href
                           ? 'rotate-180'
                           : 'group-hover:rotate-180',
-                        openDropdown === item.href
+                        // Chevron color matches text color for consistency
+                        pathname.startsWith(item.href) ||
+                          (item.href === '/shows' &&
+                            pathname.startsWith('/shows/')) ||
+                          openDropdown === item.href
                           ? 'text-[var(--brand-yellow)]'
                           : 'text-[var(--brand-gray-light)] group-hover:text-[var(--brand-yellow)]',
                       )}
@@ -295,7 +302,7 @@ export default function Header(): JSX.Element {
                     <div
                       id={`dropdown-${item.label.toLowerCase().replace(' ', '-')}`}
                       className={cn(
-                        'absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 origin-top transform rounded-md bg-[var(--brand-gray-dark)] shadow-2xl ring-1 ring-[var(--brand-black)]/70 ring-opacity-10 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)] motion-safe:will-change-transform z-20',
+                        'absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 origin-top transform rounded-md bg-[var(--brand-gray-dark)]/95 shadow-[0_8px_30px_rgba(0,0,0,0.3),_0_0_0_1px_var(--brand-yellow)/20,_inset_0_1px_2px_rgba(255,255,255,0.05)] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)] motion-safe:will-change-transform z-20',
                         isMounted && openDropdown === item.href
                           ? 'visible scale-100 opacity-100'
                           : 'invisible scale-90 opacity-0 pointer-events-none',
@@ -303,6 +310,12 @@ export default function Header(): JSX.Element {
                       role='menu'
                       aria-labelledby={item.label}
                     >
+                      <div
+                        className='absolute -top-[7px] left-1/2 -translate-x-1/2 w-4 h-2 overflow-hidden'
+                        aria-hidden='true'
+                      >
+                        <div className='w-3 h-3 bg-[var(--brand-gray-dark)]/95 rotate-45 transform origin-center -translate-y-1/2 shadow-[0_0_0_1px_var(--brand-yellow)/20]' />
+                      </div>
                       <ul className='p-1'>
                         {item.subItems.map((subItem, idx) => (
                           <li key={subItem.href}>
@@ -317,7 +330,7 @@ export default function Header(): JSX.Element {
                                   : 'text-[var(--brand-gray-light)] hover:bg-[var(--brand-black)]/80 hover:text-[var(--brand-yellow)] focus-visible:bg-[var(--brand-black)]/80 focus-visible:text-[var(--brand-yellow)]',
                                 openDropdown === item.href &&
                                   isMounted &&
-                                  'motion-safe:animate-fadeInSlideUp',
+                                  'motion-safe:animate-fadeInSlideUp', // Ensure this animation is defined
                               )}
                               style={{
                                 animationDelay:
@@ -338,7 +351,7 @@ export default function Header(): JSX.Element {
                 <Link
                   href={item.href}
                   className={cn(
-                    'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-yellow)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-black)]',
+                    'relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-yellow)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-black)]',
                     pathname === item.href
                       ? 'text-[var(--brand-yellow)] font-semibold'
                       : 'text-[var(--brand-gray-light)] hover:text-[var(--brand-yellow)]',
@@ -346,6 +359,10 @@ export default function Header(): JSX.Element {
                   onClick={() => setOpenDropdown(null)}
                 >
                   {item.label}
+                  {/* Active link indicator (underline) */}
+                  {pathname === item.href && (
+                    <span className='absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-[var(--brand-yellow)] rounded-full motion-safe:animate-scaleInX' />
+                  )}
                 </Link>
               )}
             </div>
@@ -353,14 +370,26 @@ export default function Header(): JSX.Element {
           <Link
             href={ctaLink.href}
             scroll={!(pathname === '/' && ctaLink.href.startsWith('#'))}
-            className='ml-3 md:ml-4'
+            className='ml-3 md:ml-4 group/cta'
             onClick={handleCtaClick}
           >
             <Button
               variant='primary'
-              className='px-5 py-2 text-sm font-semibold text-[var(--brand-black)]'
+              className='px-5 py-2 text-sm font-semibold text-[var(--brand-black)] shadow-md group-hover/cta:shadow-lg group-hover/cta:brightness-110 transition-all duration-200 ease-out transform group-hover/cta:scale-[1.03] active:scale-[0.97]'
             >
               {ctaLink.label}
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 20 20'
+                fill='currentColor'
+                className='w-4 h-4 ml-2 opacity-80 group-hover/cta:opacity-100 transition-opacity duration-200'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z'
+                  clipRule='evenodd'
+                />
+              </svg>
             </Button>
           </Link>
         </nav>
@@ -409,7 +438,7 @@ export default function Header(): JSX.Element {
           className={cn(
             'fixed inset-0 z-40 flex',
             isMounted && isMobileMenuOpen
-              ? 'animate-fadeInBasic'
+              ? 'animate-fadeInBasic' // Ensure this animation is defined
               : 'opacity-0 pointer-events-none',
           )}
           key={isMobileMenuOpen ? 'menu-open' : 'menu-closed'}
@@ -465,7 +494,7 @@ export default function Header(): JSX.Element {
                     key={item.href}
                     className={cn(
                       isMounted && isMobileMenuOpen
-                        ? 'motion-safe:animate-fadeInSlideRight'
+                        ? 'motion-safe:animate-fadeInSlideRight' // Ensure this animation is defined
                         : 'opacity-0',
                     )}
                     style={{
@@ -498,7 +527,7 @@ export default function Header(): JSX.Element {
                   className={cn(
                     'pt-2',
                     isMounted && isMobileMenuOpen
-                      ? 'motion-safe:animate-fadeInSlideRight'
+                      ? 'motion-safe:animate-fadeInSlideRight' // Ensure this animation is defined
                       : 'opacity-0',
                   )}
                   style={{
