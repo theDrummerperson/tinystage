@@ -198,7 +198,6 @@ This changelog is manually generated and not accurate with the package.json, onl
     </UnstyledLink>
     ```
 
-    The rest of `<a>` props can be directly added as a prop.
 
 - #### Add Motion Safe to Animations
 

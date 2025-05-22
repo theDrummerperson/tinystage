@@ -243,26 +243,6 @@ export default function Hero() {
               Concert Series
             </h2>
 
-            <p
-              className={cn(
-                'max-w-md text-base md:text-lg text-[var(--brand-gray-light)] leading-relaxed mb-10 mx-auto lg:mx-0 group/paragraph transition-all duration-300 ease-out motion-safe:hover:leading-loose motion-safe:hover:blur-[0.3px]',
-                motionAwareClass(
-                  `${entryAnimateBase} ${isMounted ? entryAnimateActive : entryAnimateInitial}`,
-                  `${entryAnimateBase} ${isMounted ? 'opacity-100' : 'opacity-0'}`,
-                ),
-              )}
-              style={{
-                transitionDelay: isMounted
-                  ? prefersReducedMotion
-                    ? '0.25s'
-                    : '0.8s'
-                  : '0ms',
-              }}
-            >
-              An intimate live music platform amplifying underrepresented
-              artists in Erie, PA. Local sound. Global stage.
-            </p>
-
             <div
               className={cn(
                 'flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center lg:justify-start sm:gap-5',
@@ -279,11 +259,7 @@ export default function Hero() {
                   : '0ms',
               }}
             >
-              <Link
-                href='/shows'
-                legacyBehavior={false}
-                className='block w-full sm:w-auto'
-              >
+              <Link href='/shows' className='block w-full sm:w-auto'>
                 <Button
                   variant='primary'
                   className={cn(
@@ -293,11 +269,7 @@ export default function Hero() {
                   See Upcoming Shows
                 </Button>
               </Link>
-              <Link
-                href='/livestream'
-                legacyBehavior={false}
-                className='block w-full sm:w-auto'
-              >
+              <Link href='/livestream' className='block w-full sm:w-auto'>
                 <Button
                   variant='outline'
                   className={cn(
