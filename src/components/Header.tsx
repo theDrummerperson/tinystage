@@ -3,17 +3,22 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { cn } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 
-// Define navigation items structure
 const navLinks = [
   { href: '/about', label: 'About' },
   {
-    href: '/shows', // This href will be for the main "Shows" page if top-level is clickable
+    href: '/shows',
     label: 'Shows',
     subItems: [
       { href: '/shows/upcoming', label: 'Upcoming Shows' },
@@ -21,7 +26,7 @@ const navLinks = [
     ],
   },
   {
-    href: '/get-involved', // Main "Get Involved" page href
+    href: '/get-involved',
     label: 'Get Involved',
     subItems: [
       { href: '/merch', label: 'Merchandise' },
@@ -30,27 +35,50 @@ const navLinks = [
   },
 ];
 
-const ctaLink = { href: '/book', label: 'Booking Inquiry' };
-
 export default function Header(): JSX.Element {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null); // Tracks open dropdown by its main item's href
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [isMounted, setIsMounted] = useState(false); // For entry animations
+  const [isMounted, setIsMounted] = useState(false);
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
-  // Scroll detection for header styling
+  const ctaLink = useMemo(() => {
+    const baseLabel = 'Booking Inquiry';
+    if (pathname === '/') {
+      return { href: '#booking', label: baseLabel };
+    }
+    return { href: '/#booking', label: baseLabel };
+  }, [pathname]);
+
   useEffect(() => {
-    const handleScroll = () => setHasScrolled(window.scrollY > 10);
+    const handleScroll = () => {
+      const scrollThreshold = 10;
+      const currentScroll = window.scrollY;
+
+      if (currentScroll > scrollThreshold) {
+        setHasScrolled(true);
+        if (headerRef.current) {
+          headerRef.current.style.transform = 'scaleY(1.02)';
+          headerRef.current.style.boxShadow =
+            '0 10px 25px -5px rgba(0, 0, 0, 0.4)';
+        }
+      } else {
+        setHasScrolled(false);
+        if (headerRef.current) {
+          headerRef.current.style.transform = 'scaleY(1)';
+          headerRef.current.style.boxShadow = 'none';
+        }
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Manage body scroll and mount state
   useEffect(() => {
     setIsMounted(true);
     if (isMobileMenuOpen) {
@@ -58,7 +86,6 @@ export default function Header(): JSX.Element {
     } else {
       document.body.style.overflow = '';
     }
-    // Cleanup function to ensure body scroll is restored if component unmounts while menu is open
     return () => {
       document.body.style.overflow = '';
     };
@@ -76,15 +103,53 @@ export default function Header(): JSX.Element {
     setOpenDropdown((prev) => (prev === href ? null : href));
   };
 
-  // Close dropdowns on outside click
+  const handleCtaClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    setOpenDropdown(null);
+    if (isMobileMenuOpen) {
+      closeMobileMenu();
+    }
+
+    const href = event.currentTarget.getAttribute('href');
+
+    if (href && href.startsWith('#') && pathname === '/') {
+      event.preventDefault();
+      const targetId = href.substring(1);
+      const targetElement = document.getElementById(targetId);
+
+      if (targetElement) {
+        const headerOffset = headerRef.current?.offsetHeight || 70;
+        const elementPosition =
+          targetElement.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - headerOffset - 20;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+
+        setTimeout(() => {
+          if (window.location.hash !== href) {
+            window.history.pushState(null, '', href);
+          }
+        }, 400);
+      }
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (openDropdown) {
         const target = event.target as Node;
-        // Check if the click is outside all elements that are part of a 'group' (nav items)
         let isInsideGroup = false;
-        document.querySelectorAll('.group').forEach((groupEl) => {
-          if (groupEl.contains(target)) {
+        const dropdownTriggers = document.querySelectorAll(
+          '.group.relative > button[aria-haspopup="menu"]',
+        );
+        dropdownTriggers.forEach((trigger) => {
+          const dropdownPanelId = trigger.getAttribute('aria-controls');
+          const panel = dropdownPanelId
+            ? document.getElementById(dropdownPanelId)
+            : null;
+          if (trigger.contains(target) || (panel && panel.contains(target))) {
             isInsideGroup = true;
           }
         });
@@ -97,14 +162,13 @@ export default function Header(): JSX.Element {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
 
-  // Mobile menu focus trapping and Escape key handling
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (!isMobileMenuOpen || !mobileMenuRef.current) return;
 
       if (event.key === 'Escape') {
         closeMobileMenu();
-        mobileMenuButtonRef.current?.focus(); // Return focus to hamburger
+        mobileMenuButtonRef.current?.focus();
         return;
       }
 
@@ -113,7 +177,7 @@ export default function Header(): JSX.Element {
           mobileMenuRef.current.querySelectorAll<HTMLElement>(
             'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])',
           ),
-        ).filter((el) => el.offsetParent !== null); // Filter out hidden elements
+        ).filter((el) => el.offsetParent !== null);
 
         if (focusableElements.length === 0) return;
 
@@ -121,13 +185,11 @@ export default function Header(): JSX.Element {
         const lastElement = focusableElements[focusableElements.length - 1];
 
         if (event.shiftKey) {
-          // Shift + Tab
           if (document.activeElement === firstElement) {
             lastElement.focus();
             event.preventDefault();
           }
         } else {
-          // Tab
           if (document.activeElement === lastElement) {
             firstElement.focus();
             event.preventDefault();
@@ -138,7 +200,6 @@ export default function Header(): JSX.Element {
 
     if (isMobileMenuOpen) {
       document.addEventListener('keydown', handleKeydown);
-      // Focus the close button in mobile menu when it opens (common accessible pattern)
       const closeButton =
         mobileMenuRef.current?.querySelector<HTMLButtonElement>(
           'button[aria-label="Close menu"]',
@@ -147,17 +208,19 @@ export default function Header(): JSX.Element {
     } else {
       document.removeEventListener('keydown', handleKeydown);
     }
-
     return () => document.removeEventListener('keydown', handleKeydown);
   }, [isMobileMenuOpen, closeMobileMenu]);
 
   return (
     <header
+      ref={headerRef}
       className={cn(
-        'sticky top-0 z-50 bg-[var(--brand-black)] transition-all duration-300 ease-out',
-        isMobileMenuOpen || hasScrolled
-          ? 'shadow-xl border-b border-[var(--brand-gray-dark)]/60'
-          : 'shadow-none border-b border-transparent',
+        'sticky top-0 z-50 transition-all duration-300 ease-out',
+        isMobileMenuOpen
+          ? 'bg-[var(--brand-black)] shadow-xl border-b border-[var(--brand-gray-dark)]/60'
+          : hasScrolled
+            ? 'bg-[var(--brand-black)] shadow-xl border-b border-[var(--brand-yellow)]'
+            : 'bg-transparent shadow-none border-b border-transparent',
       )}
     >
       <div className='container mx-auto flex items-center justify-between px-4 py-2.5 md:py-3'>
@@ -233,12 +296,12 @@ export default function Header(): JSX.Element {
                       id={`dropdown-${item.label.toLowerCase().replace(' ', '-')}`}
                       className={cn(
                         'absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 origin-top transform rounded-md bg-[var(--brand-gray-dark)] shadow-2xl ring-1 ring-[var(--brand-black)]/70 ring-opacity-10 transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)] motion-safe:will-change-transform z-20',
-                        isMounted && openDropdown === item.href // Ensure animation runs only when intended
+                        isMounted && openDropdown === item.href
                           ? 'visible scale-100 opacity-100'
                           : 'invisible scale-90 opacity-0 pointer-events-none',
                       )}
                       role='menu'
-                      aria-labelledby={item.label} // Optional: if button itself doesn't have sufficient label for menu
+                      aria-labelledby={item.label}
                     >
                       <ul className='p-1'>
                         {item.subItems.map((subItem, idx) => (
@@ -259,7 +322,7 @@ export default function Header(): JSX.Element {
                               style={{
                                 animationDelay:
                                   openDropdown === item.href && isMounted
-                                    ? `${idx * 40 + 30}ms` // Slightly faster stagger
+                                    ? `${idx * 40 + 30}ms`
                                     : '0ms',
                               }}
                             >
@@ -289,8 +352,9 @@ export default function Header(): JSX.Element {
           ))}
           <Link
             href={ctaLink.href}
+            scroll={!(pathname === '/' && ctaLink.href.startsWith('#'))}
             className='ml-3 md:ml-4'
-            onClick={() => setOpenDropdown(null)}
+            onClick={handleCtaClick}
           >
             <Button
               variant='primary'
@@ -301,7 +365,6 @@ export default function Header(): JSX.Element {
           </Link>
         </nav>
 
-        {/* Hamburger Button */}
         <button
           ref={mobileMenuButtonRef}
           className={cn(
@@ -328,7 +391,7 @@ export default function Header(): JSX.Element {
             <span
               className={cn(
                 'block h-0.5 w-6 bg-current transition-opacity duration-200 ease-out',
-                isMobileMenuOpen ? 'opacity-0' : 'opacity-100 delay-75', // Delay opacity for smoother transition
+                isMobileMenuOpen ? 'opacity-0' : 'opacity-100 delay-75',
               )}
             />
             <span
@@ -341,29 +404,21 @@ export default function Header(): JSX.Element {
         </button>
       </div>
 
-      {/* Mobile Menu - Conditionally Rendered Wrapper for Clean DOM & Transitions */}
       {isMobileMenuOpen && (
         <div
           className={cn(
             'fixed inset-0 z-40 flex',
-            // Using a key on this outer div that changes when isMobileMenuOpen changes
-            // can help ensure Tailwind's animate classes re-trigger correctly if needed.
-            // However, the inner panel's translate-x should handle most of the visual transition.
-            // For the outer wrapper, a simple fade-in for the overlay is often enough.
             isMounted && isMobileMenuOpen
               ? 'animate-fadeInBasic'
               : 'opacity-0 pointer-events-none',
           )}
-          // Forcing remount on open/close for animations to re-trigger consistently
-          // key={isMobileMenuOpen ? 'menu-open' : 'menu-closed'}
+          key={isMobileMenuOpen ? 'menu-open' : 'menu-closed'}
         >
-          {/* Overlay */}
           <div
             className='absolute inset-0 bg-[var(--brand-black)]/70 backdrop-blur-sm motion-safe:will-change-opacity'
             onClick={closeMobileMenu}
             aria-hidden='true'
           />
-          {/* Panel */}
           <div
             ref={mobileMenuRef}
             id='mobile-menu-panel'
@@ -409,7 +464,6 @@ export default function Header(): JSX.Element {
                   <li
                     key={item.href}
                     className={cn(
-                      // Apply animation only when menu is opening and component is mounted
                       isMounted && isMobileMenuOpen
                         ? 'motion-safe:animate-fadeInSlideRight'
                         : 'opacity-0',
@@ -417,7 +471,7 @@ export default function Header(): JSX.Element {
                     style={{
                       animationDelay:
                         isMounted && isMobileMenuOpen
-                          ? `${idx * 60 + 100}ms` // Adjusted stagger base
+                          ? `${idx * 60 + 100}ms`
                           : '0ms',
                     }}
                   >
@@ -450,16 +504,14 @@ export default function Header(): JSX.Element {
                   style={{
                     animationDelay:
                       isMounted && isMobileMenuOpen
-                        ? `${navLinks.length * 60 + 150}ms` // Adjusted stagger base
+                        ? `${navLinks.length * 60 + 150}ms`
                         : '0ms',
                   }}
                 >
                   <Link
                     href={ctaLink.href}
-                    onClick={() => {
-                      closeMobileMenu();
-                      setOpenDropdown(null);
-                    }}
+                    scroll={!(pathname === '/' && ctaLink.href.startsWith('#'))}
+                    onClick={handleCtaClick}
                     className='block rounded-md bg-[var(--brand-yellow)] px-3 py-3.5 text-center text-base font-bold text-[var(--brand-black)] shadow-lg transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-black)]'
                   >
                     {ctaLink.label}

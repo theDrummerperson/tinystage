@@ -404,7 +404,7 @@ React.useEffect(() => {}, []);
 Snippets: `ur`
 
 ```tsx
-const [state, dispatch] = React.useReducer(someReducer, {});
+const [state, dispah] = React.useReducer(someReducer, {});
 ```
 
 #### useRef Hook

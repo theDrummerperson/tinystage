@@ -4,9 +4,7 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
-// You've likely already merged colors.css into globals.css or handle it there.
-// If colors.css still exists and is needed, keep it. Otherwise, remove if redundant.
-import '@/styles/colors.css'; // REVIEW THIS IMPORT
+import '@/styles/colors.css';
 
 import { siteConfig } from '@/constant/config'; // This now pulls your TinyStage info
 
@@ -19,7 +17,6 @@ export const metadata: Metadata = {
   description: siteConfig.description, // Uses your TinyStage description
   robots: { index: true, follow: true }, // Standard good practice
   icons: {
-    // Keep these, but make sure the /favicon/... files actually exist in your public folder
     icon: '/favicon/favicon.ico',
     shortcut: '/favicon/favicon-16x16.png',
     apple: '/favicon/apple-touch-icon.png',
@@ -29,8 +26,8 @@ export const metadata: Metadata = {
     url: siteConfig.url,
     title: siteConfig.title,
     description: siteConfig.description,
-    siteName: siteConfig.title, // Good, uses your site title
-    images: [`${siteConfig.url}/images/og-tinystage.jpg`], // IMPORTANT: Create and use a specific OG image for TinyStage
+    siteName: siteConfig.title,
+    images: [`${siteConfig.url}/images/og.jpg`],
     type: 'website',
     locale: 'en_US',
   },
