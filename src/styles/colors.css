@@ -1,38 +1,12 @@
 /* src/styles/colors.css */
 :root {
-  /* --- Brand Palette --- */
   --brand-black: #000000;
-  --brand-black-rgb: 0, 0, 0;
-
-  --brand-white: #ffffff;
-  --brand-white-rgb: 255, 255, 255;
-
-  --brand-yellow: #fddb2f;
-  /* For #fddb2f, RGB is approximately 253, 219, 47 */
-  --brand-yellow-rgb: 253, 219, 47;
-
-  --brand-gray-light: #f0f0f0;
-  --brand-gray-light-rgb: 240, 240, 240;
-
-  --brand-gray-medium: #cccccc;
-  --brand-gray-medium-rgb: 204, 204, 204;
-
-  --brand-gray-dark: #333333;
-  --brand-gray-dark-rgb: 51, 51, 51;
-
-  /* Semantic tokens for dark theme (assuming your body is var(--brand-black)) */
-  --text-color: var(--brand-gray-light); /* Default text on dark backgrounds */
-  --text-color-inverse: var(--brand-black); /* Text for light backgrounds */
-
-  --background-color: var(--brand-black); /* Default page background */
-  --background-color-inverse: var(--brand-white); /* For light sections */
-
-  --input-bg: var(--brand-gray-dark); /* Dark input background */
-  --input-text-color: var(--brand-white); /* Light text in inputs */
-  --input-border: var(
-    --brand-gray-dark
-  ); /* Or a slightly lighter gray for visibility */
-  --input-focus-border: var(--brand-yellow);
-  --placeholder-color: #888888; /* Lighter placeholder for dark inputs */
-  --error-color: #ef5350; /* Brighter red for dark theme visibility */
+  --brand-yellow: #facc15;
+  --text-color: #ffffff;
+  --input-bg: #1a1a1a;
+  --input-border: #333333;
+  --input-text-color: #ffffff;
+  --input-focus-border: #facc15;
+  --placeholder-color: #888888;
+  --error-color: #ef4444;
 }

@@ -8,7 +8,7 @@
 @layer base {
   body {
     background-color: var(--brand-black);
-    color: var(--text-color); /* Corrected for dark theme */
+    color: var(--text-color);
   }
 
   input,
@@ -17,12 +17,18 @@
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
     color: var(--input-text-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
   }
+
   input:focus,
   textarea:focus,
   select:focus {
     outline: none;
     border-color: var(--input-focus-border);
+    box-shadow:
+      0 0 0 2px var(--brand-black),
+      0 0 0 4px var(--input-focus-border);
   }
 
   ::placeholder {
@@ -32,45 +38,5 @@
 
   .error {
     color: var(--error-color);
-  }
-}
-
-@layer utilities {
-  .bg-black {
-    background-color: var(--brand-black);
-  }
-  .bg-white {
-    background-color: var(--brand-white);
-  }
-  .bg-yellow {
-    background-color: var(--brand-yellow);
-  }
-  .bg-gray-light {
-    background-color: var(--brand-gray-light);
-  }
-  .bg-gray-medium {
-    background-color: var(--brand-gray-medium);
-  }
-  .bg-gray-dark {
-    background-color: var(--brand-gray-dark);
-  }
-
-  .text-black {
-    color: var(--brand-black);
-  }
-  .text-white {
-    color: var(--brand-white);
-  }
-  .text-yellow {
-    color: var(--brand-yellow);
-  }
-  .text-gray-light {
-    color: var(--brand-gray-light);
-  }
-  .text-gray-medium {
-    color: var(--brand-gray-medium);
-  }
-  .text-gray-dark {
-    color: var(--brand-gray-dark);
   }
 }

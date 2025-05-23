@@ -8,23 +8,21 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // <--- Start of extend
       colors: {
         'brand-black': 'var(--brand-black)',
         'brand-white': 'var(--brand-white)',
         'brand-yellow': 'var(--brand-yellow)',
-        'brand-gray': {
-          light: 'var(--brand-gray-light)',
-          medium: 'var(--brand-gray-medium)',
-          dark: 'var(--brand-gray-dark)',
-        },
+        'brand-gray-light': 'var(--brand-gray-light)',
+        'brand-gray-medium': 'var(--brand-gray-medium)',
+        'brand-gray-dark': 'var(--brand-gray-dark)',
       },
       fontFamily: {
         // sans: ['YourPrimaryFont', 'sans-serif'],
         // display: ['YourDisplayFont', 'serif'],
       },
       animation: {
-        // Your existing animations:
+        // Existing animations:
+        fadeIn: 'fadeIn 0.5s ease-out forwards', // Your existing fadeIn definition
         glintPlus: 'glintPlus 7s infinite ease-in-out 2s',
         buttonPulse: 'buttonPulseBase 3s infinite ease-out',
         subtleSmoke: 'subtleSmoke 45s linear infinite alternate',
@@ -44,58 +42,95 @@ module.exports = {
           'fadeInSlideRight 0.5s cubic-bezier(0.25,0.1,0.25,1.5) forwards',
         dropdownItemEnter:
           'dropdownItemEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards',
-
-        // New animations for Header.tsx:
         scaleInX: 'scaleInX 0.3s ease-out forwards',
-        fadeInBasic: 'fadeInBasic 0.3s ease-out forwards',
-        glint: 'glintPlus 7s infinite ease-in-out 2s', // Mapping animate-glint to use your existing glintPlus definition
-        // OR define a new 'glint' keyframe if 'glintPlus' is too complex.
+        fadeInBasic: 'fadeInBasic 0.3s ease-out forwards', // This is different from your 'fadeIn'
+        glint: 'glintPlus 7s infinite ease-in-out 2s',
+
+        // NEW animations for AboutPage enhancements:
+        textReveal:
+          'textReveal 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards 0.5s', // 0.5s delay baked in
+        nudgeRight: 'nudgeRight 0.3s ease-in-out',
+        highlightYellow: 'highlightYellow 0.6s ease-out forwards',
       },
       keyframes: {
-        // <--- Start of keyframes
-        // Your existing keyframes:
+        // Your existing fadeIn definition:
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' }, // This is more like a fadeInSlideUp
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        // Your existing fadeInBasic definition:
+        fadeInBasic: {
+          // Pure opacity fade in
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
         buttonPulseBase: {
-          /* ... your definition ... */
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.05)', opacity: '0.85' },
+          // ...
         },
         subtleSmoke: {
-          /* ... your definition ... */
+          '0%': { opacity: '0.2', transform: 'translateY(0) scale(1)' },
+          '100%': {
+            opacity: '0.05',
+            transform: 'translateY(-50px) scale(1.5)',
+          },
+          // ...
         },
         subtleBgDrift: {
-          /* ... your definition ... */
+          '0%': { backgroundPosition: '0% 0%' },
+          '100%': { backgroundPosition: '100% 100%' },
+          // ...
         },
         grainAnimate: {
-          /* ... your definition ... */
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '25%': { transform: 'translate(-1px, -1px)' },
+          '50%': { transform: 'translate(1px, 1px)' },
+          '75%': { transform: 'translate(-1px, 1px)' },
+          // ...
         },
         hazeEffect: {
-          /* ... your definition ... */
+          '0%': { opacity: '0.1', transform: 'translateX(-10%)' },
+          '100%': { opacity: '0.05', transform: 'translateX(10%)' },
+          // ...
         },
         spotlightFlicker: {
-          /* ... your definition ... */
+          '0%, 100%': { opacity: '0.8' },
+          '50%': { opacity: '1' },
+          // ...
         },
         lensFlareGlint: {
-          /* ... your definition ... */
+          '0%, 100%': { opacity: '0', transform: 'scale(0.5) rotate(0deg)' },
+          '50%': { opacity: '0.3', transform: 'scale(1) rotate(10deg)' },
+          // ...
         },
         buttonPulseVariantOne: {
-          /* ... your definition ... */
+          '0%, 100%': {
+            boxShadow: '0 0 0 0 rgba(var(--brand-yellow-rgb), 0.4)',
+          },
+          '70%': { boxShadow: '0 0 0 10px rgba(var(--brand-yellow-rgb), 0)' },
+          // ...
         },
         buttonPulseVariantTwo: {
-          /* ... your definition ... */
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(1.15)' },
+          // ...
         },
         glintPlus: {
           '0%, 100%': { opacity: '0.9', filter: 'saturate(0.9)' },
           '10%, 30%': {
             opacity: '1',
             filter:
-              'saturate(1.1) drop-shadow(0 0 4px rgba(var(--brand-yellow-rgb),0.5))', // Make sure --brand-yellow-rgb is defined in your CSS if you use this
+              'saturate(1.1) drop-shadow(0 0 4px rgba(var(--brand-yellow-rgb),0.5))',
           },
           '20%': {
             opacity: '0.95',
             filter:
-              'saturate(1) drop-shadow(0 0 8px rgba(var(--brand-yellow-rgb),0.3))', // Make sure --brand-yellow-rgb is defined
+              'saturate(1) drop-shadow(0 0 8px rgba(var(--brand-yellow-rgb),0.3))',
           },
         },
-        // Your existing fadeInSlideUp & fadeInSlideRight are fine
         fadeInSlideUp: {
+          // This is identical to your 'fadeIn'
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
@@ -107,24 +142,31 @@ module.exports = {
           '0%': { opacity: '0', transform: 'translateY(10px) scale(0.98)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
-
-        // New keyframes for Header.tsx:
         scaleInX: {
           '0%': { transform: 'scaleX(0)' },
           '100%': { transform: 'scaleX(1)' },
         },
-        fadeInBasic: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+
+        // NEW keyframes for AboutPage enhancements:
+        textReveal: {
+          '0%': { clipPath: 'inset(0 100% 0 0)' },
+          '100%': { clipPath: 'inset(0 0% 0 0)' },
         },
-        // If you want a simpler 'glint' different from 'glintPlus', define it here:
-        // glint: {
-        //   '0%, 100%': { filter: 'brightness(1)' },
-        //   '50%': { filter: 'brightness(1.2)' }, // Example simple glint
-        // },
-      }, // <--- This brace closes 'keyframes'
-    }, // <--- This brace closes 'extend'
-  }, // <--- This brace closes 'theme'
+        nudgeRight: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(4px)' },
+        },
+        highlightYellow: {
+          '0%': { backgroundColor: 'transparent', color: 'inherit' }, // Assuming text starts with its normal color
+          '40%, 60%': {
+            backgroundColor: 'rgba(var(--brand-yellow-rgb), 0.3)',
+            color: 'var(--brand-white)',
+          }, // Highlight phase
+          '100%': { backgroundColor: 'transparent', color: 'inherit' }, // Return to normal
+        },
+      },
+    },
+  },
   plugins: [
     function ({
       addUtilities,
@@ -140,8 +182,8 @@ module.exports = {
         '.animation-delay-[-20s]': {
           'animation-delay': '-20s',
         },
-        // You can add more animation utilities here if needed
       } as Record<string, import('csstype').Properties>);
     },
+    // require('@tailwindcss/forms'),
   ],
 };
