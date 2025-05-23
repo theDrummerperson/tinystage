@@ -18,19 +18,22 @@ import Button from '@/components/buttons/Button';
 const navLinks = [
   { href: '/about', label: 'About' },
   {
-    href: '/shows',
+    href: '/shows', // This is the main landing page for shows (app/shows/page.tsx)
     label: 'Shows',
     subItems: [
-      { href: '/shows/upcoming', label: 'Upcoming Shows' },
-      { href: '/shows/past', label: 'Past Performances' },
+      { href: '/shows/upcoming', label: 'Upcoming Shows' }, // Points to app/shows/upcoming/page.tsx
+      { href: '/shows/archive', label: 'Past Performances' }, // Points to app/shows/archive/page.tsx (or /shows/past/page.tsx)
     ],
   },
   {
-    href: '/get-involved',
+    href: '/get-involved', // This could be a page at app/get-involved/page.tsx
     label: 'Get Involved',
     subItems: [
-      { href: '/merch', label: 'Merchandise' },
-      { href: '/support', label: 'Support Us' },
+      // These subItems assume /merch and /support are top-level pages
+      // If they are sub-pages of /get-involved, their hrefs would be different
+      // e.g., /get-involved/merch
+      { href: '/merch', label: 'Merchandise' }, // Points to app/merch/page.tsx
+      { href: '/support', label: 'Support Us' }, // Points to app/support/page.tsx
     ],
   },
 ];

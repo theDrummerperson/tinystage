@@ -94,7 +94,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### 4. Change defaults
 
-There are some things you need to change including title, urls, favicons, etc.
+There are some things you need to change including title, urls, s, etc.
 
 Find all comments with !STARTERCONF, then follow the guide.
 

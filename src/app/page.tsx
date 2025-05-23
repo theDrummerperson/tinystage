@@ -1,32 +1,41 @@
 // src/app/page.tsx
-'use client';
+'use client'; // Keep if Hero or Booking need client-side features
 
-import Head from 'next/head';
-import * as React from 'react';
+// Remove Head from next/head, use Next.js 13+ App Router metadata in layout.tsx
+// import Head from 'next/head';
+import * as React from 'react'; // Keep if needed for React.Fragment or other specific React features
 
 import Booking from '@/components/Booking';
-// import '@/lib/env'; // Consider if this is truly needed here or can be in layout.tsx
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import Hero from '@/components/Hero'; // Your impressive Hero component
+import Hero from '@/components/Hero';
+// Remove Header and Footer imports as they are now in RootLayout
+// import Footer from '@/components/Footer';
+// import Header from '@/components/Header';
 
 export default function HomePage() {
   return (
     <>
       {' '}
-      {/* Use a Fragment or a simple div if no extra layout styling needed at this top level */}
+      {/* Or simply remove the fragment if main is the only direct child */}
+      {/*
+        The <Head> component from 'next/head' is for the Pages Router.
+        In the App Router, metadata is handled by the `export const metadata` object
+        in layout.tsx or page.tsx files.
+        You can remove the <Head> component below.
+      */}
+      {/*
       <Head>
         <title>TinyStage</title>
       </Head>
-      <Header />
+      */}
+      {/* Header is now rendered by RootLayout */}
       <main>
         {' '}
-        {/* The main content area of the page */}
+        {/* Keep a main tag for semantic content if Hero and Booking are sections */}
         <Hero />
         <Booking />
-        <React.Fragment></React.Fragment>
+        {/* <React.Fragment></React.Fragment>  // This empty fragment does nothing, can be removed */}
       </main>
-      <Footer />
+      {/* Footer is now rendered by RootLayout */}
     </>
   );
 }

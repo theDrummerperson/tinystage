@@ -1,33 +1,36 @@
 // src/app/layout.tsx
 import { Metadata } from 'next';
-import * as React from 'react';
+import * as React from 'react'; // Keep if needed for other React features
 
 import '@/styles/globals.css';
-// !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
-import '@/styles/colors.css';
+import '@/styles/colors.css'; // !STARTERCONF (as noted in your file)
 
-import { siteConfig } from '@/constant/config'; // This now pulls your TinyStage info
+import Footer from '@/components/Footer';
+// --- IMPORT YOUR HEADER AND FOOTER ---
+import Header from '@/components/Header';
+
+import { siteConfig } from '@/constant/config';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url), // Uses your updated URL
+  // ... your existing metadata ...
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.title, // Uses your TinyStage title
-    template: `%s | ${siteConfig.title}`, // e.g., "About Us | TinyStage: Local Talent, Global Livestream"
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.title}`,
   },
-  description: siteConfig.description, // Uses your TinyStage description
-  robots: { index: true, follow: true }, // Standard good practice
+  description: siteConfig.description,
+  robots: { index: true, follow: true },
   icons: {
-    icon: '/favicon/favicon.ico',
-    shortcut: '/favicon/favicon-16x16.png',
-    apple: '/favicon/apple-touch-icon.png',
+    icon: '/favicon.ico', // Corrected path for favicon
+    shortcut: '/favicon.png', // Example
+    apple: '/apple-touch-icon.png', // Example
   },
-  manifest: `/favicon/site.webmanifest`, // Ensure this file exists in public/favicon/
   openGraph: {
     url: siteConfig.url,
     title: siteConfig.title,
     description: siteConfig.description,
     siteName: siteConfig.title,
-    images: [`${siteConfig.url}/images/og.jpg`],
+    images: [`${siteConfig.url}/images/og.jpg`], // Ensure public/images/og.jpg exists
     type: 'website',
     locale: 'en_US',
   },
@@ -35,17 +38,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [`${siteConfig.url}/images/twitter-tinystage.jpg`], // IMPORTANT: Create and use a specific Twitter image
-    // creator: '@YourTinyStageTwitterHandle', // Add your Twitter handle if you have one
+    images: [`${siteConfig.url}/images/twitter-tinystage.jpg`], // Ensure public/images/twitter-tinystage.jpg exists
+    // creator: '@YourTinyStageTwitterHandle',
   },
   authors: [
-    // Update or remove this
     {
-      name: 'TinyStage', // Set author to TinyStage
-      // url: siteConfig.url, // Optionally link to the site itself
+      name: 'TinyStage',
     },
   ],
-  // Add creator and publisher if desired, directly or via siteConfig
   creator: 'TinyStage',
   publisher: 'TinyStage',
 };
@@ -57,28 +57,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='scroll-smooth'>
-      {' '}
-      {/* Added scroll-smooth for nice anchor link scrolling */}
-      {/* The <head> is automatically populated by Next.js with the metadata object */}
       <body className='bg-[var(--brand-black)] text-[var(--text-color)] antialiased'>
-        {/*
-          It's common to put Header and Footer here if they appear on ALL pages.
-          This ensures consistency and they are part of the core layout.
-          If some pages (like a dedicated auth page) shouldn't have them,
-          then keeping them in individual page.tsx files (or a sub-layout) is better.
-          Let's assume for now they are global.
-        */}
-        {/*
-        <Header /> // Example: If Header is global
-        <div id="__next_wrapper" className="flex flex-col min-h-screen"> // Wrapper for sticky footer
-          <main className="flex-grow">
+        {/* Wrapper for sticky footer and overall page structure */}
+        <div className='flex flex-col min-h-screen'>
+          <Header /> {/* <<< ADDED HEADER HERE */}
+          <main className='flex-grow'>
+            {' '}
+            {/* flex-grow makes main content take available space */}
             {children}
           </main>
-          <Footer /> // Example: If Footer is global
+          <Footer /> {/* <<< ADDED FOOTER HERE */}
         </div>
-        */}
-        {children}{' '}
-        {/* Your current setup keeps Header/Footer in page.tsx, which is also fine */}
       </body>
     </html>
   );

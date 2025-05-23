@@ -20,6 +20,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "clsx": "^2.0.0",
+    "framer-motion": "^12.12.1",
     "lucide-react": "^0.438.0",
     "next": "^14.2.23",
     "react": "^18.3.1",
@@ -59,11 +60,11 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
-      "eslint --max-warnings=0",
-      "prettier -w"
+      "eslint --max-warnings=0 --fix",
+      "prettier --write"
     ],
-    "**/*.{json,css,scss,md,webmanifest}": [
-      "prettier -w"
+    "**/*.{json,css,scss,md,yaml,yml,webmanifest}": [
+      "prettier --write"
     ]
   }
 }
