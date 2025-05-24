@@ -1,12 +1,35 @@
 /* src/styles/colors.css */
 :root {
+  /* Primary Brand Colors */
   --brand-black: #000000;
-  --brand-yellow: #facc15;
-  --text-color: #ffffff;
-  --input-bg: #1a1a1a;
-  --input-border: #333333;
+  --brand-black-rgb: 0, 0, 0; /* For rgba() */
+
+  --brand-yellow: #facc15; /* Tailwind yellow-500 */
+  --brand-yellow-rgb: 250, 204, 21; /* For rgba() - Corresponds to #facc15 */
+
+  /* Text Colors */
+  --text-color: #ffffff; /* Default text color */
+  --brand-white: #ffffff; /* Explicit white for text elements */
+  --brand-white-rgb: 255, 255, 255; /* For rgba() */
+
+  /* Grays - You can adjust these as needed */
+  --brand-gray-light: #d1d5db; /* Tailwind gray-300 - for subtitles, etc. */
+  --brand-gray-light-rgb: 209, 213, 219;
+
+  --brand-gray-medium: #6b7280; /* Tailwind gray-500 - an example, was previously used */
+  --brand-gray-medium-rgb: 107, 114, 128;
+
+  --brand-gray-dark: #1f2937; /* Tailwind gray-800 - for dark backgrounds/haze */
+  --brand-gray-dark-rgb: 31, 41, 55;
+
+  /* Input/Form Specific Colors */
+  --input-bg: #1a1a1a; /* Darker than brand-gray-dark for contrast */
+  --input-border: #333333; /* Slightly lighter than input-bg */
   --input-text-color: #ffffff;
-  --input-focus-border: #facc15;
-  --placeholder-color: #888888;
-  --error-color: #ef4444;
+  --input-focus-border: var(--brand-yellow); /* Use brand yellow for focus */
+  --placeholder-color: #888888; /* Mid-gray for placeholders */
+
+  /* Utility Colors */
+  --error-color: #ef4444; /* Tailwind red-500 */
+  --error-color-rgb: 239, 68, 68;
 }
