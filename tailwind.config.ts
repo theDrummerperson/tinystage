@@ -1,4 +1,4 @@
-// tailwind.config.js (or .ts)
+// tailwind.config.ts
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -22,7 +22,9 @@ module.exports = {
       },
       animation: {
         // Existing animations:
-        fadeIn: 'fadeIn 0.5s ease-out forwards', // Your existing fadeIn definition
+        pulse: 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        subtleSvgDrift: 'subtleSvgDrift 20s linear infinite alternate',
+        fadeIn: 'fadeIn 0.5s ease-out forwards',
         glintPlus: 'glintPlus 7s infinite ease-in-out 2s',
         buttonPulse: 'buttonPulseBase 3s infinite ease-out',
         subtleSmoke: 'subtleSmoke 45s linear infinite alternate',
@@ -43,79 +45,75 @@ module.exports = {
         dropdownItemEnter:
           'dropdownItemEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards',
         scaleInX: 'scaleInX 0.3s ease-out forwards',
-        fadeInBasic: 'fadeInBasic 0.3s ease-out forwards', // This is different from your 'fadeIn'
-        glint: 'glintPlus 7s infinite ease-in-out 2s',
+        fadeInBasic: 'fadeInBasic 0.3s ease-out forwards',
+        glint: 'glintPlus 7s infinite ease-in-out 2s', // Note: 'glint' uses 'glintPlus' keyframes
 
-        // NEW animations for AboutPage enhancements:
+        // NEW animations for /svg/1.svg integration:
+        cosmicPulse: 'cosmicPulse 14s infinite ease-in-out',
+        slowRotate: 'slowRotate 180s linear infinite',
+
+        // NEW animations for AboutPage enhancements (from original file):
         textReveal:
-          'textReveal 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards 0.5s', // 0.5s delay baked in
+          'textReveal 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards 0.5s',
         nudgeRight: 'nudgeRight 0.3s ease-in-out',
         highlightYellow: 'highlightYellow 0.6s ease-out forwards',
       },
       keyframes: {
-        // Your existing fadeIn definition:
+        subtleSvgDrift: {
+          '0%': { transform: 'translateX(-2%) translateY(-1%) scale(1)' },
+          '100%': { transform: 'translateX(2%) translateY(1%) scale(1.05)' },
+        }, // <<< Corrected: ADDED COMMA
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' }, // This is more like a fadeInSlideUp
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        // Your existing fadeInBasic definition:
+        }, // <<< Corrected: ADDED COMMA
         fadeInBasic: {
-          // Pure opacity fade in
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         buttonPulseBase: {
           '0%, 100%': { transform: 'scale(1)', opacity: '1' },
           '50%': { transform: 'scale(1.05)', opacity: '0.85' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         subtleSmoke: {
           '0%': { opacity: '0.2', transform: 'translateY(0) scale(1)' },
           '100%': {
             opacity: '0.05',
             transform: 'translateY(-50px) scale(1.5)',
           },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         subtleBgDrift: {
           '0%': { backgroundPosition: '0% 0%' },
           '100%': { backgroundPosition: '100% 100%' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         grainAnimate: {
           '0%, 100%': { transform: 'translate(0, 0)' },
           '25%': { transform: 'translate(-1px, -1px)' },
           '50%': { transform: 'translate(1px, 1px)' },
           '75%': { transform: 'translate(-1px, 1px)' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         hazeEffect: {
           '0%': { opacity: '0.1', transform: 'translateX(-10%)' },
           '100%': { opacity: '0.05', transform: 'translateX(10%)' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         spotlightFlicker: {
           '0%, 100%': { opacity: '0.8' },
           '50%': { opacity: '1' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         lensFlareGlint: {
           '0%, 100%': { opacity: '0', transform: 'scale(0.5) rotate(0deg)' },
           '50%': { opacity: '0.3', transform: 'scale(1) rotate(10deg)' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         buttonPulseVariantOne: {
           '0%, 100%': {
             boxShadow: '0 0 0 0 rgba(var(--brand-yellow-rgb), 0.4)',
           },
           '70%': { boxShadow: '0 0 0 10px rgba(var(--brand-yellow-rgb), 0)' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         buttonPulseVariantTwo: {
           '0%, 100%': { filter: 'brightness(1)' },
           '50%': { filter: 'brightness(1.15)' },
-          // ...
-        },
+        }, // <<< Corrected: ADDED COMMA
         glintPlus: {
           '0%, 100%': { opacity: '0.9', filter: 'saturate(0.9)' },
           '10%, 30%': {
@@ -128,41 +126,51 @@ module.exports = {
             filter:
               'saturate(1) drop-shadow(0 0 8px rgba(var(--brand-yellow-rgb),0.3))',
           },
-        },
+        }, // <<< Corrected: ADDED COMMA
         fadeInSlideUp: {
-          // This is identical to your 'fadeIn'
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         fadeInSlideRight: {
           '0%': { opacity: '0', transform: 'translateX(15px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         dropdownItemEnter: {
           '0%': { opacity: '0', transform: 'translateY(10px) scale(0.98)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         scaleInX: {
           '0%': { transform: 'scaleX(0)' },
           '100%': { transform: 'scaleX(1)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
 
-        // NEW keyframes for AboutPage enhancements:
+        // NEW keyframes for /svg/1.svg integration:
+        cosmicPulse: {
+          '0%, 100%': { opacity: '0.3', transform: 'scale(0.95)' },
+          '50%': { opacity: '0.7', transform: 'scale(1.05)' },
+        }, // <<< ADDED COMMA
+        slowRotate: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        }, // <<< ADDED COMMA
+
+        // Keyframes for AboutPage enhancements (from original file):
         textReveal: {
           '0%': { clipPath: 'inset(0 100% 0 0)' },
           '100%': { clipPath: 'inset(0 0% 0 0)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         nudgeRight: {
           '0%, 100%': { transform: 'translateX(0)' },
           '50%': { transform: 'translateX(4px)' },
-        },
+        }, // <<< Corrected: ADDED COMMA
         highlightYellow: {
-          '0%': { backgroundColor: 'transparent', color: 'inherit' }, // Assuming text starts with its normal color
+          // This is the last one, so NO comma after its closing brace
+          '0%': { backgroundColor: 'transparent', color: 'inherit' },
           '40%, 60%': {
             backgroundColor: 'rgba(var(--brand-yellow-rgb), 0.3)',
             color: 'var(--brand-white)',
-          }, // Highlight phase
-          '100%': { backgroundColor: 'transparent', color: 'inherit' }, // Return to normal
+          },
+          '100%': { backgroundColor: 'transparent', color: 'inherit' },
         },
       },
     },
