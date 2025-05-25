@@ -5,11 +5,9 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { PastShow } from '@/data/pastShows'; // Ensure this path is correct and PastShow is exported
+import { PastShow } from '@/data/pastShows';
 
-// >>> This is the interface defining the props <<<
 export interface ShowsPastFeaturedProps {
-  // Ensure 'export' if used across files, though not strictly needed if only used here and imported type is correct
   show: PastShow;
   sectionTitle?: string;
   sectionSubtitle?: string;
@@ -17,7 +15,6 @@ export interface ShowsPastFeaturedProps {
   headingLevel?: 'h1' | 'h2';
 }
 
-// >>> This is how the component is typed <<<
 const ShowsPastFeatured: React.FC<ShowsPastFeaturedProps> = ({
   show,
   sectionTitle = 'Previously On TinyStage',
@@ -28,7 +25,6 @@ const ShowsPastFeatured: React.FC<ShowsPastFeaturedProps> = ({
   const {
     id,
     artistName,
-    // ... other properties from show that you use ...
     performanceDate,
     tagline,
     flyerImageUrl,
@@ -36,49 +32,41 @@ const ShowsPastFeatured: React.FC<ShowsPastFeaturedProps> = ({
     description,
     artistPageLink,
     featuredQuote,
-    bgColor = '#F0EBE5',
-    primaryAccentColor = '#8A0303',
-    textColor = 'text-gray-800',
-    tapeColor = 'bg-yellow-300/80 text-yellow-900',
-  } = show; // Make sure all props from 'show' that you intend to use are destructured or accessed via show.propertyName
+  } = show;
 
   const HeadingTag = headingLevel;
 
   return (
-    // ... your JSX using the props like artistName, flyerImageUrl, etc. ...
     <section
-      style={{ backgroundColor: bgColor }}
-      className='pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden relative'
-      aria-labelledby={`featured-past-show-heading-${id}`} // id is needed from show
+      className='bg-brand-gray-dark text-brand-white pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden relative' // Ensure 'relative' for absolute positioning of children
+      aria-labelledby={`featured-past-show-heading-${id}`}
     >
-      <div className='container mx-auto px-4'>
+      {/* Content needs to be relatively positioned with a z-index higher than the background */}
+      <div className='container mx-auto px-4 relative z-10'>
         <header className='mb-12 md:mb-16 text-center'>
           <HeadingTag
-            id={`featured-past-show-heading-${id}`} // id is needed from show
-            className={`text-2xl sm:text-3xl font-semibold tracking-tight mb-2 ${headingLevel === 'h1' ? 'md:text-4xl' : ''}`}
-            style={{ color: primaryAccentColor }}
+            id={`featured-past-show-heading-${id}`}
+            className={`text-2xl sm:text-3xl font-semibold tracking-tight mb-2 text-brand-yellow ${headingLevel === 'h1' ? 'md:text-4xl' : ''}`}
           >
             {sectionTitle}
           </HeadingTag>
-          <p
-            className={`text-lg md:text-xl ${textColor.includes('text-') ? textColor : 'text-gray-700'} max-w-2xl mx-auto`}
-          >
+          <p className='text-lg md:text-xl text-brand-gray-light max-w-2xl mx-auto'>
             {sectionSubtitle}
           </p>
         </header>
 
-        <div className='max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center relative'>
+        <div className='max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center'>
           {/* Image Block */}
           <Link
             href={artistPageLink || '#'}
-            className='group relative block'
+            className='group relative block' // Keep 'relative' if it has its own absolute children
             aria-disabled={!artistPageLink}
             tabIndex={!artistPageLink ? -1 : 0}
           >
             <motion.div
               whileHover={{ scale: 1.02, rotate: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-              className='transform rotate-[-2deg] shadow-2xl rounded-2xl overflow-hidden border-4 border-white'
+              className='transform rotate-[-2deg] shadow-2xl rounded-2xl overflow-hidden border-4 border-brand-yellow'
             >
               <Image
                 src={flyerImageUrl}
@@ -94,40 +82,30 @@ const ShowsPastFeatured: React.FC<ShowsPastFeaturedProps> = ({
             </motion.div>
           </Link>
 
-          {/* Text Block */}
+          {/* Text Block - ensure it's above the background */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className='relative z-10'
+            className='relative z-10' // Ensures this content is above the z-0 background SVGs
           >
-            <div
-              className={`absolute -top-8 -left-2 md:-left-4 ${tapeColor} px-4 py-1.5 text-xs font-bold uppercase tracking-widest transform -rotate-3 shadow-lg rounded-sm`}
-            >
+            <div className='absolute -top-8 -left-2 md:-left-4 bg-brand-yellow text-brand-black px-4 py-1.5 text-xs font-bold uppercase tracking-widest transform -rotate-3 shadow-lg rounded-sm'>
               {highlightLabel}
             </div>
-            <h2
-              className='text-4xl sm:text-5xl font-extrabold mb-3 md:mb-4'
-              style={{ color: primaryAccentColor }}
-            >
+            <h2 className='text-4xl sm:text-5xl font-extrabold mb-3 md:mb-4 text-brand-yellow'>
               {artistName}
             </h2>
-            <p
-              className={`text-sm font-semibold ${textColor.includes('text-') ? textColor.replace('800', '600') : 'text-gray-600'} mb-6 uppercase tracking-wider`}
-            >
+            <p className='text-sm font-semibold text-brand-gray-light mb-6 uppercase tracking-wider'>
               Performed: {performanceDate}
             </p>
-            <p
-              className={`${textColor.includes('text-') ? textColor : 'text-gray-800'} text-base leading-relaxed mb-8 max-w-prose`}
-            >
+            <p className='text-brand-white text-base leading-relaxed mb-8 max-w-prose'>
               {description}
             </p>
             {artistPageLink && (
               <Link
                 href={artistPageLink}
-                className='inline-block text-white px-8 py-3.5 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm uppercase tracking-wide'
-                style={{ backgroundColor: primaryAccentColor }}
+                className='inline-block bg-brand-yellow text-brand-black px-8 py-3.5 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm uppercase tracking-wide'
               >
                 View Performance Details
                 <span aria-hidden='true' className='ml-2'>
@@ -136,7 +114,7 @@ const ShowsPastFeatured: React.FC<ShowsPastFeaturedProps> = ({
               </Link>
             )}
             {featuredQuote && (
-              <div className='absolute bottom-[-3rem] right-0 md:right-[-1rem] bg-white/90 px-4 py-2.5 shadow-lg max-w-[200px] sm:max-w-[220px] text-xs italic text-gray-600 transform rotate-2 border border-gray-200/80 rounded-sm'>
+              <div className='absolute bottom-[-3rem] right-0 md:right-[-1rem] bg-brand-gray-dark text-brand-gray-light px-4 py-2.5 shadow-lg max-w-[200px] sm:max-w-[220px] text-xs italic transform rotate-2 border border-brand-gray-medium/50 rounded-sm'>
                 "{featuredQuote}"
               </div>
             )}

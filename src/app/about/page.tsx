@@ -25,7 +25,7 @@ const AboutPage = () => {
                        md:w-[800px] md:h-[800px] 
                        lg:w-[900px] lg:h-[900px]
                        bg-[url('/svg/4.svg')] bg-contain bg-no-repeat bg-center
-                       motion-safe:animate-cosmicPulse motion-safe:animate-slowRotate"
+                       motion-safe:animate-cosmicPulse"
             style={{
               animationDelay: '0.3s', // Delay for the pulse animation to desynchronize
               // The slowRotate animation handles continuous rotation

@@ -24,13 +24,13 @@ const merchandiseItems = [
     // category: 'Apparel',
   },
   {
-    id: 'ts-poster-001',
-    name: 'Limited Edition Show Poster',
+    id: 'ts--001',
+    name: 'Limited Edition Show ',
     description:
-      'A beautifully designed poster commemorating a special TinyStage performance. Collectible item.',
+      'A beautifully designed  commemorating a special TinyStage performance. Collectible item.',
     price: '$15.00',
-    imageUrl: '/images/merch/tinystage-poster.jpg', // Replace with your actual image path
-    imageAlt: 'Limited Edition TinyStage Show Poster',
+    imageUrl: '/images/merch/tinystage-.jpg', // Replace with your actual image path
+    imageAlt: 'Limited Edition TinyStage Show ',
     purchaseLink: '#', // Replace with actual purchase link
     // category: 'Prints',
   },
@@ -135,7 +135,7 @@ const MerchPage = () => {
             More Than Just Merch
           </h2>
           <p className='text-lg text-gray-600 max-w-xl mx-auto'>
-            Every t-shirt, poster, or mug you buy directly supports TinyStage's
+            Every t-shirt, , or mug you buy directly supports TinyStage's
             ability to host artists, improve our venue, and bring more live
             music to the community. Thank you for being a part of our journey!
           </p>

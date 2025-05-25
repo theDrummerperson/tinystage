@@ -1,0 +1,86 @@
+// src/components/DynamicSvgBackground.tsx
+import Image from 'next/image';
+
+interface SvgLayerConfig {
+  id: number;
+  src: string;
+  alt: string;
+  className: string; // For Tailwind classes: size, position, animation, opacity, etc.
+  initialOffsetX?: string; // e.g., '-20%'
+  initialOffsetY?: string; // e.g., '10%'
+  scale?: number;
+  blur?: string; // e.g. 'blur-sm'
+}
+
+const DynamicSvgBackground: React.FC<{ svgPath: string }> = ({ svgPath }) => {
+  const layers: SvgLayerConfig[] = [
+    {
+      id: 1,
+      src: svgPath,
+      alt: 'Abstract background element 1',
+      className:
+        'absolute inset-0 w-full h-full object-contain animate-subtleSvgDrift opacity-[0.03] animation-delay-[-5s]',
+      scale: 1.5,
+      blur: 'blur-sm',
+    },
+    {
+      id: 2,
+      src: svgPath,
+      alt: 'Abstract background element 2',
+      className:
+        'absolute inset-0 w-[80%] h-[80%] object-contain animate-cosmicPulse opacity-[0.05] animation-delay-[-10s]',
+      initialOffsetX: '10%',
+      initialOffsetY: '-5%',
+      blur: 'blur-xs',
+    },
+    {
+      id: 3,
+      src: svgPath,
+      alt: 'Abstract background element 3',
+      className:
+        'absolute inset-0 w-[60%] h-[60%] object-contain animate-slowRotate opacity-[0.02] animation-delay-[-2s] mix-blend-lighten',
+      initialOffsetX: '-15%',
+      initialOffsetY: '15%',
+      scale: 0.8,
+    },
+    {
+      id: 4,
+      src: svgPath,
+      alt: 'Abstract background element 4',
+      className:
+        'absolute inset-0 w-[120%] h-[120%] object-contain animate-subtleBgDrift opacity-[0.025] animation-delay-[-15s] duration-[120s]',
+      initialOffsetX: '5%',
+      initialOffsetY: '8%',
+      scale: 1.2,
+      blur: 'blur-md',
+    },
+  ];
+
+  return (
+    <div
+      className='absolute inset-0 overflow-hidden z-0'
+      aria-hidden='true'
+    >
+      {layers.map((layer) => (
+        <div
+          key={layer.id}
+          className={`absolute inset-0 ${layer.blur || ''}`}
+          style={{
+            transform: `translate(${layer.initialOffsetX || '0'}, ${layer.initialOffsetY || '0'}) scale(${layer.scale || 1})`,
+          }}
+        >
+          <Image
+            src={layer.src}
+            alt={layer.alt}
+            layout='fill'
+            objectFit='contain'
+            className={layer.className}
+            unoptimized // Good for SVGs if not using Next.js image optimization for them
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default DynamicSvgBackground;

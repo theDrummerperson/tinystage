@@ -19,6 +19,8 @@ module.exports = {
       fontFamily: {
         // sans: ['YourPrimaryFont', 'sans-serif'],
         // display: ['YourDisplayFont', 'serif'],
+        sans: ['YourCleanSansFont', 'system-ui', 'sans-serif'], // Default sans-serif
+        display: ['YourExpressiveDisplayFont', 'serif'], // For headings
       },
       animation: {
         // Existing animations:
