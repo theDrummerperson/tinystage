@@ -1,19 +1,19 @@
 // src/app/shows/archive/page.tsx
 'use client';
 
-import Link from 'next/link'; // Keep for potential "no content" message
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { PastShow } from '@/data/pastShows';
 import { pastShowsData } from '@/data/pastShows';
 
+import PosterSelectionGrid from '@/components/PosterSelectionGrid'; // <-- IMPORTED
 import ShowDetailModal from '@/components/ShowDetailModal';
 import ShowsPastFeatured from '@/components/ShowsPastFeatured';
 
 const ShowsArchivePage = () => {
   const [selectedShowForModal, setSelectedShowForModal] =
     useState<PastShow | null>(null);
-  // quickViewShowId state removed
 
   const sortedAllShows = useMemo(
     () =>
@@ -26,9 +26,15 @@ const ShowsArchivePage = () => {
   );
 
   const featuredShowFromArchive: PastShow | undefined = sortedAllShows[0];
-  // const gridShows = sortedAllShows; // Not currently used for rendering a grid
+  const gridShows = sortedAllShows; // Use this for the PosterSelectionGrid
 
-  // openModalForShow function removed as nothing calls it now
+  // Handler for when a poster is selected in the grid
+  const handlePosterSelect = useCallback((show: PastShow) => {
+    setSelectedShowForModal(show);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }, []);
 
   const closeModal = useCallback(() => {
     setSelectedShowForModal(null);
@@ -66,7 +72,7 @@ const ShowsArchivePage = () => {
         document.body.style.overflow = originalBodyOverflow;
       }
     };
-  }, [selectedShowForModal, closeModal]); // quickViewShowId removed from dependencies
+  }, [selectedShowForModal, closeModal]);
 
   return (
     <>
@@ -79,10 +85,8 @@ const ShowsArchivePage = () => {
             sectionSubtitle='Revisit one of our memorable past performances.'
             highlightLabel='Archive Gem'
             headingLevel='h1'
-            // If ShowsPastFeatured has a click handler to open a modal,
-            // you might need to pass a function like:
-            // onShowSelect={setSelectedShowForModal}
-            // or similar, depending on its props.
+            // If ShowsPastFeatured can open a modal, it might need a prop like:
+            // onShowSelect={handlePosterSelect}
           />
         )}
 
@@ -115,6 +119,11 @@ const ShowsArchivePage = () => {
                   PAST STAGES
                 </span>
               </h2>
+              {/* Optional: Subtitle for this header if desired */}
+              <p className='text-base sm:text-lg md:text-xl text-brand-white/70 max-w-lg md:max-w-xl mx-auto md:mx-0 leading-relaxed font-serif italic group-hover:text-brand-white/90 transition-colors duration-300'>
+                Explore our rich history of performances. Click any poster below
+                to learn more.
+              </p>
               <div className='mt-8 md:mt-12 flex justify-center md:justify-start'>
                 <div className='w-24 h-1 bg-brand-yellow/50 rounded-full group-hover:w-32 group-hover:bg-brand-yellow transition-all duration-500 ease-out'></div>
               </div>
@@ -123,12 +132,16 @@ const ShowsArchivePage = () => {
         </div>
         {/* --- END OF REIMAGINED HEADER SECTION --- */}
 
-        {/* 3. Main Archive Content Section - Currently Empty */}
-        {/* The div container for the grid/MarqueeHighlight was also removed in your last snippet, 
-            so I'm leaving this section conceptually empty.
-            If sortedAllShows.length === 0, you might want a message here.
-        */}
-        {sortedAllShows.length === 0 && (
+        {/* 3. Main Archive Content Section - Now PosterSelectionGrid */}
+        {gridShows.length > 0 ? (
+          <PosterSelectionGrid
+            shows={gridShows}
+            onPosterSelect={handlePosterSelect}
+            // You can add a title prop here if PosterSelectionGrid supports it
+            // title="Browse the Archives"
+          />
+        ) : (
+          // "No shows" message if gridShows is empty
           <div className='container mx-auto px-4 pb-16 md:pb-24 lg:pb-32'>
             <div className='text-center py-12 lg:py-24 px-6 rounded-lg bg-brand-gray-dark'>
               <p className='text-2xl text-brand-yellow mb-4'>
