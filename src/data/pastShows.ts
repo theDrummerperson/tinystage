@@ -19,7 +19,7 @@ export const pastShowsData: PastShow[] = [
   {
     id: 'deja-blue-live',
     artistName: 'Deja Blue',
-    performanceDate: 'November 5, 2023', // Replace with actual date
+    performanceDate: 'May 2, 2025', // Replace with actual date
     tagline: 'Live at TinyStage',
     flyerImageUrl: '/gallery/dejablue.png', // Ensure this path is correct
     flyerImageAlt: 'Deja Blue performing live at TinyStage',

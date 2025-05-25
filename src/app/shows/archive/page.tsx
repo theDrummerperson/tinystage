@@ -1,23 +1,19 @@
 // src/app/shows/archive/page.tsx
 'use client';
 
-import Link from 'next/link';
+import Link from 'next/link'; // Keep for potential "no content" message
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { PastShow } from '@/data/pastShows';
 import { pastShowsData } from '@/data/pastShows';
 
-import PosterCard from '@/components/PosterCard';
 import ShowDetailModal from '@/components/ShowDetailModal';
 import ShowsPastFeatured from '@/components/ShowsPastFeatured';
-
-// Assuming you might have a more stylized display font for headings
-// You would configure this in your tailwind.config.js
-// For now, we'll use Tailwind's default sans or a generic serif for contrast if needed.
 
 const ShowsArchivePage = () => {
   const [selectedShowForModal, setSelectedShowForModal] =
     useState<PastShow | null>(null);
+  // quickViewShowId state removed
 
   const sortedAllShows = useMemo(
     () =>
@@ -30,38 +26,52 @@ const ShowsArchivePage = () => {
   );
 
   const featuredShowFromArchive: PastShow | undefined = sortedAllShows[0];
-  const gridShows = sortedAllShows; // Use all shows for the grid
+  // const gridShows = sortedAllShows; // Not currently used for rendering a grid
 
-  const openModalWithShow = useCallback((show: PastShow) => {
-    setSelectedShowForModal(show);
-    document.body.style.overflow = 'hidden';
-  }, []);
+  // openModalForShow function removed as nothing calls it now
 
   const closeModal = useCallback(() => {
     setSelectedShowForModal(null);
-    // Effect cleanup will restore scroll
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }, []);
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closeModal();
+        if (selectedShowForModal) {
+          closeModal();
+        }
       }
     };
 
-    if (selectedShowForModal) {
+    let originalBodyOverflow = '';
+    if (typeof document !== 'undefined') {
+      originalBodyOverflow = document.body.style.overflow;
       window.addEventListener('keydown', handleEsc);
-      return () => {
-        window.removeEventListener('keydown', handleEsc);
-        document.body.style.overflow = '';
-      };
     }
-    return undefined;
-  }, [selectedShowForModal, closeModal]);
+
+    if (selectedShowForModal && typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    } else if (!selectedShowForModal && typeof document !== 'undefined') {
+      document.body.style.overflow = originalBodyOverflow;
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('keydown', handleEsc);
+      }
+      if (selectedShowForModal && typeof document !== 'undefined') {
+        document.body.style.overflow = originalBodyOverflow;
+      }
+    };
+  }, [selectedShowForModal, closeModal]); // quickViewShowId removed from dependencies
 
   return (
     <>
       <main className='min-h-screen bg-brand-black text-brand-white'>
+        {/* 1. Standard Featured Show (Latest) */}
         {featuredShowFromArchive && (
           <ShowsPastFeatured
             show={featuredShowFromArchive}
@@ -69,65 +79,66 @@ const ShowsArchivePage = () => {
             sectionSubtitle='Revisit one of our memorable past performances.'
             highlightLabel='Archive Gem'
             headingLevel='h1'
+            // If ShowsPastFeatured has a click handler to open a modal,
+            // you might need to pass a function like:
+            // onShowSelect={setSelectedShowForModal}
+            // or similar, depending on its props.
           />
         )}
 
-        {/* --- START OF IMPROVED SECTION --- */}
-        <div className='container mx-auto px-4 py-16 md:py-24 lg:py-32'>
-          {/* Removed text-center from the <header> to allow for more flexible alignment inside */}
-          <header className='mb-12 md:mb-16 lg:mb-20 relative'>
-            {/* Optional: A subtle decorative background element - an SVG or a gradient streak */}
-            {/* 
-            <div 
-              aria-hidden="true" 
-              className="absolute -top-10 -left-10 w-48 h-48 opacity-5 transform -rotate-12"
+        {/* 2. Reimagined Header */}
+        <div className='container mx-auto px-4 pt-16 md:pt-24 lg:pt-32 pb-8 md:pb-12 lg:pb-16'>
+          <header className='mb-12 md:mb-16 lg:mb-20 relative isolate group'>
+            {/* Background effects */}
+            <div
+              aria-hidden='true'
+              className='absolute inset-0 -z-10 overflow-hidden'
             >
-              <svg viewBox="0 0 100 100" fill="var(--brand-yellow)" xmlns="http://www.w3.org/2000/svg">
-                 <circle cx="50" cy="50" r="40" /> // Example shape
-              </svg>
+              <div className='absolute -top-20 -left-20 w-72 h-72 bg-brand-yellow/5 rounded-full filter blur-3xl opacity-70 animate-pulse-slow group-hover:opacity-100 transition-opacity duration-700'></div>
+              <div className='absolute -bottom-20 -right-10 w-96 h-96 bg-brand-yellow/10 rounded-full filter blur-3xl opacity-60 animate-pulse-medium group-hover:opacity-90 transition-opacity duration-700 delay-200'></div>
+              <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-brand-white/5 rounded-full filter blur-2xl opacity-50 animate-pulse-fast group-hover:opacity-75 transition-opacity duration-700 delay-400'></div>
             </div>
-            */}
-
-            <div className='md:max-w-3xl'>
-              {' '}
-              {/* Limit width of the header text block */}
-              <h2 className='font-extrabold tracking-tighter text-brand-white mb-4 md:mb-6'>
-                <span className='block text-4xl sm:text-5xl md:text-6xl lg:text-7xl'>
-                  Explore Our
-                </span>
-                <span className='block text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-brand-yellow leading-tight'>
-                  Past Stages
+            <div
+              aria-hidden='true'
+              className='absolute inset-0 -z-20 overflow-hidden pointer-events-none'
+            >
+              <span className='absolute top-0 left-1/4 w-1/2 h-full bg-gradient-to-r from-transparent via-brand-yellow/5 to-transparent transform -skew-x-12 opacity-30 group-hover:opacity-50 transition-opacity duration-500'></span>
+              <span className='absolute bottom-0 right-1/4 w-1/2 h-full bg-gradient-to-l from-transparent via-brand-white/5 to-transparent transform skew-x-12 opacity-20 group-hover:opacity-40 transition-opacity duration-500 delay-100'></span>
+            </div>
+            {/* Text Content */}
+            <div className='relative z-10 md:max-w-4xl mx-auto text-center md:text-left'>
+              <span className='block font-light text-2xl sm:text-3xl md:text-4xl text-brand-gray-light tracking-wider mb-1 md:mb-2 opacity-80 group-hover:opacity-100 transition-opacity duration-300'>
+                Step Into The Echoes of
+              </span>
+              <h2 className='font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-yellow-300 to-amber-400 mb-6 md:mb-8 text-stroke-white-xs group-hover:text-stroke-yellow-xs transition-all duration-300'>
+                <span className='block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none -mx-1 group-hover:tracking-wide transition-all duration-500 ease-out'>
+                  PAST STAGES
                 </span>
               </h2>
-              {/* Subtitle with more breathing room and slightly more contrast */}
-              <p className='text-base sm:text-lg md:text-xl text-brand-gray-light max-w-xl leading-relaxed'>
-                Dive into the moments, the music, and the magic. Click on any
-                poster below to unfold the story of each performance.
-              </p>
+              <div className='mt-8 md:mt-12 flex justify-center md:justify-start'>
+                <div className='w-24 h-1 bg-brand-yellow/50 rounded-full group-hover:w-32 group-hover:bg-brand-yellow transition-all duration-500 ease-out'></div>
+              </div>
             </div>
           </header>
-          {/* --- END OF IMPROVED SECTION --- */}
+        </div>
+        {/* --- END OF REIMAGINED HEADER SECTION --- */}
 
-          {gridShows.length > 0 ? (
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 md:gap-x-8 md:gap-y-10'>
-              {gridShows.map((show) => (
-                <PosterCard
-                  key={show.id}
-                  show={show}
-                  onClick={() => openModalWithShow(show)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className='text-center py-12'>
-              <p className='text-xl text-brand-gray-medium mb-3'>
+        {/* 3. Main Archive Content Section - Currently Empty */}
+        {/* The div container for the grid/MarqueeHighlight was also removed in your last snippet, 
+            so I'm leaving this section conceptually empty.
+            If sortedAllShows.length === 0, you might want a message here.
+        */}
+        {sortedAllShows.length === 0 && (
+          <div className='container mx-auto px-4 pb-16 md:pb-24 lg:pb-32'>
+            <div className='text-center py-12 lg:py-24 px-6 rounded-lg bg-brand-gray-dark'>
+              <p className='text-2xl text-brand-yellow mb-4'>
                 The archive is quiet for now...
               </p>
               <p className='text-brand-gray-light mb-6'>
                 Our history is waiting to be written. Check back soon!
               </p>
               <Link
-                href='/shows'
+                href='/shows' // Ensure you have this route
                 className='mt-4 inline-block text-brand-yellow hover:text-yellow-300 transition-colors duration-200 font-semibold group'
               >
                 Discover Upcoming Shows
@@ -139,8 +150,8 @@ const ShowsArchivePage = () => {
                 </span>
               </Link>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       {selectedShowForModal && (
