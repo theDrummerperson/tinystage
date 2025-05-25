@@ -7,6 +7,8 @@
   --brand-yellow: #facc15; /* Tailwind yellow-500 */
   --brand-yellow-rgb: 250, 204, 21; /* For rgba() - Corresponds to #facc15 */
 
+  --brand-blue: #3b82f6;
+
   /* Text Colors */
   --text-color: #ffffff; /* Default text color */
   --brand-white: #ffffff; /* Explicit white for text elements */
