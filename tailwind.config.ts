@@ -172,6 +172,7 @@ const config: Config = {
     },
   },
   plugins: [
+    require('@tailwindcss/typography'),
     function (api: PluginAPI) {
       // <-- Corrected signature, use PluginAPI
       api.addUtilities({
@@ -181,6 +182,7 @@ const config: Config = {
         '.animation-delay-[-20s]': {
           'animation-delay': '-20s',
         },
+
         // You can add more utilities here if needed
       });
     },

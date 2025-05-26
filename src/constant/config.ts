@@ -7,3 +7,33 @@ export const siteConfig = {
 
   url: 'https://tinystage.vercel.app', // REPLACE with your actual production URL
 };
+
+// Constants for common values
+export const COMMON_GENRES = [
+  'Indie',
+  'Alternative',
+  'Dream Pop',
+  'Lo-Fi',
+  'Rock',
+  'Folk',
+  'Singer-Songwriter',
+  'Acoustic',
+  'Psychedelic Rock',
+  'Electronic',
+  'Jazz',
+  'Blues'
+] as const;
+
+export type Genre = typeof COMMON_GENRES[number];
+
+// Venue constants
+export const VENUES = {
+  FEED_MEDIA: {
+    name: "FEED Media Downtown Arts Center",
+    address: "Erie, PA"
+  },
+  TINYSTAGE: {
+    name: "TinyStage Listening Room", 
+    address: "Erie, PA"
+  }
+} as const;

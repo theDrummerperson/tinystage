@@ -1,46 +1,24 @@
+// src/data/pastShows.ts
+
+// 1. Define the shape of your past-show data
 export interface PastShow {
   id: string;
-  artistName: string;
-  performanceDate: string;
-  tagline?: string;
-  flyerImageUrl: string;
-  flyerImageAlt: string;
-  description: string;
-  artistPageLink?: string; // Internal link to /artists/[slug]
-  externalArtistLink?: string; // Official artist site/social
-  featuredQuote?: string;
-  bgColor?: string; // e.g., '#F0EBE5'
-  primaryAccentColor?: string; // e.g., '#8A0303'
-  textColor?: string; // e.g., 'text-gray-800' or '#333333'
-  tapeColor?: string; // e.g., 'bg-yellow-300/80 text-yellow-900'
+  title: string;
+  date: string;       // e.g. "2025-04-20"
+  time?: string;      // optional
+  venue?: string;
+  summary?: string;
 }
 
-export const pastShowsData: PastShow[] = [
+// 2. Supply some sample data (or import from elsewhere)
+export const pastShows: PastShow[] = [
   {
-    id: 'deja-blue-live',
-    artistName: 'Deja Blue',
-    performanceDate: 'May 2, 2025', // Replace with actual date
-    tagline: 'Live at TinyStage',
-    flyerImageUrl: '/gallery/dejablue.png', // Ensure this path is correct
-    flyerImageAlt: 'Deja Blue performing live at TinyStage',
-    description:
-      'Déjà Blu is a genre-blending trio from Erie making music that feels like memory—hazy, haunting, and heartbreakingly familiar, weaving indie, lo-fi, dream pop, and alt-rock into a sound that’s equal parts vibe, vulnerability, and emotional echo.',
-    artistPageLink: '/artists/deja-blue',
-    featuredQuote: 'Vibes that hum like memory..',
-    bgColor: '#F0EBE5', // Creamy background
-    primaryAccentColor: '#8A0303', // Deep red accent
-    textColor: 'text-gray-800', // Dark gray for text
-    tapeColor: 'bg-yellow-300/80 text-yellow-900', // Washi tape style
+    id: "deja-blu-2025-05-02",
+    title: "Deja Blu TinyStage Debut",
+    date: "2025-05-02",
+    time: "7:00 PM",
+    venue: "FEED Media Arts Center",
+    summary: "Genre-blending soul & blues with lo-fi dream wave and indie grooves.",
   },
-  // {
-  //   id: "another-artist-2023",
-  //   artistName: "The Groovy Collective",
-  //   performanceDate: "October 10, 2023",
-  //   tagline: "An Evening of Funk",
-  //   flyerImageUrl: "/gallery/groovy-collective.png",
-  //   flyerImageAlt: "The Groovy Collective at TinyStage",
-  //   description: "...",
-  //   artistPageLink: "/artists/groovy-collective",
-  //   // ... other properties
-  // },
+  // …more entries here
 ];

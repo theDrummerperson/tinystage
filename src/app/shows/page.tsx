@@ -1,99 +1,52 @@
-// app/shows/page.tsx
-'use client'; // Still needed if other parts of the page use client components or hooks
+// src/app/shows/page.tsx
+// 
 
-import Link from 'next/link';
+'use `client`;'
 
-// Remove direct imports of Image and motion if they are only used in ShowsPastFeatured
-// import Image from 'next/image';
-// import { motion } from 'framer-motion';
-import { PastShow, pastShowsData } from '@/data/pastShows'; // Adjust path if needed
+import React from "react";
 
-import ShowsPastFeatured from '@/components/ShowsPastFeatured'; // Import the new component
+// Define the shape of a single show
+interface Show {
+  id: string;
+  title: string;
+  date: string;    // e.g. "2025-06-15"
+  time: string;    // e.g. "7:00 PM"
+  venue: string;
+  description?: string;
+}
 
-// If you want to set metadata for this page (App Router)
-// export const metadata = {
-//   title: 'Shows | TinyStage',
-//   description: 'Discover upcoming shows and look back at past performances at TinyStage.',
-// };
+// Placeholder data — replace with your real data source or import
+const shows: Show[] = [
+  {
+    id: "show-1",
+    title: "Artist Name",
+    date: "2025-06-15",
+    time: "7:00 PM",
+    venue: "Venue Name",
+    description: "A brief description of the show.",
+  },
+  // Add more shows here
+];
 
-const ShowsPage = () => {
-  // Get the featured past show (assuming the first one in the data is the most recent/featured)
-  const featuredPastShow: PastShow | undefined = pastShowsData[0]; // Or filter/find by a specific ID/flag
-
+export default function ShowsPage() {
   return (
-    <main className='min-h-screen'>
-      {/* Use the new component here */}
-      {featuredPastShow && <ShowsPastFeatured show={featuredPastShow} />}
-      {/* End Featured Past Performance Section */}
-
-      {/* Placeholder for Upcoming Shows Section */}
-      <section
-        className='container mx-auto px-4 py-16 md:py-24 border-t'
-        style={{
-          borderColor: featuredPastShow?.primaryAccentColor
-            ? `${featuredPastShow.primaryAccentColor}40`
-            : '#8A030340',
-        }}
-      >
-        <h2
-          className='text-3xl sm:text-4xl font-extrabold text-center mb-10 md:mb-12'
-          style={{ color: featuredPastShow?.primaryAccentColor || '#8A0303' }}
-        >
-          Upcoming Shows
-        </h2>
-        <div className='text-center text-lg text-gray-600'>
-          <p>Stay tuned for our next lineup of incredible artists!</p>
-          <p className='mt-4'>
-            <Link
-              href='/#booking'
-              className='text-[var(--brand-yellow)] hover:underline font-semibold'
-            >
-              Want to perform? Submit your act!
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* Placeholder for Link to Full Past Show Archive */}
-      {pastShowsData.length > 0 && (
-        <section className='container mx-auto px-4 pb-16 md:pb-24 text-center'>
-          <Link
-            href='/shows/archive'
-            className='inline-block text-white px-6 py-3 rounded-md font-medium transition-colors text-sm'
-            style={{
-              backgroundColor: featuredPastShow?.primaryAccentColor
-                ? `${featuredPastShow.primaryAccentColor}B3`
-                : '#8A0303B3',
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                featuredPastShow?.primaryAccentColor || '#8A0303')
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                featuredPastShow?.primaryAccentColor
-                  ? `${featuredPastShow.primaryAccentColor}B3`
-                  : '#8A0303B3')
-            }
-          >
-            View All Past Performances →
-          </Link>
-        </section>
-      )}
-
-      {!featuredPastShow && (
-        <div className='container mx-auto px-4 py-16 md:py-24 text-center'>
-          <h1 className='text-4xl md:text-5xl font-extrabold text-[var(--brand-black)] mb-6'>
-            Our Stage Awaits
-          </h1>
-          <p className='text-lg text-[var(--brand-gray-dark)] max-w-xl mx-auto'>
-            We're busy curating amazing new experiences. Check back soon for
-            upcoming shows and a look at our past performances!
-          </p>
-        </div>
-      )}
+    <main className="px-6 py-8">
+      <h1 className="text-3xl font-bold mb-6">Upcoming Shows</h1>
+      <ul className="space-y-4">
+        {shows.map((show) => (
+          <li key={show.id} className="border p-4 rounded-lg">
+            <h2 className="text-xl font-semibold">{show.title}</h2>
+            <p className="text-gray-700">
+              {show.date} &middot; {show.time}
+            </p>
+            <p className="text-gray-700">{show.venue}</p>
+            {show.description && (
+              <p className="mt-2 text-gray-600">{show.description}</p>
+            )}
+          </li>
+        ))}
+      </ul>
     </main>
   );
-};
+}
 
-export default ShowsPage;
