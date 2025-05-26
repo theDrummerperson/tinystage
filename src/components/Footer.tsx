@@ -1,10 +1,9 @@
 // src/components/Footer.tsx
 'use client';
 
+import classNames from 'classnames';
 import { AlertTriangle, CheckCircle, Loader2, Mail, Send } from 'lucide-react'; // Using more icons
 import React, { useCallback, useEffect, useState } from 'react';
-
-import { cn } from '@/lib/utils';
 
 import Logo from '@/components/Logo'; // Assuming Logo.tsx is well-styled
 
@@ -158,13 +157,13 @@ export default function Footer() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) {
-      return cn(
+      return classNames(
         baseClasses.split(' ')[0],
         isMounted ? 'opacity-100' : 'opacity-0',
         'transition-opacity duration-500',
       );
     }
-    return cn(
+    return classNames(
       baseClasses,
       isMounted ? activeClasses : initialClasses,
       isMounted ? delayClass : '',
@@ -201,7 +200,7 @@ export default function Footer() {
         <div className='grid grid-cols-1 gap-y-16 gap-x-12 md:grid-cols-3 lg:gap-x-16'>
           {/* Column 1: Brand Identity */}
           <div
-            className={cn(
+            className={classNames(
               'space-y-6',
               getAnimationClasses(
                 entryAnimateBase,
@@ -223,7 +222,7 @@ export default function Footer() {
 
           {/* Column 2: Connect */}
           <div
-            className={cn(
+            className={classNames(
               'space-y-6',
               getAnimationClasses(
                 entryAnimateBase,
@@ -270,7 +269,7 @@ export default function Footer() {
 
           {/* Column 3: Stay Updated (Newsletter) */}
           <div
-            className={cn(
+            className={classNames(
               'space-y-6',
               getAnimationClasses(
                 entryAnimateBase,
@@ -331,7 +330,7 @@ export default function Footer() {
                 {/* Fixed height for message area to prevent layout shifts */}
                 {currentMessage && (
                   <p
-                    className={cn(
+                    className={classNames(
                       'absolute inset-x-0 bottom-0 flex items-center text-xs transition-all duration-500 ease-out',
                       currentMessage.type === 'success'
                         ? 'text-green-400'
@@ -364,7 +363,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div
-          className={cn(
+          className={classNames(
             'mt-20 sm:mt-24 border-t border-brand-gray-dark/50 pt-8 text-center',
             getAnimationClasses(
               entryAnimateBase,

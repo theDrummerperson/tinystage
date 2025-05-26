@@ -36,6 +36,7 @@
     color: var(--placeholder-color);
     opacity: 1;
   }
+}
 
 .text-stroke-black-1 {
   -webkit-text-stroke: 1px var(--brand-black);
@@ -46,4 +47,43 @@
   color: var(--error-color);
 }
 
+/* Global CSS */
+.archive-root {
+  --spacing: 8px;
+  padding: calc(var(--spacing) * 6) 0;
+}
+
+.show-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: calc(var(--spacing) * 3);
+  padding: 0 calc(var(--spacing) * 4);
+}
+
+.polaroid-frame {
+  border: 12px solid white;
+  border-bottom: 40px solid white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: rotate(2deg);
+  transition: transform 0.3s ease;
+}
+
+.cta-watch {
+  background: transparent;
+  color: var(--brand-yellow);
+  border: 2px solid currentColor;
+  position: relative;
+}
+
+.cta-watch:hover .hover-underline {
+  transform: scaleX(1);
+}
+
+/* Gradient overlay */
+.gradient-overlay {
+  background: linear-gradient(0deg, 
+    var(--brand-black) 10%, 
+    transparent 100%
+  );
+  mix-blend-mode: multiply;
 }
