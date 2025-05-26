@@ -37,7 +37,13 @@
     opacity: 1;
   }
 
-  .error {
-    color: var(--error-color);
-  }
+.text-stroke-black-1 {
+  -webkit-text-stroke: 1px var(--brand-black);
+  paint-order: stroke fill;
+}
+
+.error {
+  color: var(--error-color);
+}
+
 }
