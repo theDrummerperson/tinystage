@@ -16,6 +16,9 @@
     "incremental": true,
     "plugins": [
       {
+        "name": "@tailwindcss/aspect-ratio"
+      },
+      {
         "name": "next" // Essential for Next.js App Router type support
       }
     ],
