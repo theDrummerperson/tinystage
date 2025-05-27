@@ -4,9 +4,7 @@
 @tailwind utilities;
 
 @import './colors.css';
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-/* If 'YourCleanSansFont' is from Google Fonts, import it here too, e.g.: */
-/* @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap'); 
 
 @layer base {
   body {

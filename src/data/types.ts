@@ -1,16 +1,14 @@
 // src/data/types.ts
 
-// 1. Define the Base Interface for common properties
 export interface ShowBase {
   id: string;
   title: string;
-  performer: string;
-  date: string; // This will be the specific performance/show date
+  performer: string; // Use 'performer' consistently
+  date: string;      // This is the primary date (e.g., "2025-05-02")
   description?: string;
   thumbnailUrl: string;
-  videoSlug?: string; // For links to video archive
+  videoSlug?: string;
   
-  // Common optional fields
   venueVibe?: string;
   tracklist?: string[];
   extendedBio?: string;
@@ -25,26 +23,29 @@ export interface ShowBase {
   members?: string[];
   debutEP?: string;
   primaryAccentColor?: string;
+  time?: string; // Add 'time' here if it's common or make it specific to PastShow/UpcomingShow
+  tagline?: string; // Added from your local PastShow
 }
 
-// 2. Define PastShow extending ShowBase
 export interface PastShow extends ShowBase {
-  type: 'past'; // Discriminant property
-  flyerImageUrl?: string;
+  type: 'past';
+  flyerImageUrl?: string; // Changed to optional to match original ShowBase intent for some image fields
+  flyerImageAlt?: string; // Added, make optional if not always present
   artistPageLink?: string;
   featuredQuote?: string;
   photos?: { url: string; alt: string; }[];
-  videoUrl?: string; // Different from videoSlug, perhaps direct video file/embed
+  videoUrl?: string;
 }
 
-// 3. Define UpcomingShow extending ShowBase
 export interface UpcomingShow extends ShowBase {
-  type: 'upcoming'; // Discriminant property
+  type: 'upcoming';
+  // showDate: string; // 'date' from ShowBase can serve this purpose
   ticketLink?: string;
   detailsLink?: string;
   priceRange?: string;
   status?: 'on-sale' | 'sold-out' | 'cancelled' | 'postponed' | 'tba';
 }
+
 
 // 4. Create a Union Type for any kind of show - THIS IS WHAT YOU'LL LIKELY IMPORT MOST OFTEN
 export type AnyShow = PastShow | UpcomingShow;
