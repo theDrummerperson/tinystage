@@ -1,22 +1,13 @@
-// src/app/shows/upcoming/page.tsx
-"use client";
+// Example usage in a page (e.g., src/app/page.tsx or src/app/upcoming/page.tsx)
 
-import { upcomingShows } from "@/data/upcomingShows";
+import ShowUpcoming from '../../../components/ShowUpcoming';
 
-export default function ShowsPage() {
+export default function UpcomingPage() {
   return (
-    <main className="px-6 py-8">
-      <h1 className="text-3xl mb-6">Upcoming Shows</h1>
-      <ul className="space-y-4">
-        {upcomingShows.map(show => (
-          <li key={show.id} className="border p-4 rounded-lg">
-            <h2 className="text-xl font-semibold">{show.artist}</h2>
-            <p>{show.date} @ {show.time}</p>
-            <p>{show.venue}</p>
-            {show.description && <p className="mt-2 text-gray-600">{show.description}</p>}
-          </li>
-        ))}
-      </ul>
-    </main>
+    <div>
+      {/* Other page content if any */}
+      <ShowUpcoming />
+      {/* Other page content if any */}
+    </div>
   );
 }

@@ -1,70 +1,75 @@
 // src/data/types.ts
-// Base interface for common show properties
-interface BaseShow {
+
+// 1. Define the Base Interface for common properties
+export interface ShowBase {
   id: string;
-  artistName: string;
-  tagline?: string;
-  description: string;
-  imageUrl: string;
-  imageAlt: string;
-  venue: {
+  title: string;
+  performer: string;
+  date: string; // This will be the specific performance/show date
+  description?: string;
+  thumbnailUrl: string;
+  videoSlug?: string; // For links to video archive
+  
+  // Common optional fields
+  venueVibe?: string;
+  tracklist?: string[];
+  extendedBio?: string;
+  anecdotes?: string;
+  headerImage?: string;
+  genre?: string[];
+  hometown?: string;
+  venue?: { 
     name: string;
-    address: string;
+    address?: string; 
   };
-  genres: string[]; // Always an array for consistency
+  members?: string[];
+  debutEP?: string;
+  primaryAccentColor?: string;
 }
 
-// Past show specific properties
-export interface PastShow extends BaseShow {
-  flyerImageUrl: string;
-  performanceDate: string; // ISO date string
+// 2. Define PastShow extending ShowBase
+export interface PastShow extends ShowBase {
+  type: 'past'; // Discriminant property
+  flyerImageUrl?: string;
   artistPageLink?: string;
   featuredQuote?: string;
   photos?: { url: string; alt: string; }[];
-  videoUrl?: string;
-  setlist?: string[];
-  members?: string[];
-  hometown?: string;
-  debutEP?: string;
-  primaryAccentColor?: string; // For backward compatibility with existing components
+  videoUrl?: string; // Different from videoSlug, perhaps direct video file/embed
 }
 
-// Upcoming show specific properties
-export interface UpcomingShow extends BaseShow {
-  showDate: string; // ISO date string
+// 3. Define UpcomingShow extending ShowBase
+export interface UpcomingShow extends ShowBase {
+  type: 'upcoming'; // Discriminant property
   ticketLink?: string;
   detailsLink?: string;
   priceRange?: string;
-  status?: 'on-sale' | 'sold-out' | 'cancelled' | 'postponed';
-  primaryAccentColor?: string; // For backward compatibility with existing components
+  status?: 'on-sale' | 'sold-out' | 'cancelled' | 'postponed' | 'tba';
 }
 
-// Utility type for show status
-export type ShowStatus = 'upcoming' | 'past' | 'cancelled' | 'postponed';
+// 4. Create a Union Type for any kind of show - THIS IS WHAT YOU'LL LIKELY IMPORT MOST OFTEN
+export type AnyShow = PastShow | UpcomingShow;
 
-// Union type for any show
-export type Show = PastShow | UpcomingShow;
-
-// Type guards
-export const isPastShow = (show: Show): show is PastShow => {
-  return 'performanceDate' in show;
+// 5. Type Guards (Updated to use the 'type' discriminant)
+export const isPastShow = (show: AnyShow): show is PastShow => {
+  return show.type === 'past';
 };
 
-export const isUpcomingShow = (show: Show): show is UpcomingShow => {
-  return 'showDate' in show;
+export const isUpcomingShow = (show: AnyShow): show is UpcomingShow => {
+  return show.type === 'upcoming';
 };
 
-// Utility functions
-export const createSlug = (name: string, date: string): string => {
+// --- Utility Functions ---
+export const createSlug = (name: string, dateIsoString: string): string => {
   const namePart = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-  const datePart = new Date(date).toISOString().split('T')[0];
+  const datePart = new Date(dateIsoString).toISOString().split('T')[0]; 
   return `${namePart}-${datePart}`;
 };
 
-export const formatDate = (dateString: string): string => {
+// Renamed to avoid potential naming conflicts in components
+export const formatDateForDisplay = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -80,31 +85,25 @@ export const formatTime = (dateString: string): string => {
   });
 };
 
-// Data validation helpers
-export const validateShow = (show: Partial<Show>): string[] => {
+// --- Data Validation (Simplified example - expand as needed) ---
+export const validateShowData = (show: Partial<AnyShow>): string[] => {
   const errors: string[] = [];
   
-  if (!show.artistName?.trim()) errors.push('Artist name is required');
-  if (!show.description?.trim()) errors.push('Description is required');
-  if (!show.imageUrl?.trim()) errors.push('Image URL is required');
-  if (!show.venue?.name?.trim()) errors.push('Venue name is required');
-  if (!show.venue?.address?.trim()) errors.push('Venue address is required');
-  
-  // Validate date based on show type
-  if (isPastShow(show as Show)) {
+  if (!show.title?.trim()) errors.push('Show title is required');
+  if (!show.performer?.trim()) errors.push('Performer name is required');
+  // Add more common validations based on ShowBase
+
+  if (!show.type) {
+    errors.push("Show type ('past' or 'upcoming') is required for full validation.");
+  } else if (show.type === 'past') {
     const pastShow = show as Partial<PastShow>;
-    if (!pastShow.performanceDate) errors.push('Performance date is required for past shows');
-    else if (new Date(pastShow.performanceDate) > new Date()) {
-      errors.push('Performance date cannot be in the future for past shows');
-    }
-  } else if (isUpcomingShow(show as Show)) {
+    if (!pastShow.date) errors.push('Date is required for past shows');
+    // Add more PastShow specific validations
+  } else if (show.type === 'upcoming') {
     const upcomingShow = show as Partial<UpcomingShow>;
-    if (!upcomingShow.showDate) errors.push('Show date is required for upcoming shows');
-    else if (new Date(upcomingShow.showDate) < new Date()) {
-      errors.push('Show date cannot be in the past for upcoming shows');
-    }
+    if (!upcomingShow.date) errors.push('Date is required for upcoming shows');
+    // Add more UpcomingShow specific validations
   }
   
   return errors;
 };
-
