@@ -1,3 +1,4 @@
+// src/components/Header.tsx
 'use client';
 
 import Image from 'next/image';
@@ -13,15 +14,13 @@ import React, {
 
 import { cn } from '@/lib/utils';
 
-// Assuming usePrefersReducedMotion might be useful for future enhancements or if SVG has subtle animations
-// import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'; // Adjust path if needed
-import Button from '@/components/buttons/Button';
+import Button from '@/components/buttons/Button'; // Assuming Button is styled appropriately
 
 // Constants for navigation items
 const NAV_LINKS = [
   { href: '/about', label: 'About' },
   {
-    href: '/shows',
+    href: '/shows', // Parent link, might not be directly navigable if it's just a category
     label: 'Shows',
     subItems: [
       { href: '/shows/upcoming', label: 'Upcoming Shows' },
@@ -29,14 +28,14 @@ const NAV_LINKS = [
     ],
   },
   {
-    href: '/get-involved',
+    href: '/get-involved', // Parent link
     label: 'Get Involved',
     subItems: [
       { href: '/merch', label: 'Merchandise' },
       { href: '/support', label: 'Support Us' },
     ],
   },
-] as const;
+] as const; // Use 'as const' for stricter typing of href and label
 
 // Type definitions for better type safety
 type NavLink = (typeof NAV_LINKS)[number];
@@ -45,13 +44,13 @@ type SubItem = {
   label: string;
 };
 
+
 export default function Header(): JSX.Element {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  // const prefersReducedMotion = usePrefersReducedMotion(); // Uncomment if needed
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
@@ -59,7 +58,7 @@ export default function Header(): JSX.Element {
 
   const ctaLink = useMemo(
     () => ({
-      href: pathname === '/' ? '#booking' : '/#booking',
+      href: pathname === '/' ? '#booking' : '/#booking', // Example: if you have a booking section on homepage
       label: 'Booking Inquiry',
     }),
     [pathname],
@@ -70,15 +69,20 @@ export default function Header(): JSX.Element {
       setHasScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    handleScroll(); // Check on mount
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    setIsMounted(true);
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    setIsMounted(true); // Indicate component has mounted for animations
+    // Prevent body scroll when mobile menu is open
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    }
     return () => {
-      document.body.style.overflow = '';
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+      }
     };
   }, [isMobileMenuOpen]);
 
@@ -94,76 +98,92 @@ export default function Header(): JSX.Element {
 
   const handleCtaClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
-      setOpenDropdown(null);
-      if (isMobileMenuOpen) closeMobileMenu();
+      setOpenDropdown(null); // Close any open desktop dropdowns
+      if (isMobileMenuOpen) closeMobileMenu(); // Close mobile menu
 
-      const href = event.currentTarget.getAttribute('href');
-      if (href?.startsWith('#') && pathname === '/') {
+      const hrefTarget = event.currentTarget.getAttribute('href');
+      if (hrefTarget?.startsWith('#') && pathname === '/') {
         event.preventDefault();
-        const target = document.getElementById(href.substring(1));
-        if (target) {
-          const headerHeight = headerRef.current?.offsetHeight || 70;
+        const targetId = hrefTarget.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          const headerHeight = headerRef.current?.offsetHeight || 70; // Adjust default as needed
           const targetPosition =
-            target.getBoundingClientRect().top +
+            targetElement.getBoundingClientRect().top +
             window.scrollY -
             headerHeight -
-            20;
+            20; // Optional offset
           window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+          // Optionally update URL hash after smooth scroll
           setTimeout(() => {
-            if (window.location.hash !== href) {
-              window.history.pushState(null, '', href);
+            if (window.location.hash !== hrefTarget) {
+              window.history.pushState(null, '', hrefTarget);
             }
-          }, 400);
+          }, 400); // Delay to allow scroll to finish
         }
       }
+      // If it's a normal link, it will navigate as usual
     },
     [isMobileMenuOpen, pathname, closeMobileMenu],
   );
 
+  // Effect for closing desktop dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!openDropdown) return;
       const target = event.target as Node;
+      // Check if the click is outside any dropdown trigger or panel
       const isInsideDropdown = Array.from(
         document.querySelectorAll('.dropdown-trigger, .dropdown-panel'),
       ).some((el) => el.contains(target));
-      if (!isInsideDropdown) setOpenDropdown(null);
+
+      if (!isInsideDropdown) {
+        setOpenDropdown(null);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
 
+  // Effect for mobile menu keyboard navigation (Escape and Tab trapping)
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (!isMobileMenuOpen || !mobileMenuRef.current) return;
+
       if (event.key === 'Escape') {
         closeMobileMenu();
-        mobileMenuButtonRef.current?.focus();
+        mobileMenuButtonRef.current?.focus(); // Return focus to the menu button
         return;
       }
+
       if (event.key === 'Tab') {
         const focusableElements = getFocusableElements(mobileMenuRef.current);
         if (focusableElements.length === 0) return;
         handleTabNavigation(event, focusableElements);
       }
     };
+
     if (isMobileMenuOpen) {
       document.addEventListener('keydown', handleKeydown);
-      const closeButton =
-        mobileMenuRef.current?.querySelector<HTMLButtonElement>(
-          '[aria-label="Close menu"]',
+      // Focus the close button or first item in the mobile menu when it opens
+      const firstFocusable =
+        mobileMenuRef.current?.querySelector<HTMLElement>(
+          'button[aria-label="Close menu"], a[href], button:not([disabled])',
         );
-      closeButton?.focus();
+      firstFocusable?.focus();
     }
-    return () => document.removeEventListener('keydown', handleKeydown);
-  }, [isMobileMenuOpen, closeMobileMenu]);
 
-  const getFocusableElements = (container: HTMLElement) => {
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, [isMobileMenuOpen, closeMobileMenu]); // Added closeMobileMenu to dependencies
+
+  const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
     return Array.from(
       container.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
       ),
-    ).filter((el) => el.offsetParent !== null);
+    ).filter(
+      (el) => el.offsetParent !== null && !el.hasAttribute('disabled'),
+    ); // Filter out non-visible or disabled elements
   };
 
   const handleTabNavigation = (
@@ -172,49 +192,59 @@ export default function Header(): JSX.Element {
   ) => {
     const firstElement = elements[0];
     const lastElement = elements[elements.length - 1];
-    if (event.shiftKey && document.activeElement === firstElement) {
-      lastElement.focus();
-      event.preventDefault();
-    } else if (!event.shiftKey && document.activeElement === lastElement) {
-      firstElement.focus();
-      event.preventDefault();
+
+    if (event.shiftKey) {
+      // Shift + Tab
+      if (document.activeElement === firstElement) {
+        lastElement.focus(); // Wrap to last
+        event.preventDefault();
+      }
+    } else {
+      // Tab
+      if (document.activeElement === lastElement) {
+        firstElement.focus(); // Wrap to first
+        event.preventDefault();
+      }
     }
   };
-
-  const isActiveLink = (href: string) => {
-    return (
-      pathname === href ||
-      (href === '/shows' && pathname.startsWith('/shows/')) ||
-      pathname.startsWith(href) // For broader matching e.g. /get-involved matching /merch
-    );
+  
+  const isActivePath = (href: string, exact = false) => {
+    if (exact) {
+      return pathname === href;
+    }
+    // For parent items like '/shows', consider active if current path starts with it
+    if (href === '/') return pathname === '/'; // Special case for home
+    return pathname.startsWith(href);
   };
+
 
   return (
     <header
       ref={headerRef}
       className={cn(
-        'sticky top-0 z-50 transition-all duration-300 ease-out isolate', // Added isolate
+        'sticky top-0 z-50 transition-all duration-300 ease-out isolate',
         !hasScrolled &&
           !isMobileMenuOpen &&
           'bg-transparent border-b border-transparent',
         hasScrolled &&
           !isMobileMenuOpen &&
-          'bg-brand-black shadow-xl border-b-2 border-brand-yellow scale-y-[1.01]',
+          'bg-brand-black/90 backdrop-blur-md shadow-xl border-b border-brand-yellow/30 scale-y-[1.01]', // Added backdrop-blur & subtle border
         isMobileMenuOpen &&
           'bg-brand-black shadow-xl border-b border-brand-gray-dark/60',
       )}
     >
-      {/* SVG Background Layer */}
+      {/* SVG Background Layer - adjust path and opacity as needed */}
       <div
         aria-hidden='true'
         className='pointer-events-none absolute inset-0 z-[-1]'
         style={{
-          backgroundImage: "url('/svg/4.svg')",
-          backgroundPosition: 'center center', // More explicit
+          backgroundImage: "url('/svg/4.svg')", // Ensure this SVG is in public/svg
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
-          opacity: 0.04, // Adjust for desired subtlety (0.03 - 0.05 is a good range)
-          // mixBlendMode: 'soft-light', // Optional: for blending effects, test different modes
+          opacity: hasScrolled || isMobileMenuOpen ? 0.02 : 0.04, // More subtle when scrolled/menu open
+          mixBlendMode: 'soft-light', // Experiment with blend modes
+          transition: 'opacity 0.3s ease-out',
         }}
       />
 
@@ -225,7 +255,7 @@ export default function Header(): JSX.Element {
           pathname={pathname}
           openDropdown={openDropdown}
           toggleDropdown={toggleDropdown}
-          isActiveLink={isActiveLink}
+          isActivePath={isActivePath}
           ctaLink={ctaLink}
           handleCtaClick={handleCtaClick}
           isMounted={isMounted}
@@ -246,38 +276,37 @@ export default function Header(): JSX.Element {
         pathname={pathname}
         ctaLink={ctaLink}
         handleCtaClick={handleCtaClick}
+        // isActivePath is implicitly used within MobileMenuItem
       />
     </header>
   );
 }
 
-// Sub-components (LogoLink, DesktopNavigation, DropdownNavItem, DropdownPanel, DropdownItem, SimpleNavItem, CTAButton, MobileMenuButton, MobileMenu, MobileMenuItem)
-// remain unchanged. For brevity, they are not repeated here but should be included in your actual file.
+// --- Sub-components ---
 
-// ... (Keep all your existing sub-components: LogoLink, DesktopNavigation, DropdownNavItem, etc.)
-// Ensure all sub-components from your original file are present below this line.
-
-// Example of how sub-components would follow:
 function LogoLink({ closeMobileMenu }: { closeMobileMenu: () => void }) {
   return (
     <Link
       href='/'
       className='group flex shrink-0 items-center space-x-2.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black md:space-x-3'
-      aria-label='Go to Homepage'
+      aria-label='TinyStage Homepage'
       onClick={() => {
-        closeMobileMenu();
+        closeMobileMenu(); // Close mobile menu if open
+        // No need to setOpenDropdown(null) here, handled by click outside or item click
       }}
     >
       <div className='transition-all duration-300 ease-out group-hover:scale-110 group-hover:rotate-[-3deg] motion-safe:group-focus-visible:scale-110'>
         <Image
-          src='/images/Logo2.png'
-          alt='TinyStage Icon'
+          src='/images/Logo2.png' // Ensure this path is correct
+          alt='TinyStage Logo'
           width={44}
           height={44}
           priority
-          className='object-contain motion-safe:animate-glint'
+          className='object-contain motion-safe:animate-glint' // Assuming animate-glint is defined
         />
       </div>
+      {/* Optional: Text logo for larger screens if desired */}
+      {/* <span className="font-display text-2xl text-brand-white group-hover:text-brand-yellow transition-colors">TinyStage</span> */}
     </Link>
   );
 }
@@ -286,7 +315,7 @@ function DesktopNavigation({
   pathname,
   openDropdown,
   toggleDropdown,
-  isActiveLink,
+  isActivePath,
   ctaLink,
   handleCtaClick,
   isMounted,
@@ -294,7 +323,7 @@ function DesktopNavigation({
   pathname: string;
   openDropdown: string | null;
   toggleDropdown: (href: string) => void;
-  isActiveLink: (href: string) => boolean;
+  isActivePath: (href: string, exact?: boolean) => boolean;
   ctaLink: { href: string; label: string };
   handleCtaClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
   isMounted: boolean;
@@ -302,18 +331,19 @@ function DesktopNavigation({
   return (
     <nav className='hidden md:flex items-center space-x-1 lg:space-x-2'>
       {NAV_LINKS.map((item) => (
-        <div key={item.href} className='group relative mx-0.5'>
-          {'subItems' in item ? (
+        <div key={item.href} className='group relative mx-0.5 dropdown-trigger'> {/* Added dropdown-trigger */}
+          {'subItems' in item && item.subItems ? (
             <DropdownNavItem
-              item={item as NavLink & { subItems: readonly SubItem[] }}
-              isActive={isActiveLink(item.href)}
+              item={item as NavLink & { subItems: ReadonlyArray<SubItem> }}
+              isActive={isActivePath(item.href)}
               isOpen={openDropdown === item.href}
-              onToggle={toggleDropdown}
+              onToggle={() => toggleDropdown(item.href)}
               isMounted={isMounted}
               pathname={pathname}
+              // No need for setOpenDropdown here, onToggle handles it
             />
           ) : (
-            <SimpleNavItem item={item} isActive={isActiveLink(item.href)} />
+            <SimpleNavItem item={item} isActive={isActivePath(item.href, item.href === ("/" as string))} />
           )}
         </div>
       ))}
@@ -321,6 +351,7 @@ function DesktopNavigation({
     </nav>
   );
 }
+
 function DropdownNavItem({
   item,
   isActive,
@@ -329,10 +360,10 @@ function DropdownNavItem({
   isMounted,
   pathname,
 }: {
-  item: NavLink & { subItems: readonly SubItem[] };
+  item: NavLink & { subItems: ReadonlyArray<SubItem> };
   isActive: boolean;
   isOpen: boolean;
-  onToggle: (href: string) => void;
+  onToggle: () => void; // Simplified onToggle to just toggle
   isMounted: boolean;
   pathname: string;
 }) {
@@ -340,59 +371,41 @@ function DropdownNavItem({
     <>
       <button
         type='button'
-        onClick={() => onToggle(item.href)}
+        onClick={onToggle}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onToggle(item.href);
-          }
-          if (e.key === 'Escape' && isOpen) {
-            // Close only if open
-            onToggle(item.href);
-          }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); }
+          if (e.key === 'Escape' && isOpen) { onToggle(); }
         }}
         aria-haspopup='menu'
         aria-expanded={isOpen}
-        aria-controls={`dropdown-${item.label.toLowerCase().replace(' ', '-')}`}
+        aria-controls={`dropdown-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
         className={cn(
-          'dropdown-trigger relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out',
+          'relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black',
-          isActive
-            ? 'text-brand-yellow font-semibold'
-            : isOpen
-              ? 'text-brand-yellow'
-              : 'text-brand-gray-light hover:text-brand-yellow',
-          (isOpen && isActive) || // Maintain active style if open and active
-            (!isActive &&
-              'hover:bg-brand-gray-dark/30 focus-visible:bg-brand-gray-dark/30'), // Apply hover only if not active
+          isActive && !isOpen ? 'text-brand-yellow font-semibold' : 
+          isOpen ? 'text-brand-yellow bg-brand-gray-dark/30' : 
+          'text-brand-gray-light hover:text-brand-yellow hover:bg-brand-gray-dark/30',
         )}
       >
         {item.label}
-        {isActive &&
-          !isOpen && ( // Show underline only if active and not also open (dropdown button itself might have different visual cues when open)
-            <span className='absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-brand-yellow rounded-full motion-safe:animate-scaleInX' />
-          )}
+        {isActive && !isOpen && (
+          <span className='absolute bottom-0.5 left-1/2 -translate-x-1/2 w-3/5 h-[2px] bg-brand-yellow rounded-full motion-safe:animate-scaleInX origin-center' />
+        )}
         <span
           aria-hidden='true'
           className={cn(
             'ml-1.5 transition-transform duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)]',
-            isOpen ? 'rotate-180' : '', // Removed group-hover:rotate-180 to avoid conflict with explicit open state
-            isActive && !isOpen
-              ? 'text-brand-yellow'
-              : isOpen
-                ? 'text-brand-yellow'
-                : 'text-brand-gray-light group-hover:text-brand-yellow',
+            isOpen ? 'rotate-180' : '',
+            (isActive && !isOpen) || isOpen ? 'text-brand-yellow' : 'text-brand-gray-light group-hover:text-brand-yellow',
           )}
-        >
-          ▾
-        </span>
+        >▾</span>
       </button>
       {isOpen && (
         <DropdownPanel
           item={item}
           pathname={pathname}
           isMounted={isMounted}
-          onClose={() => onToggle(item.href)} // Pass an onClose to allow items to close dropdown
+          onClose={onToggle} // Close dropdown when an item is clicked or panel loses focus conceptually
         />
       )}
     </>
@@ -402,42 +415,42 @@ function DropdownNavItem({
 function DropdownPanel({
   item,
   pathname,
-  isMounted,
+  isMounted, // isMounted for panel entry animation if needed
   onClose,
 }: {
-  item: NavLink & { subItems: readonly SubItem[] };
+  item: NavLink & { subItems: ReadonlyArray<SubItem> };
   pathname: string;
-  isMounted: boolean;
-  onClose: () => void; // Added onClose prop
+  isMounted: boolean; 
+  onClose: () => void;
 }) {
   return (
     <div
-      id={`dropdown-${item.label.toLowerCase().replace(' ', '-')}`}
+      id={`dropdown-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
       className={cn(
-        'dropdown-panel absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 origin-top transform rounded-md bg-brand-gray-dark/95 shadow-xl z-20 backdrop-blur-sm', // Added backdrop-blur
+        'dropdown-panel absolute left-1/2 top-full mt-2.5 w-56 -translate-x-1/2 origin-top transform rounded-lg bg-brand-gray-dark/95 shadow-2xl z-30 backdrop-blur-md border border-brand-gray-dark/50',
         'transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)] motion-safe:will-change-[transform,opacity]',
-        isMounted
+        isMounted // Rely on parent's isOpen to control visibility via conditional rendering
           ? 'visible scale-100 opacity-100'
-          : 'invisible scale-95 opacity-0 translate-y-1 pointer-events-none',
+          : 'invisible scale-95 opacity-0 -translate-y-1 pointer-events-none', // Initial state for entry animation
       )}
       role='menu'
       aria-labelledby={item.label}
     >
-      <div
+      <div // Arrow pointing up
         className='absolute -top-[7px] left-1/2 -translate-x-1/2 w-4 h-2 overflow-hidden'
         aria-hidden='true'
       >
-        <div className='w-3 h-3 bg-brand-gray-dark/95 rotate-45 transform origin-center -translate-y-1/2 shadow-[0_0_0_1px_var(--brand-yellow)/20]' />
+        <div className='w-3 h-3 bg-brand-gray-dark/95 rotate-45 transform origin-center -translate-y-1/2 shadow-[0_0_0_1px_rgba(var(--brand-gray-dark-rgb),0.5)]' />
       </div>
-      <ul className='p-1'>
+      <ul className='p-1.5'> {/* Slightly more padding */}
         {item.subItems.map((subItem, idx) => (
           <DropdownItem
             key={subItem.href}
             subItem={subItem}
-            isActive={pathname === subItem.href}
-            isMounted={isMounted}
+            pathname={pathname} // Pass pathname directly
+            isMounted={isMounted} // For staggered animation
             index={idx}
-            onClose={onClose} // Pass onClose down
+            onClose={onClose}
           />
         ))}
       </ul>
@@ -447,37 +460,41 @@ function DropdownPanel({
 
 function DropdownItem({
   subItem,
-  isActive,
+  pathname,
   isMounted,
   index,
-  onClose, // Added onClose prop
+  onClose,
 }: {
   subItem: SubItem;
-  isActive: boolean;
+  pathname: string;
   isMounted: boolean;
   index: number;
-  onClose: () => void; // Added onClose prop
+  onClose: () => void;
 }) {
+  const isActive = pathname === subItem.href || pathname.startsWith(subItem.href + '/');
   return (
     <li>
       <Link
         href={subItem.href}
         role='menuitem'
-        onClick={onClose} // Call onClose when a dropdown item is clicked
+        onClick={onClose}
         className={cn(
-          'group/subitem relative block whitespace-nowrap rounded px-4 py-2 text-[0.875rem] transition-all duration-150 ease-out',
+          'group/subitem relative block whitespace-nowrap rounded-md px-3.5 py-2 text-[0.875rem] transition-all duration-150 ease-out', // Adjusted padding
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-gray-dark',
           isActive
             ? 'bg-brand-yellow text-brand-black font-semibold'
             : 'text-brand-gray-light hover:bg-brand-black/80 hover:text-brand-yellow focus-visible:bg-brand-black/80',
-          isMounted && 'motion-safe:animate-fadeInSlideUp',
+          isMounted && 'motion-safe:animate-dropdownItemEnter', // Use your defined animation
         )}
         style={{
-          animationDelay: isMounted ? `${index * 40 + 30}ms` : '0ms',
+          animationDelay: isMounted ? `${index * 35 + 20}ms` : '0ms', // Fine-tuned delay
         }}
       >
-        <span className='absolute left-0 top-1/2 -translate-y-1/2 h-3/5 w-1 bg-brand-yellow rounded-r-full opacity-0 group-hover/subitem:opacity-100 group-focus-visible/subitem:opacity-100 transition-opacity duration-150' />
-        {subItem.label}
+        <span className={cn(
+            'absolute left-0 top-1/2 -translate-y-1/2 h-full w-1 bg-brand-yellow rounded-r-full transition-all duration-200 ease-out',
+            isActive ? 'opacity-100 scale-y-75' : 'opacity-0 scale-y-0 group-hover/subitem:opacity-100 group-hover/subitem:scale-y-50 group-focus-visible/subitem:opacity-100 group-focus-visible/subitem:scale-y-50'
+        )} />
+        <span className="ml-1.5">{subItem.label}</span>
       </Link>
     </li>
   );
@@ -498,12 +515,12 @@ function SimpleNavItem({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black',
         isActive
           ? 'text-brand-yellow font-semibold'
-          : 'text-brand-gray-light hover:text-brand-yellow hover:bg-brand-gray-dark/30 focus-visible:bg-brand-gray-dark/30', // Added focus-visible for hover state consistency
+          : 'text-brand-gray-light hover:text-brand-yellow hover:bg-brand-gray-dark/30 focus-visible:bg-brand-gray-dark/30',
       )}
     >
       {item.label}
       {isActive && (
-        <span className='absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-brand-yellow rounded-full motion-safe:animate-scaleInX' />
+        <span className='absolute bottom-0.5 left-1/2 -translate-x-1/2 w-3/5 h-[2px] bg-brand-yellow rounded-full motion-safe:animate-scaleInX origin-center' />
       )}
     </Link>
   );
@@ -522,16 +539,18 @@ function CTAButton({
       className='ml-3 md:ml-4 group/cta'
       onClick={handleCtaClick}
     >
+      {/* Using your Button component */}
       <Button
-        variant='primary'
-        className='px-5 py-2 text-sm font-semibold text-brand-black shadow-md group-hover/cta:shadow-lg group-hover/cta:brightness-110 transition-all duration-200 ease-out transform group-hover/cta:scale-[1.03] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black' // Added focus-visible styles
+        variant='primary' // Or 'solid' if that's your primary yellow button
+        size='sm' // Or your default size
+        className='group-hover/cta:brightness-110 group-hover/cta:shadow-lg transition-all duration-200 ease-out transform group-hover/cta:scale-[1.02] active:scale-[0.98]'
       >
         {ctaLink.label}
         <svg
           xmlns='http://www.w3.org/2000/svg'
           viewBox='0 0 20 20'
           fill='currentColor'
-          className='w-4 h-4 ml-2 opacity-80 group-hover/cta:opacity-100 transition-opacity duration-200'
+          className='w-4 h-4 ml-1.5 opacity-80 group-hover/cta:opacity-100 transition-opacity duration-200'
         >
           <path
             fillRule='evenodd'
@@ -595,6 +614,7 @@ function MobileMenuButton({
   );
 }
 
+// --- ENHANCED MobileMenu Component ---
 function MobileMenu({
   isMobileMenuOpen,
   isMounted,
@@ -612,33 +632,22 @@ function MobileMenu({
   ctaLink: { href: string; label: string };
   handleCtaClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
-  // Define isActiveLink locally for use in this component
-  const isActiveLink = (href: string) => {
-    return (
-      pathname === href ||
-      (href === '/shows' && pathname.startsWith('/shows/')) ||
-      pathname.startsWith(href)
-    );
-  };
-
-  if (!isMobileMenuOpen && !isMounted) return null; // Keep it mounted for exit animation if isMounted is true
+  if (!isMobileMenuOpen && !isMounted) return null;
 
   return (
     <div
       className={cn(
         'fixed inset-0 z-40 flex',
-        // Apply animation/opacity based on isMobileMenuOpen for entry/exit
         isMobileMenuOpen
-          ? 'animate-fadeInBasic'
+          ? 'animate-fadeInBasic' 
           : isMounted
-            ? 'animate-fadeOutBasic pointer-events-none'
+            ? 'animate-fadeOutBasic pointer-events-none' 
             : 'opacity-0 pointer-events-none',
       )}
-      // No key needed here as we control visibility with classes / conditional rendering of children
     >
       <div
         className={cn(
-          'absolute inset-0 bg-brand-black/70 backdrop-blur-sm motion-safe:will-change-opacity transition-opacity duration-300',
+          'absolute inset-0 bg-brand-black/80 backdrop-blur-md motion-safe:will-change-opacity transition-opacity duration-300',
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0',
         )}
         onClick={closeMobileMenu}
@@ -648,70 +657,54 @@ function MobileMenu({
         ref={mobileMenuRef}
         id='mobile-menu-panel'
         className={cn(
-          'relative ml-auto h-full w-[clamp(280px,75vw,320px)] transform bg-brand-black shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.5)]',
-          'motion-safe:will-change-transform border-l border-brand-gray-dark/50 flex flex-col',
+          'relative ml-auto h-full w-[clamp(280px,80vw,340px)] transform bg-brand-black shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.5)]',
+          'motion-safe:will-change-transform border-l-2 border-brand-yellow/50 flex flex-col',
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
         role='dialog'
         aria-modal='true'
         aria-labelledby='mobile-menu-heading'
-        // Hide when not open for accessibility and to prevent interaction
         style={{ visibility: isMobileMenuOpen ? 'visible' : 'hidden' }}
       >
-        {isMobileMenuOpen && ( // Only render content if menu should be logically open
+        {isMobileMenuOpen && (
           <>
-            <div className='flex items-center justify-between border-b border-brand-gray-dark/50 px-4 py-3'>
+            <div className='flex items-center justify-between border-b-2 border-brand-yellow/30 px-5 py-4'>
               <h2
                 id='mobile-menu-heading'
-                className='text-lg font-semibold text-brand-white'
+                className='text-xl font-semibold text-brand-yellow tracking-tight'
               >
-                Navigation
+                Menu
               </h2>
               <button
                 onClick={closeMobileMenu}
                 className='rounded-md p-2 text-brand-white transition-colors hover:bg-brand-gray-dark/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black'
                 aria-label='Close menu'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='h-6 w-6'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M6 18L18 6M6 6l12 12'
-                  />
+                <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2.5}>
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12'/>
                 </svg>
               </button>
             </div>
-            <nav className='flex-grow overflow-y-auto p-4'>
-              <ul className='space-y-1.5'>
+            <nav className='flex-grow overflow-y-auto p-3'>
+              <ul className='space-y-0'>
                 {NAV_LINKS.map((item, idx) => (
                   <MobileMenuItem
                     key={item.href}
                     item={item}
                     index={idx}
-                    isMounted={isMounted} // isMounted for individual item animation
-                    isActive={isActiveLink(item.href)} // Use local isActiveLink
+                    isMounted={isMounted}
+                    isMobileMenuOpen={isMobileMenuOpen}
+                    pathname={pathname}
                     closeMobileMenu={closeMobileMenu}
                   />
                 ))}
                 <li
                   className={cn(
-                    'pt-2',
-                    isMounted &&
-                      isMobileMenuOpen &&
-                      'motion-safe:animate-fadeInSlideRight', // Animate only when opening
+                    'px-1 pt-6 pb-2',
+                    isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight',
                   )}
                   style={{
-                    animationDelay:
-                      isMounted && isMobileMenuOpen
-                        ? `${NAV_LINKS.length * 60 + 150}ms`
-                        : '0ms',
+                    animationDelay: isMounted && isMobileMenuOpen ? `${NAV_LINKS.length * 50 + 150}ms` : '0ms',
                   }}
                 >
                   <Link
@@ -719,8 +712,8 @@ function MobileMenu({
                     onClick={(e) => {
                       closeMobileMenu();
                       handleCtaClick(e);
-                    }} // Ensure menu closes
-                    className='block rounded-md bg-brand-yellow px-3 py-3.5 text-center text-base font-bold text-brand-black shadow-lg transition-transform duration-200 ease-out hover:scale-[1.03] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black'
+                    }}
+                    className='block rounded-lg bg-brand-yellow px-4 py-3.5 text-center text-base font-bold text-brand-black shadow-lg transition-all duration-200 ease-out hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black'
                   >
                     {ctaLink.label}
                   </Link>
@@ -734,60 +727,145 @@ function MobileMenu({
   );
 }
 
+
 function MobileMenuItem({
   item,
   index,
   isMounted,
-  isActive,
+  isMobileMenuOpen,
+  pathname,
   closeMobileMenu,
 }: {
   item: NavLink;
   index: number;
   isMounted: boolean;
-  isActive: boolean;
+  isMobileMenuOpen: boolean;
+  pathname: string;
   closeMobileMenu: () => void;
 }) {
-  // Check if item has subItems to determine if it's a simple link or needs different handling
-  // For this example, all mobile menu items are treated as simple links.
-  // If you need accordion-style dropdowns in mobile, this component would need to be more complex.
+  const hasSubItems = 'subItems' in item && item.subItems && item.subItems.length > 0;
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+
+  // Check if the parent link or any of its sub-items are active
+  const isActive = useMemo(() => {
+    if (
+      !hasSubItems &&
+      (pathname === item.href || pathname.startsWith(item.href))
+    )
+      return true;
+    if (hasSubItems) {
+      return item.subItems.some(sub => pathname === sub.href || pathname.startsWith(sub.href + '/'));
+    }
+    return false;
+  }, [pathname, item, hasSubItems]);
+  
+  const handleToggleOrNavigate = () => {
+    if (hasSubItems) {
+      setIsSubMenuOpen(!isSubMenuOpen);
+    } else {
+      closeMobileMenu();
+      // Navigation will happen via Link component
+    }
+  };
 
   return (
     <li
-      className={cn(isMounted && 'motion-safe:animate-fadeInSlideRight')}
+      className={cn(
+        isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight', // Animate only when menu is opening
+        'border-b border-brand-gray-dark/30 last:border-b-0'
+      )}
       style={{
-        animationDelay: isMounted ? `${index * 60 + 100}ms` : '0ms',
+        animationDelay: isMounted && isMobileMenuOpen ? `${index * 50 + 80}ms` : '0ms',
       }}
     >
-      <Link
-        href={item.href}
-        onClick={() => {
-          // If it's a link that should close the menu (e.g., not an accordion trigger)
-          if (!('subItems' in item)) {
-            // Or some other condition if you add mobile submenus
-            closeMobileMenu();
-          }
-          // If you add accordion behavior, you'd toggle a local state here
-          // and not necessarily call closeMobileMenu for parent items.
-        }}
-        className={cn(
-          'block rounded-md px-3 py-3 text-base transition-colors duration-150 ease-out',
-          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
-          isActive
-            ? 'bg-brand-gray-dark text-brand-yellow font-semibold'
-            : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow active:bg-brand-gray-dark/80',
-        )}
-        // Add aria-expanded if this item can open a submenu in mobile
-      >
-        {item.label}
-      </Link>
-      {/* 
-      If you were to implement mobile submenus (e.g., accordion style):
-      {item.subItems && (
-        <ul>
-          {item.subItems.map(sub => <li key={sub.href}><Link href={sub.href} onClick={closeMobileMenu}>{sub.label}</Link></li>)}
-        </ul>
+      {hasSubItems ? (
+        <button
+          type="button"
+          onClick={handleToggleOrNavigate}
+          aria-expanded={isSubMenuOpen}
+          aria-controls={`mobile-submenu-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+          className={cn(
+            'flex w-full items-center justify-between rounded-md px-4 py-3.5 text-left text-base font-medium transition-colors duration-150 ease-out',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
+            isActive && !hasSubItems // Active style for simple links
+              ? 'bg-brand-yellow/10 text-brand-yellow' 
+              : isActive && hasSubItems // Active style for parent of active sub-item
+              ? 'text-brand-yellow'
+              : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow',
+            (isActive || isSubMenuOpen && hasSubItems) ? 'font-semibold' : 'font-medium' // Bolder if active or submenu open
+          )}
+        >
+          {item.label}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={cn(
+              'h-5 w-5 transform transition-transform duration-200 ease-out text-brand-gray-light group-hover:text-brand-yellow',
+              (isActive || isSubMenuOpen) && '!text-brand-yellow', // Chevron color matches parent
+              isSubMenuOpen ? 'rotate-180' : 'rotate-0'
+            )}
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      ) : (
+        <Link
+          href={item.href}
+          onClick={handleToggleOrNavigate}
+          className={cn(
+            'flex w-full items-center justify-between rounded-md px-4 py-3.5 text-left text-base font-medium transition-colors duration-150 ease-out',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
+            isActive
+              ? 'bg-brand-yellow/10 text-brand-yellow'
+              : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow',
+            isActive ? 'font-semibold' : 'font-medium'
+          )}
+        >
+          {item.label}
+        </Link>
       )}
-      */}
+
+      {hasSubItems && (
+        <div
+          id={`mobile-submenu-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+          className={cn(
+            'overflow-hidden transition-all duration-300 ease-out motion-safe:will-change-[max-height,opacity]',
+            isSubMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          )}
+        >
+          <ul className="pl-5 pt-1.5 pb-2 space-y-1 border-l-2 border-brand-yellow/20 ml-4 my-1"> {/* Indent & style sub-menu */}
+            {item.subItems.map((subItem, subIdx) => {
+              const isSubItemActive = pathname === subItem.href || pathname.startsWith(subItem.href + '/');
+              return (
+                <li key={subItem.href} 
+                    className={cn(isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight')} // Animate only when menu is opening
+                    style={{ animationDelay: isMounted && isMobileMenuOpen ? `${(index * 50 + 80) + (subIdx + 1) * 30}ms` : '0ms'}}
+                >
+                  <Link
+                    href={subItem.href}
+                    onClick={closeMobileMenu}
+                    className={cn(
+                      'block rounded-md px-3 py-2.5 text-sm transition-colors duration-150 ease-out',
+                      'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
+                      isSubItemActive
+                        ? 'bg-brand-yellow/15 text-brand-yellow font-medium'
+                        : 'text-brand-gray-light/80 hover:bg-brand-gray-dark/50 hover:text-brand-yellow'
+                    )}
+                  >
+                    {subItem.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </li>
   );
 }

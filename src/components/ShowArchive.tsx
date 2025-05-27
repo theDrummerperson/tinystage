@@ -153,16 +153,7 @@ const ShowArchive: React.FC = () => {
     };
   }, [isModalOpen, closeModal]);
 
-  // These will be marked as unused if carouselShows.length <= 1
-  const nextSlide = () => {
-    if (carouselShows.length <= 1) return;
-    setCurrentSlide((prev) => (prev === carouselShows.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
-    if (carouselShows.length <= 1) return;
-    setCurrentSlide((prev) => (prev === 0 ? carouselShows.length - 1 : prev - 1));
-  };
+  // Carousel navigation functions removed because they are unused.
 
   return (
     <div 
