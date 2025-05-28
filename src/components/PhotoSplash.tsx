@@ -1,120 +1,268 @@
 // src/components/PhotoSplash.tsx
-"use client";
+// src/components/PhotoSplash.tsx
+'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import React, { useMemo } from 'react'; // Removed useState, useEffect, useRef if only for parallax which was removed
+import React, { useCallback, useState } from 'react';
 
-import Button from '@/components/buttons/Button';
+import DesktopGridView from './DesktopGridView';
+import LightboxView, { LightboxPhoto } from './LightboxView';
 
-import PhotoSplashItem from './PhotoSplashItem';
+// --- Re-usable Icon Components ---
+const ChevronLeftIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clipRule="evenodd" />
+  </svg>
+);
 
-// Interface for the data passed to PhotoSplashItem
-interface PreparedImage {
+const ChevronRightIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clipRule="evenodd" />
+  </svg>
+);
+// --- Interfaces ---
+interface PhotoData {
   src: string;
   alt: string;
-  linkHref: string; // This will be set based on src content
   title?: string;
   subtitle?: string;
-}
-
-// Interface for the raw image data received as props
-interface RawPhotoSplashImage {
-  src: string;
-  alt: string; // Alt is still good to have for CMS or initial data
-  // No eventLink or merchLink needed here anymore if logic is internal
-  title?: string;
-  subtitle?: string;
+  link?: string;
 }
 
 interface PhotoSplashProps {
-  rawImagesData: RawPhotoSplashImage[]; // Changed prop name
-  mainCtaText?: string;
-  mainCtaLink?: string;
-  sectionTitle?: string;
+  rawImagesData: PhotoData[];
+  sectionTitle: string;
   sectionSubtitle?: string;
+  mainCtaText: string;
+  mainCtaLink: string;
 }
 
-const defaultRawImagesData: RawPhotoSplashImage[] = [
-  
-  { src: "/images/kocur/kocur1.jpg", alt: "Johnny Kocur performing", title: "Johnny Kocur", subtitle: "Night of Pop-R&B" },
-  { src: "/images/deja/2.png", alt: "Deja Blue dynamic shot", title: "Deja Blue", subtitle: "Raw & Expressive" },
-  { src: "/images/kocur/kocur2.jpg", alt: "Johnny Kocur close-up", title: "Johnny Kocur", subtitle: "Night of Pop-R&B"},
-  { src: "/images/kocur/kocur3.jpg", alt: "Johnny Kocur with guitar", title: "Johnny Kocur", subtitle: "Acoustic Vibes" },
-  { src: "/images/deja/4.jpg", alt: "Deja Blue crowd interaction", title: "Deja Blue", subtitle: "Night of Pop-R&B"},
-  { src: "/images/kocur/RyanS.jpg", alt: "Ryan Sands performing", title: "Ryan Sands", subtitle: "Soulful Performance" },
- 
-];
+// --- Sub-Component: Section Header ---
+interface SectionHeaderProps { title: string; subtitle?: string; }
+const SectionHeader: React.FC<SectionHeaderProps> = React.memo(({ title, subtitle }) => (
+  <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 md:mb-12">
+    <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-white mb-3 md:mb-4">
+      {title}
+    </h2>
+    {subtitle && (
+      <p className="mt-3 text-md md:text-lg lg:text-xl text-brand-gray-light leading-relaxed">
+        {subtitle}
+      </p>
+    )}
+  </div>
+));
+SectionHeader.displayName = 'SectionHeader';
 
-
-const PhotoSplash: React.FC<PhotoSplashProps> = ({
-  rawImagesData = defaultRawImagesData, // Use the new prop name
-  mainCtaText = "Explore All Performances",
-  mainCtaLink = "/shows/archive",
-  sectionTitle = "Experience the Stage",
-  sectionSubtitle = "A glimpse into the unforgettable moments and the artists who make them happen."
+// --- Sub-Component: Mobile Carousel View ---
+interface MobileCarouselViewProps {
+  images: PhotoData[];
+  currentIndex: number;
+  onPrevious: () => void;
+  onNext: () => void;
+  onGoToSlide: (index: number) => void;
+  onImageClick: (index: number) => void;
+}
+const MobileCarouselView: React.FC<MobileCarouselViewProps> = React.memo(({
+  images,
+  currentIndex,
+  onPrevious,
+  onNext,
+  onGoToSlide,
+  onImageClick,
 }) => {
+  if (images.length === 0) {
+    return <p className="text-center text-brand-gray-light py-8">No images to display.</p>;
+  }
+  const currentImage = images[currentIndex];
+  if (!currentImage) {
+    return <p className="text-center text-brand-gray-light py-8">Error displaying image.</p>;
+  }
 
-  // Prepare images with correct links based on src content
-  const preparedImagesData: PreparedImage[] = useMemo(() => {
-    return rawImagesData.map(image => {
-      let linkHref = "/shows"; // Default link
-      if (image.src.includes("/deja/")) {
-        linkHref = "/shows/archive"; // All Deja images link to archive
-      } else if (image.src.includes("/kocur/")) {
-        linkHref = "/shows/upcoming"; // All Kocur images link to upcoming
-      }
-      return {
-        ...image,
-        linkHref: linkHref,
-      };
-    });
-  }, [rawImagesData]);
-
+  const imageDisplay = (
+    <Image
+      key={currentImage.src}
+      src={currentImage.src}
+      alt={currentImage.alt}
+      fill
+      className="object-contain w-full h-full transition-opacity duration-300 ease-in-out"
+      sizes="(max-width: 639px) 90vw, (max-width: 767px) 450px, 600px"
+      priority={currentIndex === 0}
+    />
+  );
 
   return (
-    <section 
-      className="relative py-16 md:py-24 bg-brand-black overflow-hidden isolate"
-      style={{ /* ... optional background pattern ... */ }}
-    >
-      <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-brand-yellow/5 rounded-full blur-[150px] opacity-30 -translate-x-1/2 -translate-y-1/2 z-[-1]" aria-hidden="true"/>
-      <div className="absolute bottom-0 right-1/4 w-2/5 h-2/5 bg-brand-blue/5 rounded-full blur-[120px] opacity-20 translate-x-1/2 translate-y-1/2 z-[-1]" aria-hidden="true"/>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <header className="text-center mb-12 md:mb-16">
-          <h2 className="font-sans text-4xl sm:text-5xl font-extrabold text-brand-yellow leading-tight tracking-tighter uppercase mb-3">
-            {sectionTitle}
-          </h2>
-          <p className="text-lg md:text-xl text-brand-gray-light/80 max-w-2xl mx-auto font-light">
-            {sectionSubtitle}
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {preparedImagesData.map((image, index) => ( // Use preparedImagesData
-            <PhotoSplashItem 
-              key={image.src + index} 
-              image={image} // Pass the fully prepared image object
-              index={index}
-            />
-          ))}
-        </div>
-
-        {mainCtaLink && mainCtaText && (
-          <div className="mt-16 md:mt-20 text-center">
-            <Link href={mainCtaLink} passHref>
-              <Button
-                variant="primary"
-                size="lg"
-                className="px-10 py-4 text-base md:text-lg font-bold tracking-wider uppercase motion-safe:animate-buttonPulse"
-              >
-                {mainCtaText}
-              </Button>
-            </Link>
-          </div>
+    <div className="relative w-full max-w-2xl mx-auto">
+      <div
+        className={`relative overflow-hidden rounded-xl shadow-2xl aspect-[4/3] bg-brand-gray-dark flex justify-center items-center ${!currentImage.link ? 'cursor-pointer' : ''}`}
+        onClick={!currentImage.link ? () => onImageClick(currentIndex) : undefined}
+        onKeyDown={!currentImage.link ? (e) => (e.key === 'Enter' || e.key === ' ') && onImageClick(currentIndex) : undefined}
+        tabIndex={!currentImage.link ? 0 : undefined}
+        role={!currentImage.link ? "button" : undefined}
+        aria-label={!currentImage.link ? `View image: ${currentImage.title || currentImage.alt} in lightbox` : undefined}
+      >
+        {currentImage.link ? (
+          <Link href={currentImage.link} legacyBehavior>
+            <a className="block w-full h-full relative" aria-label={currentImage.title || currentImage.alt}>
+              {imageDisplay}
+            </a>
+          </Link>
+        ) : (
+          <div className="w-full h-full relative">{imageDisplay}</div>
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(var(--brand-black-rgb),0.85)] via-[rgba(var(--brand-black-rgb),0.4)] to-transparent flex flex-col justify-end p-4 pointer-events-none">
+            {(currentImage.title || currentImage.subtitle) && (
+                <div className="bg-[rgba(var(--brand-black-rgb),0.3)] backdrop-blur-sm p-3 rounded-md pointer-events-auto">
+                {currentImage.title && (
+                    <h3 className="text-lg font-semibold text-brand-white">{currentImage.title}</h3>
+                )}
+                {currentImage.subtitle && (
+                    <p className="mt-0.5 text-xs text-brand-gray-light">{currentImage.subtitle}</p>
+                )}
+                </div>
+            )}
+        </div>
       </div>
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={onPrevious}
+            className="absolute left-1.5 md:left-2.5 top-1/2 -translate-y-1/2 transform bg-[rgba(var(--brand-black-rgb),0.5)] hover:bg-[rgba(var(--brand-black-rgb),0.8)] text-brand-white p-2 rounded-full z-10 transition-colors focus:outline-none enhanced-focus focus:ring-offset-0"
+            aria-label="Previous image"
+          >
+            <ChevronLeftIcon className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <button
+            onClick={onNext}
+            className="absolute right-1.5 md:right-2.5 top-1/2 -translate-y-1/2 transform bg-[rgba(var(--brand-black-rgb),0.5)] hover:bg-[rgba(var(--brand-black-rgb),0.8)] text-brand-white p-2 rounded-full z-10 transition-colors focus:outline-none enhanced-focus focus:ring-offset-0"
+            aria-label="Next image"
+          >
+            <ChevronRightIcon className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <div className="flex justify-center mt-4 space-x-1.5 md:space-x-2">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => onGoToSlide(idx)}
+                className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ease-in-out ${
+                  currentIndex === idx ? 'bg-brand-yellow scale-125' : 'bg-brand-gray-medium hover:bg-brand-gray-light scale-100'
+                }`}
+                aria-label={`Go to image ${idx + 1}`}
+                aria-current={currentIndex === idx ? "true" : "false"}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+});
+MobileCarouselView.displayName = 'MobileCarouselView';
+
+// --- Sub-Component: Main Call to Action Button ---
+interface MainCtaButtonProps { text: string; link: string; }
+const MainCtaButton: React.FC<MainCtaButtonProps> = React.memo(({ text, link }) => (
+  <div className="mt-12 md:mt-16 text-center px-4">
+    <Link href={link} legacyBehavior>
+      <a className="inline-flex items-center px-6 py-3 md:px-8 md:py-3.5 bg-brand-yellow text-brand-black text-sm md:text-base font-bold rounded-lg shadow-lg hover:bg-yellow-600 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out enhanced-focus focus:ring-offset-brand-black">
+        {text}
+        {/* Optional: Icon for CTA can be added here if you have one, e.g., an ArrowRightIcon component
+        <ArrowRightIcon className="ml-2 h-5 w-5 text-brand-black" />
+        */}
+      </a>
+    </Link>
+  </div>
+));
+MainCtaButton.displayName = 'MainCtaButton';
+
+// --- Main PhotoSplash Component ---
+export default function PhotoSplash({
+  rawImagesData,
+  sectionTitle,
+  sectionSubtitle,
+  mainCtaText,
+  mainCtaLink,
+}: PhotoSplashProps) {
+  const [carouselCurrentIndex, setCarouselCurrentIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
+
+  const handleOpenLightbox = useCallback((index: number) => {
+    setLightboxImageIndex(index);
+    setIsLightboxOpen(true);
+  }, []);
+
+  const handleCloseLightbox = useCallback(() => {
+    setIsLightboxOpen(false);
+  }, []);
+
+  const handleLightboxPrevious = useCallback(() => {
+    setLightboxImageIndex((prevIndex) =>
+      prevIndex === 0 ? rawImagesData.length - 1 : prevIndex - 1
+    );
+  }, [rawImagesData.length]);
+
+  const handleLightboxNext = useCallback(() => {
+    setLightboxImageIndex((prevIndex) =>
+      prevIndex === rawImagesData.length - 1 ? 0 : prevIndex + 1
+    );
+  }, [rawImagesData.length]);
+
+  const goToCarouselPrevious = useCallback(() => {
+    setCarouselCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? rawImagesData.length - 1 : prevIndex - 1
+    );
+  }, [rawImagesData.length]);
+
+  const goToCarouselNext = useCallback(() => {
+    setCarouselCurrentIndex((prevIndex) =>
+      prevIndex === rawImagesData.length - 1 ? 0 : prevIndex + 1
+    );
+  }, [rawImagesData.length]);
+
+  const goToCarouselSlide = useCallback((slideIndex: number) => {
+    setCarouselCurrentIndex(slideIndex);
+  }, []);
+
+  const currentLightboxPhoto = rawImagesData[lightboxImageIndex] as LightboxPhoto | undefined;
+
+  return (
+    <section className="py-16 md:py-24 bg-brand-black text-brand-white font-sans overflow-hidden">
+      <SectionHeader title={sectionTitle} subtitle={sectionSubtitle} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="sm:hidden">
+          <MobileCarouselView
+            images={rawImagesData}
+            currentIndex={carouselCurrentIndex}
+            onPrevious={goToCarouselPrevious}
+            onNext={goToCarouselNext}
+            onGoToSlide={goToCarouselSlide}
+            onImageClick={handleOpenLightbox}
+          />
+        </div>
+        <div className="hidden sm:block">
+          <DesktopGridView
+            images={rawImagesData}
+            onImageClick={handleOpenLightbox}
+          />
+        </div>
+      </div>
+
+      {mainCtaText && mainCtaLink && (
+        <MainCtaButton text={mainCtaText} link={mainCtaLink} />
+      )}
+
+      {isLightboxOpen && currentLightboxPhoto && (
+         <LightboxView
+            isOpen={isLightboxOpen}
+            photo={currentLightboxPhoto}
+            onClose={handleCloseLightbox}
+            onPrevious={rawImagesData.length > 1 ? handleLightboxPrevious : undefined}
+            onNext={rawImagesData.length > 1 ? handleLightboxNext : undefined}
+            showNavigation={rawImagesData.length > 1}
+        />
+      )}
     </section>
   );
-};
-
-export default PhotoSplash;
+}
