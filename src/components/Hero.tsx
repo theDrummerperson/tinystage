@@ -201,7 +201,7 @@ export default function Hero() {
         />
       )}
 
-      <div className='relative z-10 container mx-auto px-4 w-full py-16 md:py-20 lg:py-24'>
+      <div className='relative z-10 container mx-auto px-4 py-16 md:py-20 lg:py-24'>
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center'>
           <div
             className={cn(

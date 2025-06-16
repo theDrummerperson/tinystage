@@ -19,14 +19,7 @@ import Button from '@/components/buttons/Button'; // Assuming Button is styled a
 // Constants for navigation items
 const NAV_LINKS = [
   { href: '/about', label: 'About' },
-  {
-    href: '/shows', // Parent link, might not be directly navigable if it's just a category
-    label: 'Shows',
-    subItems: [
-      { href: '/shows/upcoming', label: 'Upcoming Shows' },
-      { href: '/shows/archive', label: 'Past Performances' },
-    ],
-  },
+  { href: '/shows', label: 'Shows' },
   {
     href: '/get-involved', // Parent link
     label: 'Get Involved',
@@ -750,7 +743,7 @@ function MobileMenuItem({
   const isActive = useMemo(() => {
     if (
       !hasSubItems &&
-      (pathname === item.href || pathname.startsWith(item.href))
+      (pathname === item.href || pathname.startsWith(item.href + '/'))
     )
       return true;
     if (hasSubItems) {
