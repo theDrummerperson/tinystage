@@ -10,11 +10,11 @@ import { cn } from '@/lib/utils'; // Assuming you have a cn utility
 
 const PROMO_IMAGES = [
   {
-    src: '/land/1.png',
+    src: '/land/2.png',
     alt: 'A passionate local musician performing on stage with a guitar at a TinyStage event.',
   },
   {
-    src: '/land/2.png',
+    src: '/land/1.png',
     alt: 'An energetic band captivating the audience under dramatic stage lighting at a TinyStage show.',
   },
 ];

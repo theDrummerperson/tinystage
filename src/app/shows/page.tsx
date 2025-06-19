@@ -1,5 +1,6 @@
 // src/app/shows/page.tsx
-import { ArrowRight, CalendarDays } from 'lucide-react';
+import { ArrowRight, CalendarDays, Play } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
@@ -72,13 +73,8 @@ const ShowsPage = () => {
           </div>
         </div>
 
-        {/* Edge Bleed Effect */}
-        <div className='absolute -bottom-px left-0 w-full h-20 md:h-32 z-[1] overflow-hidden'>
-          <div
-            className="absolute bottom-0 left-0 w-full h-full bg-[url('/svg/edge-bleed.svg')] bg-repeat-x bg-bottom opacity-60"
-            style={{ backgroundSize: 'auto 100%' }}
-          />
-        </div>
+   
+    
       </section>
 
       {/* SVG Peeking from Side */}
@@ -86,7 +82,139 @@ const ShowsPage = () => {
         <div className="w-full h-full bg-[url('/svg/side-peek.svg')] bg-contain bg-no-repeat aspect-square" />
       </div>
 
-      {/* Upcoming Shows Section */}
+
+
+
+
+
+     {/* === ENHANCED V5: Featured Past Shows Section === */}
+<section className='relative py-20 md:py-28 bg-brand-black z-[1] overflow-hidden'>
+  
+  {/* --- Simplified Background --- */}
+  <div className='absolute inset-0 z-0' aria-hidden='true'>
+    {/* Layer 1: The SVG Graphic */}
+    <div className='absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none'>
+      <div
+        className="w-[1200px] h-[1200px] bg-[url('/svg/4.svg')] bg-contain bg-no-repeat bg-center 
+                   opacity-20 mix-blend-lighten motion-safe:animate-cosmicPulse"
+      />
+    </div>
+    
+    {/* Layer 2: Gradient Overlay for Contrast */}
+    <div className='absolute inset-0 bg-gradient-radial from-brand-black/10 via-brand-black/50 to-brand-black/80' />
+  </div>
+
+  {/* --- Content (on top of background) --- */}
+  <div className='container mx-auto px-4 text-center relative z-[1]'>
+    <div
+      className='max-w-3xl mx-auto mb-20 md:mb-24 motion-safe:animate-fadeIn'
+      style={{ animationDelay: '0.1s' }}
+    >
+      <h2 className='text-3xl sm:text-4xl font-bold mb-4 text-brand-white'>
+        From the Archive
+      </h2>
+      <p className='text-lg md:text-xl text-brand-gray-light max-w-2xl mx-auto'>
+        Relive the moments that defined our stage. Here are a couple of
+        standout performances from our past shows.
+      </p>
+    </div>
+
+    {/* Dynamic "Collage" Layout Container */}
+    <div className='relative flex flex-col md:flex-row justify-center items-center gap-8 lg:gap-0 max-w-5xl mx-auto mb-16 min-h-[500px] md:min-h-[400px]'>
+      
+      {/* Card 1: Deja Blue */}
+      <div
+        className='w-full max-w-md md:absolute md:left-0 md:top-0 group motion-safe:animate-fadeIn'
+        style={{ animationDelay: '0.3s' }}
+      >
+        <Link
+          href='/shows/archive#deja-blue'
+          className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out 
+                     md:rotate-[-4deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 
+                     hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'
+        >
+          <Image
+            src='/gallery/db6.jpeg'
+            alt='Deja Blue performing live with a guitar at TinyStage'
+            fill
+            className='object-cover transition-transform duration-500 ease-in-out group-hover:scale-110'
+          />
+          <div className='absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent' />
+          <div className='absolute inset-0 bg-brand-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
+            <Play
+              className='h-16 w-16 text-brand-white drop-shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300'
+              fill='currentColor'
+            />
+          </div>
+          <div className='absolute bottom-0 left-0 p-6 w-full text-left'>
+            <h3 className='text-3xl font-bold text-brand-yellow drop-shadow-md transition-transform duration-300 group-hover:translate-x-1'>
+              Deja Blue
+            </h3>
+            <p className='mt-2 text-brand-gray-light max-w-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out delay-75'>
+              Electrifying, soulful vocals, songwriting, and raw, emotion-infused guitar and drums. This is Deja Blue!
+            </p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Card 2: Johnny Kocur */}
+      <div
+        className='w-full max-w-md md:absolute md:right-0 md:bottom-0 group motion-safe:animate-fadeIn'
+        style={{ animationDelay: '0.5s' }}
+      >
+        <Link
+          href='/shows/archive#johnny-kocur'
+          className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out
+                     md:rotate-[3deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 
+                     hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'
+        >
+          <Image
+            src='/images/MainKocur.jpg'
+            alt='Johnny Kocur playing an acoustic guitar at TinyStage'
+            fill
+            className='object-cover transition-transform duration-500 ease-in-out group-hover:scale-110'
+          />
+          <div className='absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent' />
+          <div className='absolute inset-0 bg-brand-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
+            <Play
+              className='h-16 w-16 text-brand-white drop-shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300'
+              fill='currentColor'
+            />
+          </div>
+          <div className='absolute bottom-0 left-0 p-6 w-full text-left'>
+            <h3 className='text-3xl font-bold text-brand-yellow drop-shadow-md transition-transform duration-300 group-hover:translate-x-1'>
+              Johnny Kocur
+            </h3>
+            <p className='mt-2 text-brand-gray-light max-w-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out delay-75'>
+              Masterful vocal performances and acoustic storytelling with intricate fingerpicking for a night of pop-R&B. This is Johnny Kocur!
+            </p>
+          </div>
+        </Link>
+      </div>
+    </div>
+
+    {/* CTA Button */}
+    <div
+      className='motion-safe:animate-fadeIn'
+      style={{ animationDelay: '0.7s' }}
+    >
+      <Link
+        href='/shows/archive'
+        className='group inline-flex items-center justify-center px-8 py-4 border border-brand-yellow text-lg font-medium rounded-md text-brand-yellow hover:bg-brand-yellow hover:text-brand-black shadow-lg transition-all duration-300 ease-out transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-offset-brand-black focus:ring-brand-yellow'
+      >
+        Explore All Past Shows
+        <ArrowRight className='ml-3 h-5 w-5 group-hover:animate-nudgeRight' />
+      </Link>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+  {/* Upcoming Shows Section */}
       <section className='relative py-20 md:py-28 bg-brand-black z-[1]'>
         <div className='container mx-auto px-4'>
           <div className='grid md:grid-cols-5 gap-12 items-center'>
@@ -131,80 +259,20 @@ const ShowsPage = () => {
         </div>
       </section>
 
-      {/* Featured Past Shows Section */}
-      <section className='relative py-20 md:py-28 bg-brand-gray-dark z-[1]'>
-        <div className='container mx-auto px-4 text-center'>
+
+
+
+
+   {/* Edge Bleed Effect */}
+        <div className='absolute -bottom-px left-0 w-full h-10 md:h-32 z-[1] overflow-hidden'>
           <div
-            className='max-w-3xl mx-auto mb-16 motion-safe:animate-fadeIn'
-            style={{ animationDelay: '0.1s' }}
-          >
-            <h2 className='text-3xl sm:text-4xl font-bold mb-4 text-brand-white'>
-              From the Archive
-            </h2>
-            <p className='text-lg md:text-xl text-brand-gray-light max-w-2xl mx-auto'>
-              Relive the moments that defined our stage. Here are a couple of
-              standout performances from our past shows.
-            </p>
-          </div>
-
-          <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12'>
-            <div
-              className='bg-brand-black/40 rounded-lg p-8 border border-brand-gray-dark/50 shadow-lg text-left motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.3s' }}
-            >
-              <h3 className='text-2xl font-bold text-brand-yellow mb-2'>
-                Deja Blue
-              </h3>
-              <p className='text-brand-gray-light leading-relaxed mb-6'>
-                An electrifying performance that blended soulful vocals with
-                raw, blues-infused guitar riffs, leaving the audience
-                spellbound.
-              </p>
-              <Link
-                href='/shows/archive#deja-blue'
-                className='font-semibold text-brand-white hover:text-brand-yellow transition-colors group inline-flex items-center'
-              >
-                Watch the Performance{' '}
-                <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
-              </Link>
-            </div>
-
-            <div
-              className='bg-brand-black/40 rounded-lg p-8 border border-brand-gray-dark/50 shadow-lg text-left motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.5s' }}
-            >
-              <h3 className='text-2xl font-bold text-brand-yellow mb-2'>
-                Johnny Kocur
-              </h3>
-              <p className='text-brand-gray-light leading-relaxed mb-6'>
-                A masterful display of acoustic storytelling. Johnny's
-                intricate fingerpicking and heartfelt lyrics created an
-                intimate, unforgettable evening.
-              </p>
-              <Link
-                href='/shows/archive#johnny-kocur'
-                className='font-semibold text-brand-white hover:text-brand-yellow transition-colors group inline-flex items-center'
-              >
-                Watch the Performance{' '}
-                <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
-              </Link>
-            </div>
-          </div>
-
-          <div
-            className='motion-safe:animate-fadeIn'
-            style={{ animationDelay: '0.7s' }}
-          >
-            <Link
-              href='/shows/archive'
-              className='group inline-flex items-center justify-center px-8 py-4 border border-brand-yellow text-lg font-medium rounded-md text-brand-yellow hover:bg-brand-yellow hover:text-brand-black shadow-lg transition-all duration-300 ease-out transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-offset-brand-black focus:ring-brand-yellow'
-            >
-              Explore All Past Shows
-              <ArrowRight className='ml-3 h-5 w-5 group-hover:animate-nudgeRight' />
-            </Link>
-          </div>
+            className="absolute bottom-0 left-0 w-full h-full bg-[url('/svg/edge-bleed.svg')] bg-repeat-x bg-bottom opacity-10"
+            style={{ backgroundSize: 'auto 100%' }}
+          />
         </div>
-      </section>
+
+
+
     </main>
   );
 };
