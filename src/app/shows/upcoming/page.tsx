@@ -84,12 +84,36 @@ const UpcomingShowPage = () => {
                 </div>
               </div>
               <div className='overflow-hidden'>
+                {/* --- THIS IS THE UPDATED PART --- */}
                 <div className='motion-safe:animate-slideUp' style={{ animationDelay: '0.6s' }}>
-                  <span className='block text-brand-yellow mt-4'>Ellis</span>
+                  <a
+                    href="https://www.instagram.com/_ellis_music/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-brand-yellow mt-4 hover:brightness-125 transition-all duration-300"
+                  >
+                    Ellis
+                  </a>
                 </div>
               </div>
             </h1>
-           
+            <div className='flex flex-wrap gap-4 mt-8 motion-safe:animate-fadeIn' style={{ animationDelay: '0.8s' }}>
+              <button className='group bg-brand-yellow text-brand-black px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-brand-yellow/20 flex items-center'>
+                <Ticket className='mr-3 w-5 h-5 group-hover:rotate-12 transition-transform' />
+                Notify Me
+              </button>
+              <button
+                onClick={() => setIsLiked(!isLiked)}
+                className={`group px-6 py-4 rounded-full border-2 transition-all duration-300 hover:scale-105 flex items-center ${
+                  isLiked
+                    ? 'border-brand-yellow bg-brand-yellow/10 text-brand-yellow'
+                    : 'border-white/30 text-white hover:border-brand-yellow hover:text-brand-yellow'
+                }`}
+              >
+                <Heart className={`w-5 h-5 mr-2 transition-all ${isLiked ? 'fill-current scale-110' : 'group-hover:scale-110'}`} />
+                {isLiked ? 'Liked' : 'Like'}
+              </button>
+            </div>
           </div>
         </div>
         <div className='absolute bottom-8 left-1/2 -translate-x-1/2 motion-safe:animate-bounce'>
@@ -125,7 +149,7 @@ const UpcomingShowPage = () => {
               <ul className='space-y-4 text-lg'>
                  {/* Details mapped here for brevity */}
                  <li className='flex items-start'><Calendar className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Date:</strong>Coming Soon</span></li>
-                 <li className='flex items-start'><MapPin className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Venue:</strong>FEED Media Downtown Arts Center, Erie, PA</span></li>
+                 <li className='flex items-start'><MapPin className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Venue:</strong>TinyStage, Erie, PA</span></li>
                  <li className='flex items-start'><MicVocal className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Genre:</strong>Acoustic | Alt-Rock | Emo-Pop</span></li>
                  <li className='flex items-start'><Guitar className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Accompaniment:</strong>Shawn Spencer (Guitar)</span></li>
               </ul>
