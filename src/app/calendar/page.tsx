@@ -1,7 +1,8 @@
 // src/app/calendar/page.tsx
-import ShowAccordion, { Show } from '@/components/ShowAccordion';
 import { CalendarDays } from 'lucide-react';
 import React from 'react';
+
+import ShowAccordion, { Show } from '@/components/ShowAccordion';
 
 export const metadata = {
   title: 'Show Schedule | TinyStage',

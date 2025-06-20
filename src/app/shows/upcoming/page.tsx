@@ -1,24 +1,23 @@
 // src/app/shows/upcoming/page.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import {
   Archive,
   ArrowLeft,
   Calendar,
+  ChevronDown,
+  Clock,
   Guitar,
+  Heart,
   MapPin,
   MicVocal,
   Music2,
   Ticket,
-  Heart,
-  Share2,
-  Clock,
   Users,
-  ChevronDown,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import React, { useEffect,useState } from 'react';
 
 // Enhanced mock data for the setlist
 const setlist = [
@@ -138,9 +137,9 @@ const UpcomingShowPage = () => {
         <div className='container mx-auto px-4'>
           <div className='grid lg:grid-cols-3 gap-12 items-start'>
             <div className='lg:col-span-2 space-y-6'>
-              <h2 className='text-3xl sm:text-4xl font-bold text-brand-white'>An Intimate Acoustic Experience</h2>
+              <h2 className='text-3xl sm:text-4xl font-bold text-brand-white'>An Intimate Acoustic Set</h2>
               <div className='prose prose-xl prose-invert max-w-none text-brand-gray-light leading-relaxed'>
-                <p><span className='text-brand-yellow font-semibold'>Ellis</span> (@_Ellis_Music) is an acoustic singer-songwriter from Erie, PA, whose raw honesty blurs the lines between alternative rock and emotional storytelling.</p>
+                <p><span className='text-brand-yellow font-semibold'>Ellis</span> (@_ellis_music) is singer-songwriter from Erie, PA, whose raw honesty blurs the lines between alternative rock and emotional storytelling.</p>
                 <p>Backed by guitarist <span className='font-medium text-white'>Shawn Spencer</span>, Ellis’s stripped-down live performances hit with emotional clarity—letting the lyrics lead.</p>
               </div>
             </div>
@@ -148,8 +147,8 @@ const UpcomingShowPage = () => {
               <h3 className='text-2xl font-bold text-brand-yellow mb-6'>Event Details</h3>
               <ul className='space-y-4 text-lg'>
                  {/* Details mapped here for brevity */}
-                 <li className='flex items-start'><Calendar className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Date:</strong>Coming Soon</span></li>
-                 <li className='flex items-start'><MapPin className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Venue:</strong>TinyStage, Erie, PA</span></li>
+                 <li className='flex items-start'><Calendar className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Date:</strong>06/27/2025</span></li>
+                 <li className='flex items-start'><MapPin className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Venue:</strong>FEED Media Downtown Arts Center</span></li>
                  <li className='flex items-start'><MicVocal className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Genre:</strong>Acoustic | Alt-Rock | Emo-Pop</span></li>
                  <li className='flex items-start'><Guitar className='w-6 h-6 mr-4 mt-1 text-brand-yellow/80' /><span><strong className='text-white block'>Accompaniment:</strong>Shawn Spencer (Guitar)</span></li>
               </ul>
