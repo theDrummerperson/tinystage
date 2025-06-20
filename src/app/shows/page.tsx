@@ -103,7 +103,7 @@ const ShowsPage = () => {
           </div>
           <div className='relative flex flex-col md:flex-row justify-center items-center gap-8 lg:gap-0 max-w-5xl mx-auto mb-16 min-h-[500px] md:min-h-[400px]'>
             <div className='w-full max-w-md md:absolute md:left-0 md:top-0 group motion-safe:animate-fadeIn' style={{ animationDelay: '0.3s' }}>
-              <Link href='/shows/archive#deja-blue' className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out md:rotate-[-4deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'>
+              <Link href='/artist/deja-blue' className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out md:rotate-[-4deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'>
                 <Image src='/gallery/db6.jpeg' alt='Deja Blue performing live with a guitar at TinyStage' fill className='object-cover transition-transform duration-500 ease-in-out group-hover:scale-110' />
                 <div className='absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent' />
                 <div className='absolute inset-0 bg-brand-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
@@ -116,7 +116,7 @@ const ShowsPage = () => {
               </Link>
             </div>
             <div className='w-full max-w-md md:absolute md:right-0 md:bottom-0 group motion-safe:animate-fadeIn' style={{ animationDelay: '0.5s' }}>
-              <Link href='/shows/archive#johnny-kocur' className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out md:rotate-[3deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'>
+              <Link href='/rartist/johnny-kocur' className='block relative aspect-video lg:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl transition-all duration-500 ease-out md:rotate-[3deg] md:hover:rotate-0 md:hover:scale-105 md:hover:z-10 hover:shadow-[0_0_45px_rgba(var(--brand-yellow-rgb),0.3)]'>
                 <Image src='/images/MainKocur.jpg' alt='Johnny Kocur playing an acoustic guitar at TinyStage' fill className='object-cover transition-transform duration-500 ease-in-out group-hover:scale-110' />
                 <div className='absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent' />
                 <div className='absolute inset-0 bg-brand-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
