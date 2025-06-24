@@ -5,7 +5,7 @@
 
 @import './colors.css'; /* Defines all var(--brand-...) and var(--brand-...-rgb) */
 /* Ensure Lobster is imported if still used, otherwise remove */
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap&family=Open+Sans:wght@300;400;600;700&display=swap'); 
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap&family=Open+Sans:wght@300;400;600;700&display=swap');
 
 /* Optional: Define font variables if you prefer to use them explicitly */
 /* :root {
@@ -20,8 +20,13 @@
   body {
     background-color: var(--brand-black);
     color: var(--text-color); /* Defaults to --brand-white */
-    font-family: theme('fontFamily.sans'); /* Explicitly use Tailwind's configured sans font */
-    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    font-family: theme(
+      'fontFamily.sans'
+    ); /* Explicitly use Tailwind's configured sans font */
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1,
+      'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -41,7 +46,7 @@
   select:focus {
     outline: none;
     border-color: var(--input-focus-border);
-    box-shadow: 
+    box-shadow:
       0 0 0 2px var(--brand-black),
       0 0 0 4px var(--input-focus-border),
       0 0 20px rgba(var(--brand-yellow-rgb), 0.3);
@@ -64,7 +69,7 @@
 }
 
 .archive-root {
-  --spacing: 8px; 
+  --spacing: 8px;
   padding: calc(var(--spacing) * 6) 0;
 }
 
@@ -73,14 +78,14 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: clamp(1.5rem, 4vw, 3rem);
   padding: 0 calc(var(--spacing, 8px) * 4); /* Use local --spacing or a global one if defined */
-  align-items: start; 
+  align-items: start;
 }
 
 .polaroid-frame {
-  padding: 12px; 
+  padding: 12px;
   padding-bottom: 40px;
   background: linear-gradient(145deg, var(--brand-white) 0%, #f8f8f8 100%);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(var(--brand-black-rgb), 0.3),
     0 2px 8px rgba(var(--brand-black-rgb), 0.2),
     inset 0 1px 0 rgba(var(--brand-white-rgb), 0.8);
@@ -89,7 +94,7 @@
 }
 .polaroid-frame:hover {
   transform: rotate(0deg) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 16px 48px rgba(var(--brand-black-rgb), 0.4),
     0 4px 16px rgba(var(--brand-black-rgb), 0.3),
     inset 0 1px 0 rgba(var(--brand-white-rgb), 0.9);
@@ -114,7 +119,12 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(var(--brand-white-rgb), 0.1), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(var(--brand-white-rgb), 0.1),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform 0.6s ease;
   z-index: -1;
@@ -125,7 +135,7 @@
 
 .gradient-overlay {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 0%,
     rgba(var(--brand-black-rgb), 0.1) 50%,
     rgba(var(--brand-black-rgb), 0.3) 100%
@@ -139,7 +149,7 @@
 
 .enhanced-focus:focus {
   outline: none;
-  box-shadow: 
+  box-shadow:
     0 0 0 2px var(--brand-black),
     0 0 0 4px var(--brand-yellow),
     0 0 20px rgba(var(--brand-yellow-rgb), 0.3);
@@ -155,8 +165,13 @@
 /* Removed @keyframes fadeInBasic as it should be in tailwind.config.js */
 
 @keyframes subtleGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(var(--brand-yellow-rgb), 0.1); }
-  50% { box-shadow: 0 0 40px rgba(var(--brand-yellow-rgb), 0.2); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(var(--brand-yellow-rgb), 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--brand-yellow-rgb), 0.2);
+  }
 }
 
 .space-y-fluid > * + * {
@@ -169,12 +184,30 @@
   background: rgba(var(--brand-gray-dark-rgb), 0.8);
 }
 
-.responsive-text-xl { font-size: clamp(1.125rem, 2.5vw, 1.5rem); line-height: 1.6; }
-.responsive-text-2xl { font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.4; }
-.responsive-text-3xl { font-size: clamp(1.875rem, 5vw, 2.5rem); line-height: 1.3; }
+.responsive-text-xl {
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  line-height: 1.6;
+}
+.responsive-text-2xl {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.4;
+}
+.responsive-text-3xl {
+  font-size: clamp(1.875rem, 5vw, 2.5rem);
+  line-height: 1.3;
+}
 
-.snap-x { scroll-snap-type: x mandatory; }
-.snap-center { scroll-snap-align: center; }
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+.snap-center {
+  scroll-snap-align: center;
+}
 
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

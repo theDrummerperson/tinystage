@@ -21,7 +21,7 @@ export default function ErrorPage({ error: currentError, reset }: ErrorProps) {
 
   return (
     <ErrorDisplay
-      title="Oops! System Glitch."
+      title='Oops! System Glitch.'
       message="An unexpected error occurred on our end. We're not sure what happened, but our circuits are definitely scrambled."
       showReset={true}
       reset={reset}

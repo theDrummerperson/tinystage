@@ -4,11 +4,11 @@ export interface ShowBase {
   id: string;
   title: string;
   performer: string; // Use 'performer' consistently
-  date: string;      // This is the primary date (e.g., "2025-05-02")
+  date: string; // This is the primary date (e.g., "2025-05-02")
   description?: string;
   thumbnailUrl: string;
   videoSlug?: string;
-  
+
   venueVibe?: string;
   tracklist?: string[];
   extendedBio?: string;
@@ -16,9 +16,9 @@ export interface ShowBase {
   headerImage?: string;
   genre?: string[];
   hometown?: string;
-  venue?: { 
+  venue?: {
     name: string;
-    address?: string; 
+    address?: string;
   };
   members?: string[];
   debutEP?: string;
@@ -33,7 +33,7 @@ export interface PastShow extends ShowBase {
   flyerImageAlt?: string; // Added, make optional if not always present
   artistPageLink?: string;
   featuredQuote?: string;
-  photos?: { url: string; alt: string; }[];
+  photos?: { url: string; alt: string }[];
   videoUrl?: string;
 }
 
@@ -45,7 +45,6 @@ export interface UpcomingShow extends ShowBase {
   priceRange?: string;
   status?: 'on-sale' | 'sold-out' | 'cancelled' | 'postponed' | 'tba';
 }
-
 
 // 4. Create a Union Type for any kind of show - THIS IS WHAT YOU'LL LIKELY IMPORT MOST OFTEN
 export type AnyShow = PastShow | UpcomingShow;
@@ -65,7 +64,7 @@ export const createSlug = (name: string, dateIsoString: string): string => {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-  const datePart = new Date(dateIsoString).toISOString().split('T')[0]; 
+  const datePart = new Date(dateIsoString).toISOString().split('T')[0];
   return `${namePart}-${datePart}`;
 };
 
@@ -74,7 +73,7 @@ export const formatDateForDisplay = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 };
 
@@ -82,20 +81,22 @@ export const formatTime = (dateString: string): string => {
   return new Date(dateString).toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
-    hour12: true
+    hour12: true,
   });
 };
 
 // --- Data Validation (Simplified example - expand as needed) ---
 export const validateShowData = (show: Partial<AnyShow>): string[] => {
   const errors: string[] = [];
-  
+
   if (!show.title?.trim()) errors.push('Show title is required');
   if (!show.performer?.trim()) errors.push('Performer name is required');
   // Add more common validations based on ShowBase
 
   if (!show.type) {
-    errors.push("Show type ('past' or 'upcoming') is required for full validation.");
+    errors.push(
+      "Show type ('past' or 'upcoming') is required for full validation.",
+    );
   } else if (show.type === 'past') {
     const pastShow = show as Partial<PastShow>;
     if (!pastShow.date) errors.push('Date is required for past shows');
@@ -105,6 +106,6 @@ export const validateShowData = (show: Partial<AnyShow>): string[] => {
     if (!upcomingShow.date) errors.push('Date is required for upcoming shows');
     // Add more UpcomingShow specific validations
   }
-  
+
   return errors;
 };

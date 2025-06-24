@@ -89,8 +89,8 @@ export default function Logo() {
       <div className='relative'>
         {/* Fill Text */}
         {/* Lobster is usually bold by nature, ensure it's the weight you want */}
-                <span
-                  className='
+        <span
+          className='
                     block
                     text-2xl 
                     font
@@ -102,13 +102,13 @@ export default function Logo() {
                   z-10
                   transition-colors duration-300 ease-in-out
                 '
-                >
-                  TinyStage
-                </span>
+        >
+          TinyStage
+        </span>
         {/* Outline - Using Text Stroke (preferred) or your layered span approach */}
         {/* Option 1: Text Stroke (add .text-stroke-1-brand-black utility) */}
         <span
-          aria-hidden="true" // Decorative
+          aria-hidden='true' // Decorative
           className='
           absolute inset-0
           block

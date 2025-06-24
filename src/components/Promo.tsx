@@ -26,7 +26,9 @@ export default function Promo() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % PROMO_IMAGES.length);
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % PROMO_IMAGES.length,
+      );
     }, IMAGE_CHANGE_INTERVAL);
 
     return () => clearInterval(timer); // Cleanup on component unmount
@@ -86,9 +88,7 @@ export default function Promo() {
                   sizes='(max-width: 768px) 100vw, 50vw'
                   className={cn(
                     'object-cover transition-opacity duration-1000 ease-in-out',
-                    index === currentImageIndex
-                      ? 'opacity-100'
-                      : 'opacity-0',
+                    index === currentImageIndex ? 'opacity-100' : 'opacity-0',
                   )}
                   priority={index === 0} // Prioritize loading the first image
                 />

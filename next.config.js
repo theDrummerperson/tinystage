@@ -38,7 +38,6 @@ const nextConfig = {
           dimensions: false,
           titleProp: true,
         },
-
       },
     );
 

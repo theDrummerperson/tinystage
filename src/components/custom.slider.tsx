@@ -1,6 +1,6 @@
-import React, { ReactNode,useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from 'react';
 
-import "./custom.slider.css";
+import './custom.slider.css';
 
 interface CustomCarouselProps {
   children: ReactNode[];
@@ -9,7 +9,9 @@ interface CustomCarouselProps {
 const CustomCarousel: React.FC<CustomCarouselProps> = ({ children }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [slideDone, setSlideDone] = useState<boolean>(true);
-  const [timeID, setTimeID] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [timeID, setTimeID] = useState<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const slideNext = React.useCallback((): void => {
     setActiveIndex((val) => (val >= children.length - 1 ? 0 : val + 1));
@@ -49,27 +51,27 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ children }) => {
 
   return (
     <div
-      className="container__slider"
+      className='container__slider'
       onMouseEnter={AutoPlayStop}
       onMouseLeave={AutoPlayStart}
     >
       {children.map((item, index) => (
         <div
-          className={"slider__item slider__item-active-" + (activeIndex + 1)}
+          className={'slider__item slider__item-active-' + (activeIndex + 1)}
           key={index}
         >
           {item}
         </div>
       ))}
 
-      <div className="container__slider__links">
+      <div className='container__slider__links'>
         {children.map((_, index) => (
           <button
             key={index}
             className={
               activeIndex === index
-                ? "container__slider__links-small container__slider__links-small-active"
-                : "container__slider__links-small"
+                ? 'container__slider__links-small container__slider__links-small-active'
+                : 'container__slider__links-small'
             }
             onClick={(e) => {
               e.preventDefault();
@@ -80,22 +82,22 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({ children }) => {
       </div>
 
       <button
-        className="slider__btn-next"
+        className='slider__btn-next'
         onClick={(e) => {
           e.preventDefault();
           slideNext();
         }}
       >
-        {">"}
+        {'>'}
       </button>
       <button
-        className="slider__btn-prev"
+        className='slider__btn-prev'
         onClick={(e) => {
           e.preventDefault();
           slidePrev();
         }}
       >
-        {"<"}
+        {'<'}
       </button>
     </div>
   );

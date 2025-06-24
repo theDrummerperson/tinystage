@@ -21,19 +21,19 @@ export const COMMON_GENRES = [
   'Psychedelic Rock',
   'Electronic',
   'Jazz',
-  'Blues'
+  'Blues',
 ] as const;
 
-export type Genre = typeof COMMON_GENRES[number];
+export type Genre = (typeof COMMON_GENRES)[number];
 
 // Venue constants
 export const VENUES = {
   FEED_MEDIA: {
-    name: "FEED Media Downtown Arts Center",
-    address: "Erie, PA"
+    name: 'FEED Media Downtown Arts Center',
+    address: 'Erie, PA',
   },
   TINYSTAGE: {
-    name: "TinyStage Listening Room", 
-    address: "Erie, PA"
-  }
+    name: 'TinyStage Listening Room',
+    address: 'Erie, PA',
+  },
 } as const;

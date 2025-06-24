@@ -37,7 +37,6 @@ type SubItem = {
   label: string;
 };
 
-
 export default function Header(): JSX.Element {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -159,10 +158,9 @@ export default function Header(): JSX.Element {
     if (isMobileMenuOpen) {
       document.addEventListener('keydown', handleKeydown);
       // Focus the close button or first item in the mobile menu when it opens
-      const firstFocusable =
-        mobileMenuRef.current?.querySelector<HTMLElement>(
-          'button[aria-label="Close menu"], a[href], button:not([disabled])',
-        );
+      const firstFocusable = mobileMenuRef.current?.querySelector<HTMLElement>(
+        'button[aria-label="Close menu"], a[href], button:not([disabled])',
+      );
       firstFocusable?.focus();
     }
 
@@ -174,9 +172,7 @@ export default function Header(): JSX.Element {
       container.querySelectorAll<HTMLElement>(
         'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
       ),
-    ).filter(
-      (el) => el.offsetParent !== null && !el.hasAttribute('disabled'),
-    ); // Filter out non-visible or disabled elements
+    ).filter((el) => el.offsetParent !== null && !el.hasAttribute('disabled')); // Filter out non-visible or disabled elements
   };
 
   const handleTabNavigation = (
@@ -200,7 +196,7 @@ export default function Header(): JSX.Element {
       }
     }
   };
-  
+
   const isActivePath = (href: string, exact = false) => {
     if (exact) {
       return pathname === href;
@@ -209,7 +205,6 @@ export default function Header(): JSX.Element {
     if (href === '/') return pathname === '/'; // Special case for home
     return pathname.startsWith(href);
   };
-
 
   return (
     <header
@@ -324,7 +319,9 @@ function DesktopNavigation({
   return (
     <nav className='hidden md:flex items-center space-x-1 lg:space-x-2'>
       {NAV_LINKS.map((item) => (
-        <div key={item.href} className='group relative mx-0.5 dropdown-trigger'> {/* Added dropdown-trigger */}
+        <div key={item.href} className='group relative mx-0.5 dropdown-trigger'>
+          {' '}
+          {/* Added dropdown-trigger */}
           {'subItems' in item && item.subItems ? (
             <DropdownNavItem
               item={item as NavLink & { subItems: ReadonlyArray<SubItem> }}
@@ -336,7 +333,10 @@ function DesktopNavigation({
               // No need for setOpenDropdown here, onToggle handles it
             />
           ) : (
-            <SimpleNavItem item={item} isActive={isActivePath(item.href, item.href === ("/" as string))} />
+            <SimpleNavItem
+              item={item}
+              isActive={isActivePath(item.href, item.href === ('/' as string))}
+            />
           )}
         </div>
       ))}
@@ -366,8 +366,13 @@ function DropdownNavItem({
         type='button'
         onClick={onToggle}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); }
-          if (e.key === 'Escape' && isOpen) { onToggle(); }
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggle();
+          }
+          if (e.key === 'Escape' && isOpen) {
+            onToggle();
+          }
         }}
         aria-haspopup='menu'
         aria-expanded={isOpen}
@@ -375,9 +380,11 @@ function DropdownNavItem({
         className={cn(
           'relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ease-out',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black',
-          isActive && !isOpen ? 'text-brand-yellow font-semibold' : 
-          isOpen ? 'text-brand-yellow bg-brand-gray-dark/30' : 
-          'text-brand-gray-light hover:text-brand-yellow hover:bg-brand-gray-dark/30',
+          isActive && !isOpen
+            ? 'text-brand-yellow font-semibold'
+            : isOpen
+              ? 'text-brand-yellow bg-brand-gray-dark/30'
+              : 'text-brand-gray-light hover:text-brand-yellow hover:bg-brand-gray-dark/30',
         )}
       >
         {item.label}
@@ -389,9 +396,13 @@ function DropdownNavItem({
           className={cn(
             'ml-1.5 transition-transform duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1.5)]',
             isOpen ? 'rotate-180' : '',
-            (isActive && !isOpen) || isOpen ? 'text-brand-yellow' : 'text-brand-gray-light group-hover:text-brand-yellow',
+            (isActive && !isOpen) || isOpen
+              ? 'text-brand-yellow'
+              : 'text-brand-gray-light group-hover:text-brand-yellow',
           )}
-        >▾</span>
+        >
+          ▾
+        </span>
       </button>
       {isOpen && (
         <DropdownPanel
@@ -413,7 +424,7 @@ function DropdownPanel({
 }: {
   item: NavLink & { subItems: ReadonlyArray<SubItem> };
   pathname: string;
-  isMounted: boolean; 
+  isMounted: boolean;
   onClose: () => void;
 }) {
   return (
@@ -435,7 +446,9 @@ function DropdownPanel({
       >
         <div className='w-3 h-3 bg-brand-gray-dark/95 rotate-45 transform origin-center -translate-y-1/2 shadow-[0_0_0_1px_rgba(var(--brand-gray-dark-rgb),0.5)]' />
       </div>
-      <ul className='p-1.5'> {/* Slightly more padding */}
+      <ul className='p-1.5'>
+        {' '}
+        {/* Slightly more padding */}
         {item.subItems.map((subItem, idx) => (
           <DropdownItem
             key={subItem.href}
@@ -464,7 +477,8 @@ function DropdownItem({
   index: number;
   onClose: () => void;
 }) {
-  const isActive = pathname === subItem.href || pathname.startsWith(subItem.href + '/');
+  const isActive =
+    pathname === subItem.href || pathname.startsWith(subItem.href + '/');
   return (
     <li>
       <Link
@@ -483,11 +497,15 @@ function DropdownItem({
           animationDelay: isMounted ? `${index * 35 + 20}ms` : '0ms', // Fine-tuned delay
         }}
       >
-        <span className={cn(
+        <span
+          className={cn(
             'absolute left-0 top-1/2 -translate-y-1/2 h-full w-1 bg-brand-yellow rounded-r-full transition-all duration-200 ease-out',
-            isActive ? 'opacity-100 scale-y-75' : 'opacity-0 scale-y-0 group-hover/subitem:opacity-100 group-hover/subitem:scale-y-50 group-focus-visible/subitem:opacity-100 group-focus-visible/subitem:scale-y-50'
-        )} />
-        <span className="ml-1.5">{subItem.label}</span>
+            isActive
+              ? 'opacity-100 scale-y-75'
+              : 'opacity-0 scale-y-0 group-hover/subitem:opacity-100 group-hover/subitem:scale-y-50 group-focus-visible/subitem:opacity-100 group-focus-visible/subitem:scale-y-50',
+          )}
+        />
+        <span className='ml-1.5'>{subItem.label}</span>
       </Link>
     </li>
   );
@@ -632,9 +650,9 @@ function MobileMenu({
       className={cn(
         'fixed inset-0 z-40 flex',
         isMobileMenuOpen
-          ? 'animate-fadeInBasic' 
+          ? 'animate-fadeInBasic'
           : isMounted
-            ? 'animate-fadeOutBasic pointer-events-none' 
+            ? 'animate-fadeOutBasic pointer-events-none'
             : 'opacity-0 pointer-events-none',
       )}
     >
@@ -673,8 +691,19 @@ function MobileMenu({
                 className='rounded-md p-2 text-brand-white transition-colors hover:bg-brand-gray-dark/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black'
                 aria-label='Close menu'
               >
-                <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2.5}>
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12'/>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='h-6 w-6'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M6 18L18 6M6 6l12 12'
+                  />
                 </svg>
               </button>
             </div>
@@ -694,10 +723,15 @@ function MobileMenu({
                 <li
                   className={cn(
                     'px-1 pt-6 pb-2',
-                    isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight',
+                    isMounted &&
+                      isMobileMenuOpen &&
+                      'motion-safe:animate-fadeInSlideRight',
                   )}
                   style={{
-                    animationDelay: isMounted && isMobileMenuOpen ? `${NAV_LINKS.length * 50 + 150}ms` : '0ms',
+                    animationDelay:
+                      isMounted && isMobileMenuOpen
+                        ? `${NAV_LINKS.length * 50 + 150}ms`
+                        : '0ms',
                   }}
                 >
                   <Link
@@ -720,7 +754,6 @@ function MobileMenu({
   );
 }
 
-
 function MobileMenuItem({
   item,
   index,
@@ -736,7 +769,8 @@ function MobileMenuItem({
   pathname: string;
   closeMobileMenu: () => void;
 }) {
-  const hasSubItems = 'subItems' in item && item.subItems && item.subItems.length > 0;
+  const hasSubItems =
+    'subItems' in item && item.subItems && item.subItems.length > 0;
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   // Check if the parent link or any of its sub-items are active
@@ -747,11 +781,13 @@ function MobileMenuItem({
     )
       return true;
     if (hasSubItems) {
-      return item.subItems.some(sub => pathname === sub.href || pathname.startsWith(sub.href + '/'));
+      return item.subItems.some(
+        (sub) => pathname === sub.href || pathname.startsWith(sub.href + '/'),
+      );
     }
     return false;
   }, [pathname, item, hasSubItems]);
-  
+
   const handleToggleOrNavigate = () => {
     if (hasSubItems) {
       setIsSubMenuOpen(!isSubMenuOpen);
@@ -765,15 +801,16 @@ function MobileMenuItem({
     <li
       className={cn(
         isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight', // Animate only when menu is opening
-        'border-b border-brand-gray-dark/30 last:border-b-0'
+        'border-b border-brand-gray-dark/30 last:border-b-0',
       )}
       style={{
-        animationDelay: isMounted && isMobileMenuOpen ? `${index * 50 + 80}ms` : '0ms',
+        animationDelay:
+          isMounted && isMobileMenuOpen ? `${index * 50 + 80}ms` : '0ms',
       }}
     >
       {hasSubItems ? (
         <button
-          type="button"
+          type='button'
           onClick={handleToggleOrNavigate}
           aria-expanded={isSubMenuOpen}
           aria-controls={`mobile-submenu-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
@@ -781,29 +818,31 @@ function MobileMenuItem({
             'flex w-full items-center justify-between rounded-md px-4 py-3.5 text-left text-base font-medium transition-colors duration-150 ease-out',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
             isActive && !hasSubItems // Active style for simple links
-              ? 'bg-brand-yellow/10 text-brand-yellow' 
+              ? 'bg-brand-yellow/10 text-brand-yellow'
               : isActive && hasSubItems // Active style for parent of active sub-item
-              ? 'text-brand-yellow'
-              : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow',
-            (isActive || isSubMenuOpen && hasSubItems) ? 'font-semibold' : 'font-medium' // Bolder if active or submenu open
+                ? 'text-brand-yellow'
+                : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow',
+            isActive || (isSubMenuOpen && hasSubItems)
+              ? 'font-semibold'
+              : 'font-medium', // Bolder if active or submenu open
           )}
         >
           {item.label}
           <svg
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns='http://www.w3.org/2000/svg'
             className={cn(
               'h-5 w-5 transform transition-transform duration-200 ease-out text-brand-gray-light group-hover:text-brand-yellow',
               (isActive || isSubMenuOpen) && '!text-brand-yellow', // Chevron color matches parent
-              isSubMenuOpen ? 'rotate-180' : 'rotate-0'
+              isSubMenuOpen ? 'rotate-180' : 'rotate-0',
             )}
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
+            viewBox='0 0 20 20'
+            fill='currentColor'
+            aria-hidden='true'
           >
             <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
+              fillRule='evenodd'
+              d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
+              clipRule='evenodd'
             />
           </svg>
         </button>
@@ -817,7 +856,7 @@ function MobileMenuItem({
             isActive
               ? 'bg-brand-yellow/10 text-brand-yellow'
               : 'text-brand-gray-light hover:bg-brand-gray-dark/60 hover:text-brand-yellow',
-            isActive ? 'font-semibold' : 'font-medium'
+            isActive ? 'font-semibold' : 'font-medium',
           )}
         >
           {item.label}
@@ -829,16 +868,30 @@ function MobileMenuItem({
           id={`mobile-submenu-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
           className={cn(
             'overflow-hidden transition-all duration-300 ease-out motion-safe:will-change-[max-height,opacity]',
-            isSubMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+            isSubMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0',
           )}
         >
-          <ul className="pl-5 pt-1.5 pb-2 space-y-1 border-l-2 border-brand-yellow/20 ml-4 my-1"> {/* Indent & style sub-menu */}
+          <ul className='pl-5 pt-1.5 pb-2 space-y-1 border-l-2 border-brand-yellow/20 ml-4 my-1'>
+            {' '}
+            {/* Indent & style sub-menu */}
             {item.subItems.map((subItem, subIdx) => {
-              const isSubItemActive = pathname === subItem.href || pathname.startsWith(subItem.href + '/');
+              const isSubItemActive =
+                pathname === subItem.href ||
+                pathname.startsWith(subItem.href + '/');
               return (
-                <li key={subItem.href} 
-                    className={cn(isMounted && isMobileMenuOpen && 'motion-safe:animate-fadeInSlideRight')} // Animate only when menu is opening
-                    style={{ animationDelay: isMounted && isMobileMenuOpen ? `${(index * 50 + 80) + (subIdx + 1) * 30}ms` : '0ms'}}
+                <li
+                  key={subItem.href}
+                  className={cn(
+                    isMounted &&
+                      isMobileMenuOpen &&
+                      'motion-safe:animate-fadeInSlideRight',
+                  )} // Animate only when menu is opening
+                  style={{
+                    animationDelay:
+                      isMounted && isMobileMenuOpen
+                        ? `${index * 50 + 80 + (subIdx + 1) * 30}ms`
+                        : '0ms',
+                  }}
                 >
                   <Link
                     href={subItem.href}
@@ -848,7 +901,7 @@ function MobileMenuItem({
                       'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-yellow focus-visible:ring-offset-1 focus-visible:ring-offset-brand-black',
                       isSubItemActive
                         ? 'bg-brand-yellow/15 text-brand-yellow font-medium'
-                        : 'text-brand-gray-light/80 hover:bg-brand-gray-dark/50 hover:text-brand-yellow'
+                        : 'text-brand-gray-light/80 hover:bg-brand-gray-dark/50 hover:text-brand-yellow',
                     )}
                   >
                     {subItem.label}

@@ -10,7 +10,14 @@ interface ErrorDisplayProps {
   icon?: React.ReactNode;
 }
 
-export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ title, message, showReset, reset, errorCode, icon }) => {
+export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
+  title,
+  message,
+  showReset,
+  reset,
+  errorCode,
+  icon,
+}) => {
   return (
     <div>
       {icon}

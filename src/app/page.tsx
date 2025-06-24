@@ -1,7 +1,7 @@
 // src/app/page.tsx
-'use client'; 
+'use client';
 
-import * as React from 'react'; 
+import * as React from 'react';
 
 import Booking from '@/components/Booking';
 import Hero from '@/components/Hero';
@@ -12,8 +12,8 @@ export default function HomePage() {
     <>
       <main>
         <Hero />
-        <Promo />      {/* <-- 2. Add the component here */}
-        <Booking /> 
+        <Promo /> {/* <-- 2. Add the component here */}
+        <Booking />
       </main>
     </>
   );
