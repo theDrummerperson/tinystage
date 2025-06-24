@@ -1,49 +1,51 @@
 // src/app/layout.tsx
 import { Metadata } from 'next';
-import * as React from 'react'; // Keep if needed for other React features
+import * as React from 'react';
 
 import '@/styles/globals.css';
-import '@/styles/colors.css'; // !STARTERCONF (as noted in your file)
+import '@/styles/colors.css';
 
 import Footer from '@/components/Footer';
-// --- IMPORT YOUR HEADER AND FOOTER ---
 import Header from '@/components/Header';
 
 import { siteConfig } from '@/constant/config';
 
 export const metadata: Metadata = {
-  // ... your existing metadata ...
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.title,
-    template: `%s | ${siteConfig.title}`,
+    default: 'TinyStage | Intimate Live Music in Erie, PA',
+    template: '%s | TinyStage',
   },
-  description: siteConfig.description,
+  description:
+    'TinyStage is Erie’s most intimate concert series—curated live performances spotlighting the city’s most compelling artists.',
   robots: { index: true, follow: true },
   icons: {
-    icon: '/favicon.ico', // Corrected path for favicon
-    shortcut: '/favicon.png', // Example
-    apple: '/apple-touch-icon.png', // Example
+    icon: '/favicon.ico',
+    shortcut: '/favicon.png',
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteName: siteConfig.title,
-    images: [`${siteConfig.url}/images/og.jpg`], // Ensure public/images/og.jpg exists
+    title: 'TinyStage | Intimate Live Music in Erie, PA',
+    description:
+      'Discover TinyStage, a live concert series amplifying local talent through stripped-down performances in intimate settings.',
+    siteName: 'TinyStage',
+    images: [`${siteConfig.url}/images/Logo2.png`],
     type: 'website',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [`${siteConfig.url}/images/twitter-tinystage.jpg`], // Ensure public/images/twitter-tinystage.jpg exists
-    // creator: '@YourTinyStageTwitterHandle',
+    title: 'TinyStage | Intimate Live Music in Erie, PA',
+    description:
+      'TinyStage brings stripped-down, heartfelt performances from Erie’s most powerful voices. Stream live or attend in person.',
+    images: [`${siteConfig.url}/images/Logo2.png`],
+    // creator: '@TinyStageErie', // Optional if you set up a Twitter handle
   },
   authors: [
     {
       name: 'TinyStage',
+      url: 'https://tinystage.live',
     },
   ],
   creator: 'TinyStage',
@@ -58,15 +60,10 @@ export default function RootLayout({
   return (
     <html lang='en' className='scroll-smooth'>
       <body className='bg-[var(--brand-black)] text-[var(--text-color)] antialiased'>
-        {/* Wrapper for sticky footer and overall page structure */}
         <div className='flex flex-col min-h-screen'>
-          <Header /> {/* <<< ADDED HEADER HERE */}
-          <main className='flex-grow'>
-            {' '}
-            {/* flex-grow makes main content take available space */}
-            {children}
-          </main>
-          <Footer /> {/* <<< ADDED FOOTER HERE */}
+          <Header />
+          <main className='flex-grow'>{children}</main>
+          <Footer />
         </div>
       </body>
     </html>
