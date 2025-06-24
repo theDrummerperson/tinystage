@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "check-all": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm test",
+    "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "test": "echo \"No tests defined yet\" && exit 0"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
