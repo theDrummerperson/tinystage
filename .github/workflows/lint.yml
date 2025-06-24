@@ -1,12 +1,12 @@
 name: Code Check
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request: {}
 
 concurrency:
-  group: ${{ github.job }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -18,19 +18,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🤌 Setup pnpm
-  uses: pnpm/action-setup@v4
-  with:
-    version: 10.9.0
-
-         
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.9.0              # ← your pnpm version
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: pnpm
 
-      - name: 📥 Download deps
+      - name: 📥 Install deps
         run: pnpm install --frozen-lockfile
 
       - name: 🔬 Lint
@@ -42,5 +40,5 @@ jobs:
       - name: 💅 Prettier check
         run: pnpm run format:check
 
-      - name: 🃏 Run jest
-        run: pnpm run test
+      - name: 🃏 Run Jest
+        run: pnpm run test --if-present
