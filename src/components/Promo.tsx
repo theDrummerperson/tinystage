@@ -17,7 +17,7 @@ const PROMO_IMAGES = [
     src: '/land/1.png',
     alt: 'An energetic band captivating Deja Blue at a TinyStage show.',
   },
-   {
+  {
     src: '/land/3.png',
     alt: 'Ellis performing at a TinyStage show.',
   },

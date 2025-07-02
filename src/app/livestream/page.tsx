@@ -57,23 +57,25 @@ const stepsData = [
   {
     icon: UserPlus,
     title: 'Step 1: Create a Bandcamp Account',
-    description: "If you don't already have one, sign up for a free fan account on Bandcamp. This is required to follow artists and get notifications.",
+    description:
+      "If you don't already have one, sign up for a free fan account on Bandcamp. This is required to follow artists and get notifications.",
     delay: '0.1s',
   },
   {
     icon: Rss,
     title: 'Step 2: Follow FEED on Bandcamp',
-    description: 'Visit our partner\'s page and click the "Follow" button. This ensures you\'ll be notified the moment the livestream begins.',
+    description:
+      'Visit our partner\'s page and click the "Follow" button. This ensures you\'ll be notified the moment the livestream begins.',
     delay: '0.3s',
   },
   {
     icon: Clapperboard,
     title: 'Step 3: Tune In on Show Night',
-    description: 'The livestream feed goes live at the same time as the performance. Check your email or Bandcamp feed for a direct link on the day of the show.',
+    description:
+      'The livestream feed goes live at the same time as the performance. Check your email or Bandcamp feed for a direct link on the day of the show.',
     delay: '0.5s',
   },
 ];
-
 
 const LivestreamPage = () => {
   return (
@@ -111,7 +113,10 @@ const LivestreamPage = () => {
       <section className='relative py-20 md:py-28 bg-brand-gray-dark'>
         <div className='container mx-auto px-4'>
           <div className='grid md:grid-cols-2 gap-12 lg:gap-16 items-center max-w-5xl mx-auto'>
-            <div className='motion-safe:animate-fadeIn' style={{ animationDelay: '0.2s' }}>
+            <div
+              className='motion-safe:animate-fadeIn'
+              style={{ animationDelay: '0.2s' }}
+            >
               <div className='bg-brand-black/30 p-8 rounded-lg border border-white/10 shadow-2xl flex justify-center'>
                 <Image
                   src='/images/feedlogo.png'
@@ -122,17 +127,45 @@ const LivestreamPage = () => {
                 />
               </div>
             </div>
-            <div className='text-lg text-brand-gray-light leading-relaxed space-y-4 motion-safe:animate-fadeIn' style={{ animationDelay: '0.4s' }}>
-              <h2 className='text-3xl font-bold text-brand-white mb-4'>A Dual Experience</h2>
-              <p>Every TinyStage performance is a unique event, happening live and in-person at the{' '}
-                <a href='https://feed.art' target='_blank' rel='noopener noreferrer' className='font-bold text-brand-yellow hover:underline'>FEED Media Arts Center</a>{' '}in Downtown Erie.</p>
-              <p>Through our partnership with FEED, we're proud to broadcast every show live, bringing the intimate energy of our stage to a global audience, for free.</p>
+            <div
+              className='text-lg text-brand-gray-light leading-relaxed space-y-4 motion-safe:animate-fadeIn'
+              style={{ animationDelay: '0.4s' }}
+            >
+              <h2 className='text-3xl font-bold text-brand-white mb-4'>
+                A Dual Experience
+              </h2>
+              <p>
+                Every TinyStage performance is a unique event, happening live
+                and in-person at the{' '}
+                <a
+                  href='https://feed.art'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-bold text-brand-yellow hover:underline'
+                >
+                  FEED Media Arts Center
+                </a>{' '}
+                in Downtown Erie.
+              </p>
+              <p>
+                Through our partnership with FEED, we're proud to broadcast
+                every show live, bringing the intimate energy of our stage to a
+                global audience, for free.
+              </p>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] text-brand-black">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[75px] sm:h-[100px] md:h-[120px]">
-            <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" className="fill-current"></path>
+        <div className='absolute bottom-0 left-0 w-full overflow-hidden leading-[0] text-brand-black'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 1200 120'
+            preserveAspectRatio='none'
+            className='relative block w-full h-[75px] sm:h-[100px] md:h-[120px]'
+          >
+            <path
+              d='M1200 120L0 16.48 0 0 1200 0 1200 120z'
+              className='fill-current'
+            ></path>
           </svg>
         </div>
       </section>
@@ -151,7 +184,7 @@ const LivestreamPage = () => {
             className='object-cover blur-sm brightness-100'
           />
         </div>
-        
+
         {/* Overlay is now separate from the image, can be adjusted independently */}
         <div className='absolute inset-0 bg-black/05' aria-hidden='true'></div>
 
@@ -164,7 +197,7 @@ const LivestreamPage = () => {
               Follow these simple steps to ensure you never miss a performance.
             </p>
           </div>
-          
+
           <ol className='space-y-8'>
             {stepsData.map((step, index) => (
               <LivestreamStep
@@ -179,7 +212,10 @@ const LivestreamPage = () => {
           </ol>
 
           {/* CTA Button */}
-          <div className='text-center mt-16 motion-safe:animate-fadeIn' style={{ animationDelay: '0.7s' }}>
+          <div
+            className='text-center mt-16 motion-safe:animate-fadeIn'
+            style={{ animationDelay: '0.7s' }}
+          >
             <Link
               href='https://feedart.bandcamp.com'
               target='_blank'

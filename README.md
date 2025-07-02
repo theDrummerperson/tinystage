@@ -41,3 +41,4 @@ git clone https://github.com/theDrummerperson/tinystage.git
 cd tinystage
 pnpm install
 pnpm dev
+```
