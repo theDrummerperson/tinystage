@@ -1,4 +1,5 @@
 import { CalendarDays } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
 
 import ShowAccordion, { Show } from '@/components/ShowAccordion';
@@ -58,16 +59,28 @@ const pastShows = allShows.filter((show) => show.status === 'Past');
 
 const SchedulePage = () => {
   return (
-    <main className='bg-brand-black py-20 md:py-28'>
-      <div className='container mx-auto px-4'>
-        <div className='text-center max-w-3xl mx-auto mb-16'>
-          <div className='inline-block p-4 bg-brand-gray-dark rounded-full mb-6'>
+    <main className='relative bg-brand-black pb-20 md:pb-28'>
+      {/* Background Image Layer */}
+      <Image
+        src='/images/ellis/livebg2.jpg'
+        alt='Ellis live performance background'
+        fill
+        className='w-full h-full object-cover object-center opacity-50 blur-[1.5px] brightness-[0.5]'
+        priority
+        sizes='100vw'
+      />
+
+      {/* Foreground Content */}
+      <div className='relative z-20 container mx-auto px-4'>
+        {/* Hero Header Section */}
+        <div className='text-center max-w-3xl mx-auto pt-32 md:pt-40 mb-16'>
+          <div className='inline-block p-4 bg-black/70 rounded-full mb-6 backdrop-blur-sm drop-shadow-md'>
             <CalendarDays className='w-12 h-12 text-brand-yellow' />
           </div>
-          <h1 className='text-4xl sm:text-5xl md:text-6xl font-bold text-brand-white leading-tight mb-4'>
+          <h1 className='text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-4 drop-shadow-xl'>
             Show Schedule
           </h1>
-          <p className='text-lg md:text-xl text-brand-gray-light'>
+          <p className='text-lg md:text-xl text-brand-gray-light drop-shadow-md'>
             A chronological list of our live performances. Click any show to
             expand for more details.
           </p>

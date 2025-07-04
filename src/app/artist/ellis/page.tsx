@@ -1,5 +1,6 @@
 // src/app/artists/ellis/page.tsx
 import React from 'react';
+
 import EllisClientPage from './EllisClientPage';
 
 export const metadata = {
