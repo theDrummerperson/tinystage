@@ -1,63 +1,65 @@
+// src/app/calendar/page.tsx
+'use client';
+
+// External Imports
 import { CalendarDays } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react';
+import { useState } from 'react';
 
-import ShowAccordion, { Show } from '@/components/ShowAccordion';
+// Assuming the component is at src/components/ShowAccordion.tsx
+import ShowAccordion, { Show } from '../../components/ShowAccordion';
 
-export const metadata = {
-  title: 'Show Schedule | TinyStage',
-  description:
-    'Explore the full schedule of upcoming and past shows at TinyStage. Find dates and get ready for the next live performance.',
-};
+// Use Show type from '../../components/ShowAccordion'
 
-// --- All Shows Data ---
-const allShows: Show[] = [
+// --- Static Shows Data (POPULATED) ---
+const staticShows: Show[] = [
   {
-    date: 'June 27, 2025',
     artist: 'Ellis',
+    date: '2024-06-27',
     status: 'Past',
-    imageSrc: '/images/ellis/main1.jpg',
+    imageSrc: '/images/ellis/main.jpg',
+    description:
+      'Raw honesty and emotional storytelling blur the lines between alternative rock and pure vulnerability. This show is now archived.',
+    highlights: ['Archived', 'Raw'],
     slug: '/artist/ellis',
-    venue: 'TinyStage Live',
-    genre: 'Acoustic / Emo-Pop',
-    duration: '~60 min',
-    description:
-      'Experience the raw, honest sound of Ellis in an intimate acoustic setting. A journey through heartbreak, healing, and everything in between.',
-    highlights: ['Acoustic Set', 'New Music', 'Intimate Venue'],
   },
   {
-    date: 'May 30, 2025',
-    artist: 'Johnny Kocur',
-    status: 'Past',
-    imageSrc: '/land/1.png',
-    slug: '/artist/johnny-kocur',
-    venue: 'TinyStage Live',
-    genre: 'Acoustic / Pop-R&B',
-    duration: '65 min',
-    description:
-      "Relive a masterful display of acoustic storytelling. Johnny's intricate fingerpicking and heartfelt lyrics created an unforgettable evening.",
-    highlights: ['Fan Favorites', 'Sold Out Show', 'Live Storytelling'],
-  },
-  {
-    date: 'May 2, 2025',
     artist: 'Deja Blue',
+    date: '2024-05-15',
     status: 'Past',
-    imageSrc: '/images/deja/5.jpg',
-    slug: '/artist/deja-blue',
-    venue: 'TinyStage Live',
-    genre: 'Blues-Rock / Soul',
-    duration: '75 min',
+    imageSrc: '/gallery/db6.jpeg',
     description:
-      'An electrifying performance that blended soulful vocals with raw, blues-infused guitar riffs, leaving the audience spellbound.',
-    highlights: ['High Energy', 'Soulful Vocals', 'Guitar Solos'],
+      'Electrifying, soulful vocals and raw, emotion-infused guitar and drums. This is Deja Blue!',
+    highlights: ['Archived', 'Soul'],
+    slug: '/artist/deja-blue',
+  },
+  {
+    artist: 'Johnny Kocur',
+    date: '2024-05-30',
+    status: 'Past', // 🚨 EDITED: Johnny Kocur moved to Past
+    imageSrc: '/images/MainKocur.jpg',
+    description:
+      'Masterful vocal performances and acoustic storytelling for a night of pop-R&B. Archived.',
+    highlights: ['Archived', 'Pop-R&B'],
+    slug: '/artist/johnny-kocur',
   },
 ];
 
-// --- Filtered Shows by Status ---
-const upcomingShows = allShows.filter((show) => show.status === 'Upcoming');
-const pastShows = allShows.filter((show) => show.status === 'Past');
-
+// --- MAIN PAGE COMPONENT ---
 const SchedulePage = () => {
+  const [loading] = useState(false);
+
+  // Combine static and dynamic shows
+  const allCombinedShows = [...staticShows];
+
+  // Filter shows based on status
+  // upcomingShows is now empty (length: 0)
+  const upcomingShows = allCombinedShows.filter(
+    (show) => show.status === 'Upcoming',
+  );
+  // pastShows now contains all three shows (length: 3)
+  const pastShows = allCombinedShows.filter((show) => show.status === 'Past');
+
   return (
     <main className='relative bg-brand-black pb-20 md:pb-28'>
       {/* Background Image Layer */}
@@ -86,21 +88,27 @@ const SchedulePage = () => {
           </p>
         </div>
 
-        {/* Upcoming Shows Section */}
-        {upcomingShows.length > 0 && (
-          <section className='mb-16'>
-            <h2 className='text-2xl font-bold text-brand-yellow mb-6 text-center'>
-              Upcoming Shows
+        {/* Loading State (Will not show as loading is false) */}
+        {loading && (
+          <div className='text-center text-brand-yellow/80 mt-10'>
+            <p>Loading full schedule...</p>
+          </div>
+        )}
+
+        {/* Fallback Message for NO upcoming shows (Upcoming section removed) */}
+        {!loading && upcomingShows.length === 0 && (
+          <section className='mb-20 mt-10'>
+            <h2 className='text-4xl font-extrabold text-brand-yellow mb-6 text-center tracking-wider'>
+              TinyStage Will Return Spring 2026!
             </h2>
-            <ShowAccordion shows={upcomingShows} />
           </section>
         )}
 
-        {/* Past Shows Section */}
-        {pastShows.length > 0 && (
-          <section>
+        {/* Past Shows Section (Archived) - Now visible and contains all 3 shows */}
+        {!loading && pastShows.length > 0 && (
+          <section className='mt-10'>
             <h2 className='text-2xl font-bold text-brand-yellow mb-6 text-center'>
-              Past Shows
+              Archived Shows
             </h2>
             <ShowAccordion shows={pastShows} />
           </section>
