@@ -1,5 +1,9 @@
 // src/lib/archive-data.ts
 interface Show {
+  artist: any;
+  imageSrc: any;
+  slug: any;
+  description: any;
   id: string;
   title: string;
   performer: string;
@@ -18,6 +22,10 @@ export async function loadShows(): Promise<Show[]> {
       date: '2023-11-15',
       thumbnail: '/img/shows/owl-session.jpg',
       excerpt: "Jazz trio's candlelit performance of Blue Note classics",
+      artist: undefined,
+      imageSrc: undefined,
+      slug: undefined,
+      description: undefined,
     },
     // ... more sample shows
   ];

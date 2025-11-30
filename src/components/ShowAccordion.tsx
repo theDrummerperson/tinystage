@@ -1,4 +1,5 @@
-// src/components/ShowAccordion.tsx
+// /Users/ilyasabukar/Development/Frontend/Nextjs_Projects/ts/tinystage/src/components/ShowAccordion.tsx
+
 'use client';
 
 import { ArrowRight, Calendar, ChevronDown, Play } from 'lucide-react';
@@ -6,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
-// Enhanced Show interface (remains the same)
+// Enhanced Show interface
 export interface Show {
   date: string;
   artist: string;
@@ -26,7 +27,9 @@ interface ShowAccordionProps {
   shows: Show[];
 }
 
+// 🚨 Define the component with the name that is exported (ShowAccordion)
 const ShowAccordion: React.FC<ShowAccordionProps> = ({ shows }) => {
+  // Find the index of the first upcoming show to default it to open
   const upcomingShowIndex = shows.findIndex(
     (show) => show.status === 'Upcoming',
   );
@@ -46,7 +49,7 @@ const ShowAccordion: React.FC<ShowAccordionProps> = ({ shows }) => {
 
         return (
           <div
-            key={show.artist}
+            key={show.artist + show.date} // Added date to key for uniqueness
             className={`bg-brand-gray-dark border border-white/10 rounded-xl transition-all duration-300 overflow-hidden ${
               isOpen
                 ? 'shadow-2xl shadow-brand-yellow/10 scale-[1.01]'
@@ -103,6 +106,7 @@ const ShowAccordion: React.FC<ShowAccordionProps> = ({ shows }) => {
                         alt={`Promotional image for ${show.artist}`}
                         fill
                         className='object-cover'
+                        sizes='(max-width: 1024px) 100vw, 40vw'
                       />
                       <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
                         <div className='bg-white/20 backdrop-blur-sm rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform'>
@@ -150,4 +154,4 @@ const ShowAccordion: React.FC<ShowAccordionProps> = ({ shows }) => {
   );
 };
 
-export default ShowAccordion;
+export default ShowAccordion; // 🚨 Correct export

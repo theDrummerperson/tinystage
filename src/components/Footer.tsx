@@ -1,392 +1,285 @@
-// src/components/Footer.tsx
 'use client';
 
-import classNames from 'classnames';
-import { AlertTriangle, CheckCircle, Loader2, Mail, Send } from 'lucide-react'; // Using more icons
-import React, { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertCircle,
+  ArrowRight,
+  Check,
+  Facebook,
+  Instagram,
+  Loader2,
+  Mail,
+  Youtube,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
 
-import Logo from '@/components/Logo'; // Assuming Logo.tsx is well-styled
-
-// --- SVG Icon Components (Kept as is from your example, they are good) ---
-const FacebookIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    viewBox='0 0 24 24'
-    fill='currentColor'
-    aria-hidden='true'
-  >
-    <path d='M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z' />
-  </svg>
-);
-const YouTubeIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    viewBox='0 0 24 24'
-    fill='currentColor'
-    aria-hidden='true'
-  >
-    <path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' />
-  </svg>
-);
-const InstagramIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    viewBox='0 0 24 24'
-    fill='currentColor'
-    aria-hidden='true'
-  >
-    <path d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z' />
-  </svg>
-);
-
-type SocialIconComponent = React.FC<{ className?: string }>;
-
-const socialLinksData: {
-  name: string;
-  url: string;
-  icon: SocialIconComponent;
-  ariaLabel: string;
-}[] = [
+// --- Configuration ---
+const SOCIAL_LINKS = [
   {
     name: 'Facebook',
-    url: 'https://www.facebook.com/tinystageerie',
-    icon: FacebookIcon,
-    ariaLabel: 'TinyStage on Facebook',
-  },
-  {
-    name: 'YouTube',
-    url: 'https://www.youtube.com/GetTiny',
-    icon: YouTubeIcon,
-    ariaLabel: 'TinyStage on YouTube',
+    href: 'https://www.facebook.com/tinystageerie',
+    icon: Facebook,
   },
   {
     name: 'Instagram',
-    url: 'https://www.instagram.com/tinystage_erie',
-    icon: InstagramIcon,
-    ariaLabel: 'TinyStage on Instagram',
-  }, // Changed to https
+    href: 'https://www.instagram.com/tinystage_erie',
+    icon: Instagram,
+  },
+  { name: 'YouTube', href: 'https://www.youtube.com/GetTiny', icon: Youtube },
 ];
 
-// Define a type for newsletter status messages for better type safety
-type NewsletterMessage = {
-  text: string;
-  type: 'success' | 'error';
-  icon: React.ElementType;
+const NAV_COLUMNS = [
+  {
+    title: 'Discover',
+    links: [
+      { label: 'About Us', href: '/about' },
+      { label: 'Show Schedule', href: '/calendar' },
+      { label: 'Past Performances', href: '/shows' },
+    ],
+  },
+  {
+    title: 'Support',
+    links: [
+      { label: 'Get Involved', href: '/support' },
+      { label: 'Merchandise', href: '/merch' },
+      { label: 'Contact', href: 'mailto:thetinystage@gmail.com' },
+    ],
+  },
+];
+
+// --- Animation Variants ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
 };
 
-const newsletterMessages: Record<'success' | 'error', NewsletterMessage> = {
-  success: {
-    text: 'Thanks for subscribing! Keep an eye on your inbox.',
-    type: 'success',
-    icon: CheckCircle,
-  },
-  error: {
-    text: 'Something went wrong. Please try again later.',
-    type: 'error',
-    icon: AlertTriangle,
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 export default function Footer() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterStatus, setNewsletterStatus] = useState<
-    'idle' | 'submitting' | 'success' | 'error'
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
   >('idle');
-  const [currentMessage, setCurrentMessage] =
-    useState<NewsletterMessage | null>(null);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
 
-  // Effect to handle display and clearing of newsletter messages
-  useEffect(() => {
-    if (newsletterStatus === 'success' || newsletterStatus === 'error') {
-      setCurrentMessage(newsletterMessages[newsletterStatus]);
-      const timer = setTimeout(() => {
-        setCurrentMessage(null); // Start fade out
-        // Optionally reset status to idle after fade out completes if needed by other logic
-        // setTimeout(() => setNewsletterStatus('idle'), 500); // Match fade out duration
-      }, 3000); // Message visible for 3s
-      return () => clearTimeout(timer);
-    } else if (newsletterStatus === 'idle') {
-      setCurrentMessage(null); // Clear message when idle
-    }
-  }, [newsletterStatus]);
+    setStatus('loading');
 
-  const handleNewsletterSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if (!newsletterEmail.trim() || newsletterStatus === 'submitting') return;
+    // Simulate API call
+    setTimeout(() => {
+      // randomly succeed or fail for demo
+      const isSuccess = Math.random() > 0.1;
+      setStatus(isSuccess ? 'success' : 'error');
+      if (isSuccess) setEmail('');
 
-      setNewsletterStatus('submitting');
-      setCurrentMessage(null); // Clear previous messages
-
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-        // const response = await fetch('/api/newsletter', { /* ... */ });
-        // if (!response.ok) throw new Error('Subscription failed');
-        const simulatedApiSuccess = Math.random() > 0.2; // Simulate 80% success rate
-
-        if (simulatedApiSuccess) {
-          setNewsletterStatus('success');
-          setNewsletterEmail('');
-        } else {
-          setNewsletterStatus('error');
-        }
-      } catch (error) {
-        setNewsletterStatus('error');
-      } finally {
-        // If not success/error, reset to idle. Success/error handled by useEffect.
-        if (newsletterStatus !== 'success' && newsletterStatus !== 'error') {
-          setNewsletterStatus('idle');
-        }
-      }
-    },
-    [newsletterEmail, newsletterStatus],
-  );
-
-  const getAnimationClasses = (
-    baseClasses: string,
-    activeClasses: string,
-    initialClasses: string,
-    delayClass = '', // Added delayClass
-  ) => {
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      return classNames(
-        baseClasses.split(' ')[0],
-        isMounted ? 'opacity-100' : 'opacity-0',
-        'transition-opacity duration-500',
-      );
-    }
-    return classNames(
-      baseClasses,
-      isMounted ? activeClasses : initialClasses,
-      isMounted ? delayClass : '',
-    );
+      // Reset after delay
+      setTimeout(() => setStatus('idle'), 3000);
+    }, 1500);
   };
 
-  const entryAnimateBase =
-    'transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1.2)]';
-  const entryAnimateActive = 'opacity-100 translate-y-0 scale-100';
-  const entryAnimateInitial = 'opacity-0 translate-y-6 scale-95';
-
   return (
-    <footer className='relative overflow-hidden bg-brand-black text-brand-white py-20 sm:py-28 lg:py-32 isolate'>
-      {/* Enhanced Background: Subtle animated gradient overlay */}
-      <div
-        aria-hidden='true'
-        className='absolute inset-0 -z-10 opacity-50 mix-blend-soft-light motion-safe:animate-[pulse_20s_cubic-bezier(0.4,0,0.6,1)_infinite]'
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at top left, var(--brand-yellow), transparent 40%), radial-gradient(circle at bottom right, var(--brand-blue, var(--brand-yellow)), transparent 40%)', // Assuming a --brand-blue or fallback
-        }}
-      />
-      <div
-        aria-hidden='true'
-        className='absolute inset-0 z-0 opacity-[0.03] motion-safe:animate-subtleBgDrift'
-        style={{
-          backgroundImage: 'url(/svg/bg-dark-noise.svg)', // Assuming a subtle noise SVG
-          backgroundSize: '300px', // smaller size for more noticeable drift
-          mixBlendMode: 'overlay',
-        }}
-      />
+    <footer className='relative bg-neutral-950 text-white overflow-hidden pt-24 pb-12 selection:bg-yellow-500/30'>
+      {/* --- Cinematic Background --- */}
+      <div className='absolute inset-0 pointer-events-none'>
+        {/* Top Gradient Fade */}
+        <div className='absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-neutral-950 to-transparent z-10' />
 
-      <div className='relative z-10 container mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='grid grid-cols-1 gap-y-16 gap-x-12 md:grid-cols-3 lg:gap-x-16'>
-          {/* Column 1: Brand Identity */}
-          <div
-            className={classNames(
-              'space-y-6',
-              getAnimationClasses(
-                entryAnimateBase,
-                entryAnimateActive,
-                entryAnimateInitial,
-                'delay-100',
-              ),
-            )}
-          >
-            <div className='inline-block group focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-yellow focus-within:ring-offset-4 focus-within:ring-offset-brand-black rounded-sm'>
-              <Logo /> {/* Assuming Logo is a Link */}
-            </div>
-            <p className='max-w-xs text-sm leading-relaxed text-brand-gray-light opacity-90'>
-              Erie's premier intimate concert series, celebrating diverse
-              musical talent and fostering community through the power of live
-              music.
-            </p>
-          </div>
+        {/* Animated Aurora Gradients */}
+        <div className='absolute bottom-0 left-0 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[120px] mix-blend-screen animate-pulse duration-[10s]' />
+        <div className='absolute top-1/2 right-0 w-[400px] h-[400px] bg-purple-900/10 rounded-full blur-[100px] mix-blend-screen' />
 
-          {/* Column 2: Connect */}
-          <div
-            className={classNames(
-              'space-y-6',
-              getAnimationClasses(
-                entryAnimateBase,
-                entryAnimateActive,
-                entryAnimateInitial,
-                'delay-200',
-              ),
-            )}
+        {/* Noise Texture */}
+        <div
+          className='absolute inset-0 opacity-[0.03] mix-blend-overlay'
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
+      </div>
+
+      <div className='container relative z-20 mx-auto px-4 md:px-6'>
+        <motion.div
+          variants={containerVariants}
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true, margin: '-100px' }}
+          className='grid lg:grid-cols-12 gap-12 lg:gap-8 mb-20'
+        >
+          {/* Brand Column */}
+          <motion.div
+            variants={itemVariants}
+            className='lg:col-span-4 space-y-6'
           >
-            <h3 className="text-lg font-semibold tracking-tight text-brand-white relative pb-2 mb-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-10 after:h-0.5 after:bg-brand-yellow/70">
-              Get In Touch
-            </h3>
-            <ul className='space-y-3 text-sm'>
-              <li>
-                <a
-                  href='mailto:thetinystage@gmail.com'
-                  className='group inline-flex items-center text-brand-gray-light transition-colors duration-200 ease-out hover:text-brand-yellow focus:outline-none focus-visible:text-brand-yellow rounded-sm'
-                >
-                  <Mail
-                    size={16}
-                    className='mr-2.5 opacity-70 group-hover:opacity-100 transition-opacity'
+            <Link href='/' className='inline-block group'>
+              <div className='flex items-center gap-3'>
+                <div className='relative w-10 h-10 transition-transform duration-500 group-hover:rotate-12'>
+                  <Image
+                    src='/images/Logo2.png'
+                    alt='TinyStage Logo'
+                    fill
+                    className='object-contain'
                   />
-                  thetinystage@gmail.com
-                </a>
-              </li>
-              <li>
-                <div className='flex items-center space-x-3 pt-2'>
-                  {socialLinksData.map((social) => (
-                    <a
-                      key={social.name}
-                      href={social.url}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      aria-label={social.ariaLabel}
-                      className='text-brand-gray-light transition-all duration-200 ease-out hover:text-brand-yellow hover:scale-110 transform focus:outline-none focus-visible:rounded-full focus-visible:text-brand-yellow focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-brand-black p-1 -m-1' // Added padding for larger click target
-                    >
-                      <social.icon className='h-5 w-5' />
-                    </a>
-                  ))}
                 </div>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Stay Updated (Newsletter) */}
-          <div
-            className={classNames(
-              'space-y-6',
-              getAnimationClasses(
-                entryAnimateBase,
-                entryAnimateActive,
-                entryAnimateInitial,
-                'delay-300',
-              ),
-            )}
-          >
-            <h3 className="text-lg font-semibold tracking-tight text-brand-white relative pb-2 mb-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-10 after:h-0.5 after:bg-brand-yellow/70">
-              Stay Updated
-            </h3>
-            <form className='space-y-3' onSubmit={handleNewsletterSubmit}>
-              <div className='relative flex group focus-within:ring-2 focus-within:ring-brand-yellow focus-within:ring-offset-2 focus-within:ring-offset-brand-black rounded-md transition-shadow focus-within:shadow-lg focus-within:shadow-brand-yellow/20'>
-                <label htmlFor='footer-email' className='sr-only'>
-                  Your email address
-                </label>
-                <input
-                  id='footer-email'
-                  type='email'
-                  name='email'
-                  required
-                  autoComplete='email'
-                  placeholder='your.email@example.com'
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  disabled={newsletterStatus === 'submitting'}
-                  className='w-full min-w-0 flex-auto appearance-none rounded-l-md border-0 bg-brand-gray-dark/70 px-4 py-2.5 text-sm text-brand-white placeholder-brand-gray-medium shadow-sm transition-colors duration-200 ease-out focus:bg-brand-gray-dark focus:placeholder-brand-gray-light focus:ring-0 focus:outline-none disabled:opacity-60'
-                />
-                <button
-                  type='submit'
-                  disabled={
-                    newsletterStatus === 'submitting' || !newsletterEmail.trim()
-                  }
-                  className='relative shrink-0 rounded-r-md bg-brand-yellow px-4 py-2.5 text-sm font-bold text-brand-black shadow-sm transition-all duration-200 ease-out hover:brightness-110 active:brightness-95 focus:outline-none disabled:bg-brand-yellow/50 disabled:text-brand-black/70 disabled:cursor-not-allowed flex items-center justify-center'
-                  style={{ minWidth: '5rem' }} // Ensure button has some width for spinner
+                <span className='font-serif text-2xl font-bold tracking-tight text-white group-hover:text-yellow-500 transition-colors'>
+                  TinyStage
+                </span>
+              </div>
+            </Link>
+            <p className='text-neutral-400 leading-relaxed max-w-sm'>
+              Erie's premier intimate concert series. Celebrating diverse
+              musical talent and fostering community through the raw power of
+              live performance.
+            </p>
+            <div className='flex items-center gap-4'>
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='p-2 rounded-full bg-white/5 border border-white/5 text-neutral-400 hover:text-white hover:bg-yellow-500 hover:border-yellow-500 transition-all duration-300 group'
+                  aria-label={`Follow us on ${social.name}`}
                 >
-                  {newsletterStatus === 'submitting' ? (
-                    <Loader2
-                      size={18}
-                      className='animate-spin'
-                      aria-label='Submitting'
-                    />
-                  ) : (
-                    <Send
-                      size={16}
-                      className='transform transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5'
-                    /> // Subtle icon animation on button hover
-                  )}
-                  <span className='ml-2 hidden sm:inline'>
-                    {newsletterStatus === 'submitting' ? 'Wait...' : 'Join'}
-                  </span>
-                </button>
-              </div>
+                  <social.icon className='w-5 h-5 transition-transform group-hover:scale-110' />
+                </a>
+              ))}
+            </div>
+          </motion.div>
 
-              <div className='h-6 relative'>
-                {' '}
-                {/* Fixed height for message area to prevent layout shifts */}
-                {currentMessage && (
-                  <p
-                    className={classNames(
-                      'absolute inset-x-0 bottom-0 flex items-center text-xs transition-all duration-500 ease-out',
-                      currentMessage.type === 'success'
-                        ? 'text-green-400'
-                        : 'text-red-400',
-                      isMounted &&
-                        newsletterStatus !== 'idle' &&
-                        newsletterStatus !== 'submitting'
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 -translate-y-2', // Animate in/out
-                    )}
-                  >
-                    <currentMessage.icon
-                      size={14}
-                      className='mr-1.5 shrink-0'
-                    />
-                    {currentMessage.text}
-                  </p>
-                )}
-                {newsletterStatus === 'idle' &&
-                  !newsletterEmail.trim() &&
-                  !currentMessage && (
-                    <p className='absolute inset-x-0 bottom-0 text-xs leading-normal text-brand-gray-medium opacity-70 motion-safe:animate-fadeInBasic'>
-                      Latest shows, artist spotlights, community news.
-                    </p>
-                  )}
+          {/* Navigation Columns */}
+          <motion.div
+            variants={itemVariants}
+            className='lg:col-span-4 grid grid-cols-2 gap-8'
+          >
+            {NAV_COLUMNS.map((col) => (
+              <div key={col.title}>
+                <h3 className='font-serif text-lg font-semibold text-white mb-6 relative inline-block'>
+                  {col.title}
+                  <span className='absolute -bottom-2 left-0 w-8 h-0.5 bg-yellow-500 rounded-full' />
+                </h3>
+                <ul className='space-y-3'>
+                  {col.links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className='text-neutral-400 hover:text-yellow-500 transition-colors text-sm font-medium inline-flex items-center group'
+                      >
+                        <span className='w-0 overflow-hidden transition-all duration-300 group-hover:w-3 opacity-0 group-hover:opacity-100 text-yellow-500 mr-0 group-hover:mr-1'>
+                          •
+                        </span>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </form>
-          </div>
-        </div>
+            ))}
+          </motion.div>
+
+          {/* Newsletter Column */}
+          <motion.div variants={itemVariants} className='lg:col-span-4'>
+            <div className='bg-neutral-900/50 border border-white/5 rounded-2xl p-6 md:p-8 backdrop-blur-sm'>
+              <h3 className='font-serif text-xl font-semibold text-white mb-2'>
+                Join the Inner Circle
+              </h3>
+              <p className='text-neutral-400 text-sm mb-6'>
+                Get early access to tickets, exclusive artist interviews, and
+                behind-the-scenes content.
+              </p>
+
+              <form onSubmit={handleSubscribe} className='relative'>
+                <div className='relative group'>
+                  <Mail className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 group-focus-within:text-yellow-500 transition-colors' />
+                  <input
+                    type='email'
+                    placeholder='your.email@example.com'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={status === 'loading' || status === 'success'}
+                    className='w-full bg-neutral-950 border border-white/10 rounded-xl py-3 pl-10 pr-12 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all'
+                    required
+                  />
+                  <button
+                    type='submit'
+                    disabled={status === 'loading' || status === 'success'}
+                    className='absolute right-1.5 top-1.5 p-1.5 rounded-lg bg-yellow-500 text-neutral-950 hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                  >
+                    {status === 'loading' ? (
+                      <Loader2 className='w-4 h-4 animate-spin' />
+                    ) : (
+                      <ArrowRight className='w-4 h-4' />
+                    )}
+                  </button>
+                </div>
+
+                {/* Status Feedback */}
+                <AnimatePresence>
+                  {status === 'success' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className='absolute top-full left-0 mt-2 flex items-center gap-2 text-xs text-green-400 font-medium'
+                    >
+                      <Check className='w-3 h-3' />
+                      <span>You're on the list!</span>
+                    </motion.div>
+                  )}
+                  {status === 'error' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className='absolute top-full left-0 mt-2 flex items-center gap-2 text-xs text-red-400 font-medium'
+                    >
+                      <AlertCircle className='w-3 h-3' />
+                      <span>Something went wrong. Try again.</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </form>
+            </div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom Bar */}
-        <div
-          className={classNames(
-            'mt-20 sm:mt-24 border-t border-brand-gray-dark/50 pt-8 text-center',
-            getAnimationClasses(
-              entryAnimateBase,
-              entryAnimateActive,
-              entryAnimateInitial,
-              'delay-[400ms]',
-            ), // Use array for Tailwind JIT
-          )}
+        <motion.div
+          variants={itemVariants}
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true }}
+          className='pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500'
         >
-          <p className='text-xs text-brand-gray-medium opacity-80'>
+          <p>
             © {new Date().getFullYear()} TinyStage Concert Series. All rights
-            reserved. Site by{' '}
-            <a
-              href='https://yourname.com'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='font-medium hover:text-brand-yellow transition-colors'
-            >
-              Your Name
-            </a>
-            .
+            reserved.
           </p>
-        </div>
+          <div className='flex items-center gap-6'>
+            <Link href='#' className='hover:text-yellow-500 transition-colors'>
+              Privacy Policy
+            </Link>
+            <Link href='#' className='hover:text-yellow-500 transition-colors'>
+              Terms of Service
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </footer>
   );

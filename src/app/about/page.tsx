@@ -1,203 +1,270 @@
-// src/app/about/page.tsx
-import { ArrowRight, Globe, HandHeart, Ticket } from 'lucide-react'; // CORRECTED: HandHeart instead of HeartHand
+'use client';
+
+import { motion, Variants } from 'framer-motion';
+import {
+  ArrowRight,
+  Globe,
+  HandHeart,
+  Mic2,
+  Sparkles,
+  Ticket,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-export const metadata = {
-  title: 'About TinyStage | Local Sound, Global Stage',
-  description:
-    'Learn about TinyStage, our mission to amplify underrepresented artists in Erie, PA, and how we bring local brilliance to the world.',
+// Animation Variants
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
 };
 
 const AboutPage = () => {
   return (
-    <main className='overflow-hidden relative'>
-      {/* Hero Section */}
-      <section className='relative py-20 md:py-32 text-center bg-radial-gradient'>
-        {/* Background Elements */}
+    <main className='relative min-h-screen bg-neutral-950 text-white overflow-x-hidden selection:bg-yellow-500/30'>
+      {/* --- Global Background Ambience --- */}
+      <div className='fixed inset-0 z-0 pointer-events-none'>
+        {/* Background Image/Gradient Layer */}
+        <div className='absolute inset-0 z-0'>
+          <div className='absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/80 to-neutral-950' />
+          {/* Subtle animated orb */}
+          <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[120px] animate-pulse duration-[8s]' />
+          <div className='absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px]' />
+        </div>
+
+        {/* Noise Texture */}
         <div
-          className='absolute inset-0 flex items-center justify-center z-[0] overflow-hidden pointer-events-none'
-          aria-hidden='true'
-        >
-          <div
-            className="w-[calc(100vw_-_40px)] h-[calc(100vw_-_40px)] sm:w-[700px] sm:h-[700px] md:w-[800px] md:h-[800px] lg:w-[900px] lg:h-[900px] bg-[url('/svg/4.svg')] bg-contain bg-no-repeat bg-center motion-safe:animate-cosmicPulse"
-            style={{ animationDelay: '0.3s' }}
-          />
-        </div>
-        <div className='absolute inset-0 bg-gradient-radial from-brand-gray-dark/15 via-brand-black/70 to-brand-black opacity-95 z-[1]' />
+          className='absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none'
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        ></div>
+      </div>
 
-        {/* Hero Content */}
-        <div className='container mx-auto px-4 relative z-[2]'>
-          <div className='max-w-4xl mx-auto space-y-8 mb-12'>
-            <h1 className='text-5xl sm:text-6xl md:text-7xl font-bold text-brand-white leading-tight'>
-              <span
-                className='block tracking-tight motion-safe:animate-fadeIn'
-                style={{ animationDelay: '0.1s' }}
-              >
-                Local sound.
-              </span>
-              <span className='block text-brand-yellow mt-4 motion-safe:animate-textReveal'>
-                Global stage.
-              </span>
-            </h1>
-
-            <div
-              className='border-l-2 border-brand-yellow pl-6 ml-4 max-w-2xl mx-auto motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.7s' }}
+      <div className='relative z-10 container mx-auto px-4 sm:px-6 lg:px-8'>
+        {/* --- Hero Section --- */}
+        <section className='pt-32 md:pt-48 pb-20 md:pb-32 text-center max-w-5xl mx-auto'>
+          <motion.div
+            initial='hidden'
+            animate='visible'
+            variants={staggerContainer}
+          >
+            {/* Eyebrow */}
+            <motion.div
+              variants={fadeInUp}
+              className='flex justify-center mb-6'
             >
-              <p className='text-xl md:text-2xl text-brand-gray-light italic'>
+              <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md'>
+                <div className='w-2 h-2 rounded-full bg-yellow-500 animate-pulse' />
+                <span className='text-xs font-bold text-neutral-300 tracking-widest uppercase'>
+                  Our Mission
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1
+              variants={fadeInUp}
+              className='text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 font-serif leading-[1.1]'
+            >
+              Local Sound. <br />
+              <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-200 to-yellow-500 bg-[length:200%_auto] animate-shine'>
+                Global Stage.
+              </span>
+            </motion.h1>
+
+            {/* Divider */}
+            <motion.div
+              variants={fadeInUp}
+              className='w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent mx-auto mb-10'
+            />
+
+            {/* Main Description */}
+            <motion.div
+              variants={fadeInUp}
+              className='relative bg-neutral-900/40 border border-white/5 rounded-2xl p-8 md:p-10 backdrop-blur-sm max-w-3xl mx-auto'
+            >
+              <Sparkles className='absolute -top-6 -left-6 w-12 h-12 text-yellow-500/20' />
+              <p className='text-xl md:text-2xl text-neutral-300 leading-relaxed font-light'>
                 TinyStage is a monthly, community-powered concert series
-                co-created and produced by A. Ilyas O. Abukar and Rebecca Kuhn,
-                inspired by NPR’s Tiny Desk. We partner with Erie-area
-                musicians—especially artists from under-represented groups—to
-                stage intimate, stripped-down shows that are both live and
-                live-streamed to a global audience.
+                co-created by A. Ilyas O. Abukar and Rebecca Kuhn.
+                <span className='text-white font-medium block mt-4'>
+                  We partner with Erie-area musicians to stage intimate,
+                  stripped-down shows that are both live and live-streamed to
+                  the world.
+                </span>
               </p>
-            </div>
+            </motion.div>
 
-            <blockquote
-              className='pt-8 motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.9s' }}
+            {/* Quote */}
+            <motion.blockquote
+              variants={fadeInUp}
+              className='mt-12 text-neutral-500 italic text-lg md:text-xl font-serif'
             >
-              <p className='text-2xl md:text-3xl font-medium text-brand-white leading-relaxed border-t border-b border-brand-yellow/30 py-6 max-w-3xl mx-auto'>
-                We ask: what would it look like if Erie's arts scene truly
-                reflected the city's cultural richness?
-              </p>
-            </blockquote>
-          </div>
-        </div>
+              "What would it look like if Erie's arts scene truly reflected the
+              city's cultural richness?"
+            </motion.blockquote>
+          </motion.div>
+        </section>
 
-        <div className='absolute -bottom-px left-0 w-full h-20 md:h-32 z-[1] overflow-hidden'>
-          <div
-            className="absolute bottom-0 left-0 w-full h-full bg-[url('/svg/edge-bleed.svg')] bg-repeat-x bg-bottom opacity-60"
-            style={{ backgroundSize: 'auto 100%' }}
-          />
-        </div>
-      </section>
-
-      {/* Meet the Founders Section */}
-      <section className='py-20 md:py-28 bg-brand-gray-dark z-[1]'>
-        <div className='container mx-auto px-4'>
-          <div className='text-center max-w-3xl mx-auto mb-16'>
-            <h2 className='text-3xl sm:text-4xl font-bold text-brand-white'>
+        {/* --- Founders Section --- */}
+        <section className='py-20 border-t border-white/5'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className='text-center mb-16'
+          >
+            <h2 className='text-3xl md:text-4xl font-bold font-serif mb-4'>
               Meet the Founders
             </h2>
-            <p className='text-lg md:text-xl text-brand-gray-light mt-4'>
-              Bringing a shared vision for an inclusive arts scene to life.
+            <p className='text-neutral-400'>
+              The visionaries behind the lens and the soundboard.
             </p>
-          </div>
-          <div className='grid md:grid-cols-2 gap-12 max-w-4xl mx-auto'>
+          </motion.div>
+
+          <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
             {/* Founder 1 */}
-            <div
-              className='text-center motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.2s' }}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className='group relative h-[400px] rounded-2xl overflow-hidden'
             >
-              <div className='relative w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-brand-gray-dark/50 shadow-2xl'>
-                <Image
-                  src='/images/founders/awes.jpg'
-                  alt='A. Ilyas O. Abukar'
-                  layout='fill'
-                  objectFit='cover'
-                />
+              <Image
+                src='/images/founders/awes.jpg'
+                alt='A. Ilyas O. Abukar'
+                fill
+                className='object-cover transition-transform duration-700 group-hover:scale-105'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent opacity-90 group-hover:opacity-80 transition-opacity' />
+              <div className='absolute bottom-0 left-0 p-8'>
+                <h3 className='text-2xl font-bold text-white mb-1'>
+                  A. Ilyas O. Abukar
+                </h3>
+                <p className='text-yellow-500 font-medium tracking-wide text-sm uppercase'>
+                  Co-Founder & Producer
+                </p>
               </div>
-              <h3 className='text-2xl font-bold text-brand-white'>
-                A. Ilyas O. Abukar
-              </h3>
-              <p className='text-brand-yellow font-semibold'>
-                Co-Founder & Producer
-              </p>
-            </div>
+            </motion.div>
+
             {/* Founder 2 */}
-            <div
-              className='text-center motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.4s' }}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className='group relative h-[400px] rounded-2xl overflow-hidden'
             >
-              <div className='relative w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-brand-gray-dark/50 shadow-2xl'>
-                <Image
-                  src='/images/founders/becca.jpg'
-                  alt='Rebecca Kuhn'
-                  layout='fill'
-                  objectFit='cover'
-                />
+              <Image
+                src='/images/founders/becca.jpg'
+                alt='Rebecca Kuhn'
+                fill
+                className='object-cover transition-transform duration-700 group-hover:scale-105'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent opacity-90 group-hover:opacity-80 transition-opacity' />
+              <div className='absolute bottom-0 left-0 p-8'>
+                <h3 className='text-2xl font-bold text-white mb-1'>
+                  Rebecca Kuhn
+                </h3>
+                <p className='text-yellow-500 font-medium tracking-wide text-sm uppercase'>
+                  Co-Founder & Producer
+                </p>
               </div>
-              <h3 className='text-2xl font-bold text-brand-white'>
-                Rebecca Kuhn
-              </h3>
-              <p className='text-brand-yellow font-semibold'>
-                Co-Founder & Producer
-              </p>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Support Section with Thematic Icons */}
-      <section className='relative py-20 md:py-28 bg-brand-black z-[1]'>
-        <div className='container mx-auto px-4'>
-          <div className='grid md:grid-cols-5 gap-12 items-center'>
-            <div
-              className='md:col-span-2 text-center md:text-left motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.2s' }}
+        {/* --- Support Section --- */}
+        <section className='py-24 relative'>
+          <div className='absolute inset-0 bg-neutral-900/30 -skew-y-3 transform origin-left z-0' />
+
+          <div className='relative z-10 max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center'>
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
             >
-              <div className='relative inline-block p-5 rounded-full bg-brand-gray-dark/40 mb-6 shadow-md'>
-                <div className='relative z-10 w-24 h-24 flex items-center justify-center'>
-                  <div className="w-full h-full bg-[url('/svg/spotlight.svg')] bg-contain bg-no-repeat bg-center" />
-                </div>
-                <div className='absolute inset-0 rounded-full bg-brand-yellow/20 blur-xl motion-safe:animate-pulse -z-10'></div>
+              <div className='inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-yellow-500/10 mb-8 border border-yellow-500/20'>
+                <Mic2 className='w-8 h-8 text-yellow-500' />
               </div>
-              <h2 className='text-3xl sm:text-4xl font-bold mb-3 text-brand-white'>
-                Fuel the Stage
+              <h2 className='text-4xl md:text-5xl font-bold font-serif mb-6 leading-tight'>
+                Fuel the <br />
+                <span className='text-yellow-500'>Movement.</span>
               </h2>
-              <p className='text-xl text-brand-gray-medium'>
-                Your support powers the music.
+              <p className='text-lg text-neutral-400 mb-8 leading-relaxed'>
+                TinyStage is a grassroots music series powered by community. We
+                aren't just putting on shows; we are building an ecosystem where
+                art flourishes.
               </p>
-            </div>
 
-            <div
-              className='md:col-span-3 motion-safe:animate-fadeIn'
-              style={{ animationDelay: '0.4s' }}
-            >
-              <p className='text-lg md:text-xl text-brand-gray-light leading-relaxed mb-6'>
-                TinyStage is a grassroots music series powered by{' '}
-                <strong className='text-brand-white'>community</strong>. Your
-                support allows us to:
-              </p>
-              <ul className='space-y-5 mb-10'>
-                {/* CORRECTED ICON */}
-                <li className='flex items-start'>
-                  <HandHeart className='text-brand-yellow mr-4 mt-1 h-6 w-6 flex-shrink-0' />
-                  <span className='text-brand-gray-light text-lg'>
-                    Pay artists fairly for their work
-                  </span>
-                </li>
-                <li className='flex items-start'>
-                  <Ticket className='text-brand-yellow mr-4 mt-1 h-6 w-6 flex-shrink-0' />
-                  <span className='text-brand-gray-light text-lg'>
-                    Keep performances free and accessible
-                  </span>
-                </li>
-                <li className='flex items-start'>
-                  <Globe className='text-brand-yellow mr-4 mt-1 h-6 w-6 flex-shrink-0' />
-                  <span className='text-brand-gray-light text-lg'>
-                    Amplify local voices on a global scale
-                  </span>
-                </li>
-              </ul>
-              <p className='text-xl md:text-2xl text-brand-yellow font-semibold leading-relaxed mb-10'>
-                Help us keep the spotlight bright on Erie's talent.
-              </p>
               <Link
                 href='/support'
-                className='group inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-brand-black bg-brand-yellow hover:brightness-110 shadow-xl hover:shadow-2xl transition-all duration-300 ease-out transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-offset-brand-black focus:ring-brand-yellow'
+                className='group inline-flex items-center justify-center px-8 py-4 bg-white text-neutral-950 text-lg font-bold rounded-full hover:bg-yellow-500 transition-all duration-300 hover:scale-105 shadow-xl'
               >
                 Become a Supporter
-                <ArrowRight className='ml-3 h-5 w-5 group-hover:animate-nudgeRight' />
+                <ArrowRight className='ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform' />
               </Link>
+            </motion.div>
+
+            {/* Right Content - Feature Grid */}
+            <div className='grid gap-6'>
+              {[
+                {
+                  icon: HandHeart,
+                  title: 'Artist Appreciation',
+                  desc: 'All proceeds from this event go directly to the artists.',
+                },
+                {
+                  icon: Ticket,
+                  title: 'Accessible to All',
+                  desc: 'Keeping performances free and accessible removes barriers to experiencing live culture.',
+                },
+                {
+                  icon: Globe,
+                  title: 'Global Amplification',
+                  desc: 'Our high-fidelity livestreams bring local Erie brilliance to screens around the world.',
+                },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.2, duration: 0.6 }}
+                  className='flex items-start gap-5 p-6 rounded-xl bg-neutral-900/50 border border-white/5 hover:border-yellow-500/30 transition-colors backdrop-blur-sm'
+                >
+                  <div className='flex-shrink-0 p-3 rounded-lg bg-neutral-800 text-yellow-500'>
+                    <item.icon className='w-6 h-6' />
+                  </div>
+                  <div>
+                    <h3 className='text-xl font-bold text-white mb-2'>
+                      {item.title}
+                    </h3>
+                    <p className='text-neutral-400 text-sm leading-relaxed'>
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 };

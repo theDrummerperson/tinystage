@@ -1,352 +1,213 @@
 'use client';
 
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useScroll,
+  useTransform,
+  Variants,
+} from 'framer-motion';
+import { ArrowRight, PlayCircle, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
-import { cn } from '@/lib/utils';
-
-import Button from '@/components/buttons/Button';
-
-import { useIsMounted } from '../hooks/useIsMounted';
-import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-
-const ANIMATION_BASE_CLASSES =
-  'transition-all duration-1200 ease-[cubic-bezier(0.16,1,0.3,1)]';
-
-const DELAYS = {
-  // ... (your DELAYS object)
-  H1_REDUCED: '0s',
-  H1_MOTION: '0s',
-  TINY_CHAR_BASE_MOTION: 0.2,
-  TINY_CHAR_FACTOR_MOTION: 0.015,
-  TINY_CHAR_BASE_REDUCED: 0.1,
-  TINY_CHAR_FACTOR_REDUCED: 0.01,
-  STAGE_REDUCED: '0.2s',
-  STAGE_MOTION: '0.65s',
-  H2_REDUCED: '0.1s',
-  H2_MOTION: '0.5s',
-  LOGO_REDUCED: '0.3s',
-  LOGO_MOTION: '1s',
-  BUTTONS_REDUCED: '0.3s',
-  BUTTONS_MOTION: '1s',
-  TEXT_BACKDROP_MOTION: '0.4s',
-  TEXT_BACKDROP_REDUCED: '0.1s',
+// Animation Variants for Staggered Entrance
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
 };
 
-// --- SOLUTION: Define TINY_CHARS outside the component ---
-const TINY_CHARS_ARRAY = 'TINY'.split('');
-// --- END SOLUTION ---
-
-interface EntryAnimationPropsOptions {
-  // ... (your interface)
-  isMounted: boolean;
-  prefersReducedMotion: boolean;
-  delay: string;
-  reducedMotionDelay: string;
-  initialTranslateY?: string | null;
-}
-
-function getEntryAnimationStyles({
-  // ... (your function)
-  isMounted,
-  prefersReducedMotion,
-  delay,
-  reducedMotionDelay,
-  initialTranslateY = 'translate-y-8',
-}: EntryAnimationPropsOptions) {
-  const classNames = [ANIMATION_BASE_CLASSES];
-
-  if (prefersReducedMotion) {
-    classNames.push(isMounted ? 'opacity-100' : 'opacity-0');
-  } else {
-    if (isMounted) {
-      classNames.push('opacity-100', 'translate-y-0');
-    } else {
-      classNames.push('opacity-0');
-      if (initialTranslateY) {
-        classNames.push(initialTranslateY);
-      }
-    }
-  }
-
-  return {
-    className: cn(...classNames),
-    style: {
-      transitionDelay: isMounted
-        ? prefersReducedMotion
-          ? reducedMotionDelay
-          : delay
-        : '0ms',
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1], // Custom ease curve
     },
-  };
-}
+  },
+};
+
+const logoVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.8, rotate: -10 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 20,
+      delay: 0.5,
+    },
+  },
+};
 
 export default function Hero() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const isMounted = useIsMounted();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    // ... (mouse move effect)
-    const handleMouseMove = (event: MouseEvent) => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
-        });
-      }
-    };
+  // 1. HIGH PERFORMANCE MOUSE TRACKING
+  // Using useMotionValue avoids React re-renders on mousemove
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-    if (!prefersReducedMotion) {
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
-    }
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [prefersReducedMotion]);
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
 
-  const spotlightStyle = useMemo(() => {
-    // ... (spotlightStyle logic)
-    if (!heroRef.current || prefersReducedMotion) return {};
-    const jitterX = (Math.random() - 0.5) * 4;
-    const jitterY = (Math.random() - 0.5) * 4;
-    return {
-      background: `radial-gradient(ellipse 900px 750px at ${mousePosition.x + jitterX}px ${mousePosition.y + jitterY}px, rgba(var(--brand-yellow-rgb), 0.08), transparent 65%)`,
-    };
-  }, [mousePosition, prefersReducedMotion]);
+  // Dynamic background gradient based on mouse position
+  const spotlight = useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(234, 179, 8, 0.08), transparent 80%)`;
 
-  // No longer define TINY_CHARS here
-
-  const charRandomRotations = useMemo(() => {
-    if (prefersReducedMotion) return TINY_CHARS_ARRAY.map(() => 0); // Use the constant
-    return TINY_CHARS_ARRAY.map(() => (Math.random() - 0.5) * 2); // Use the constant
-  }, [prefersReducedMotion]); // Dependency array is now correct
-
-  const logoAnimationProps = getEntryAnimationStyles({
-    // ...
-    isMounted,
-    prefersReducedMotion,
-    delay: DELAYS.LOGO_MOTION,
-    reducedMotionDelay: DELAYS.LOGO_REDUCED,
-  });
-  // ... (other animation props)
-  const h1AnimationProps = getEntryAnimationStyles({
-    isMounted,
-    prefersReducedMotion,
-    delay: DELAYS.H1_MOTION,
-    reducedMotionDelay: DELAYS.H1_REDUCED,
-    initialTranslateY: 'translate-y-5',
-  });
-  const stageAnimationProps = getEntryAnimationStyles({
-    isMounted,
-    prefersReducedMotion,
-    delay: DELAYS.STAGE_MOTION,
-    reducedMotionDelay: DELAYS.STAGE_REDUCED,
-  });
-  const h2AnimationProps = getEntryAnimationStyles({
-    isMounted,
-    prefersReducedMotion,
-    delay: DELAYS.H2_MOTION,
-    reducedMotionDelay: DELAYS.H2_REDUCED,
-  });
-  const buttonsAnimationProps = getEntryAnimationStyles({
-    isMounted,
-    prefersReducedMotion,
-    delay: DELAYS.BUTTONS_MOTION,
-    reducedMotionDelay: DELAYS.BUTTONS_REDUCED,
-  });
+  // Parallax for background image
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 1000], [0, 200]);
 
   return (
     <section
-      ref={heroRef}
-      className='relative overflow-hidden isolate min-h-screen flex flex-col justify-center items-center text-center lg:text-left bg-[var(--brand-black)]'
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className='relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden bg-neutral-950 text-white selection:bg-yellow-500/30'
     >
-      {/* ... (Background layers and spotlight) ... */}
-      <div
-        className='absolute inset-0 z-[-2] bg-cover bg-center bg-no-repeat motion-safe:animate-subtleBgDrift'
-        style={{
-          backgroundImage: "url('/svg/4.svg')",
-          opacity: prefersReducedMotion ? 1 : 0.7,
-          mixBlendMode: 'normal',
-        }}
-      />
-      {!prefersReducedMotion && (
-        <div className='absolute inset-0 z-[-1] opacity-[0.015] motion-safe:animate-grain pointer-events-none' />
-      )}
-      <div
-        className='absolute inset-0 z-[-1] opacity-[0.07] mix-blend-color-dodge motion-safe:animate-hazeOne'
-        style={{
-          backgroundImage:
-            'radial-gradient(ellipse at 20% 30%, rgba(var(--brand-yellow-rgb), 0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 25%, rgba(var(--brand-yellow-rgb), 0.1) 0%, transparent 55%), radial-gradient(ellipse at 50% 75%, rgba(var(--brand-yellow-rgb), 0.12) 0%, transparent 50%)',
-        }}
-      />
-      <div
-        className='absolute inset-0 z-[-1] opacity-[0.09] mix-blend-soft-light motion-safe:animate-hazeTwo'
-        style={{
-          backgroundImage:
-            'radial-gradient(ellipse at 30% 70%, rgba(var(--brand-gray-dark-rgb), 0.4) 0%, transparent 65%), radial-gradient(ellipse at 70% 30%, rgba(var(--brand-gray-dark-rgb), 0.3) 0%, transparent 50%), radial-gradient(ellipse at 10% 50%, rgba(var(--brand-gray-dark-rgb), 0.35) 0%, transparent 60%)',
-          animationDirection: 'reverse',
-        }}
-      />
-      {!prefersReducedMotion && (
-        <div
-          className='pointer-events-none absolute inset-0 z-0 motion-safe:animate-spotlightFlicker'
-          style={{
-            ...spotlightStyle,
-            opacity: isMounted ? 0.25 : 0,
-            transition: 'opacity 0.6s cubic-bezier(0.16,1,0.3,1)',
-          }}
-        />
-      )}
+      {/* --- CINEMATIC BACKGROUND LAYERS --- */}
 
-      <div className='relative z-10 container mx-auto px-4 py-16 md:py-20 lg:py-24'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center'>
-          <div
-            className={cn(
-              'lg:col-span-4 xl:col-span-5 flex justify-center lg:justify-end mb-8 lg:mb-0',
-              logoAnimationProps.className,
-            )}
-            style={logoAnimationProps.style}
-          >
-            {/* ... (Logo JSX) ... */}
-            <div className='relative p-1 transition-transform duration-300 ease-out group hover:-translate-y-1.5'>
-              <Image
-                src='/images/TSlogo.png'
-                alt='TinyStage Logo'
-                width={170}
-                height={170}
-                priority
-                className={cn(
-                  'block rounded-full motion-safe:animate-glint',
-                  'transition-transform duration-300 group-hover:scale-105',
-                )}
-              />
-              <div
-                className='absolute inset-[-4px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none'
-                style={{
-                  boxShadow: '0 0 20px 8px rgba(var(--brand-yellow-rgb), 0.35)',
-                }}
-              />
-            </div>
+      {/* 1. Base Image with Parallax */}
+      <motion.div className='absolute inset-0 z-0' style={{ y: bgY }}>
+        <Image
+          src='/images/ellis/livebg2.jpg'
+          alt='TinyStage Ambience'
+          fill
+          priority
+          className='object-cover opacity-20 blur-[2px] grayscale-[0.3]'
+          sizes='100vw'
+        />
+        <div className='absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-950/80 to-neutral-950' />
+      </motion.div>
+
+      {/* 2. Interactive Spotlight (GPU Accelerated) */}
+      <motion.div
+        className='absolute inset-0 z-[1] pointer-events-none mix-blend-screen'
+        style={{ background: spotlight }}
+      />
+
+      {/* 3. Noise Texture */}
+      <div
+        className='absolute inset-0 z-[2] opacity-[0.04] mix-blend-overlay pointer-events-none'
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* --- CONTENT GRID --- */}
+      <div className='relative z-10 container mx-auto px-4 md:px-6'>
+        <motion.div
+          variants={containerVariants}
+          initial='hidden'
+          animate='visible'
+          className='grid lg:grid-cols-12 gap-12 items-center'
+        >
+          {/* Left Column: Logo (Visual Anchor) */}
+          <div className='lg:col-span-5 order-2 lg:order-1 flex justify-center lg:justify-end'>
+            <motion.div
+              variants={logoVariants}
+              className='relative group cursor-default'
+            >
+              {/* Glow Effect behind logo */}
+              <div className='absolute inset-0 bg-yellow-500/20 rounded-full blur-3xl group-hover:bg-yellow-500/30 transition-colors duration-500' />
+
+              <div className='relative w-[200px] h-[200px] md:w-[280px] md:h-[280px]'>
+                <Image
+                  src='/images/TSlogo.png'
+                  alt='TinyStage Logo'
+                  fill
+                  className='object-contain drop-shadow-2xl'
+                  priority
+                />
+                {/* Rotating Ring Border */}
+                <div className='absolute inset-0 border border-dashed border-white/20 rounded-full animate-[spin_20s_linear_infinite]' />
+              </div>
+            </motion.div>
           </div>
 
-          <div className='lg:col-span-8 xl:col-span-7 relative'>
-            <div
-              className='absolute inset-x-0 top-0 bottom-0 z-0 
-                         lg:-inset-x-6 lg:-inset-y-3 xl:-inset-x-8 xl:-inset-y-4
-                         opacity-0 transition-opacity duration-1000 ease-out pointer-events-none'
-              style={{
-                backgroundImage:
-                  'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(var(--brand-black-rgb), 0.35) 0%, transparent 65%)',
-                opacity: isMounted ? 1 : 0,
-                transitionDelay: isMounted
-                  ? prefersReducedMotion
-                    ? DELAYS.TEXT_BACKDROP_REDUCED
-                    : DELAYS.TEXT_BACKDROP_MOTION
-                  : '0ms',
-              }}
-            />
-
-            <h1
-              className={cn(
-                'relative z-[1] font-black tracking-tighter text-[var(--brand-white)] leading-none mb-3 text-[2.75rem] sm:text-5xl md:text-6xl lg:text-[5rem] xl:text-[6rem] headline-text-group',
-                h1AnimationProps.className,
-              )}
-              style={{
-                ...h1AnimationProps.style,
-                textShadow:
-                  '0 0 10px rgba(var(--brand-white-rgb), 0.2), 0 0 15px rgba(var(--brand-white-rgb), 0.1)',
-              }}
+          {/* Right Column: Typography & Actions */}
+          <div className='lg:col-span-7 order-1 lg:order-2 text-center lg:text-left'>
+            {/* Badge */}
+            <motion.div
+              variants={itemVariants}
+              className='flex justify-center lg:justify-start mb-6'
             >
-              {TINY_CHARS_ARRAY.map((char, index) => {
-                // Use the constant
-                const charAnimProps = getEntryAnimationStyles({
-                  isMounted,
-                  prefersReducedMotion,
-                  delay: `${DELAYS.TINY_CHAR_BASE_MOTION + index * index * DELAYS.TINY_CHAR_FACTOR_MOTION}s`,
-                  reducedMotionDelay: `${DELAYS.TINY_CHAR_BASE_REDUCED + index * DELAYS.TINY_CHAR_FACTOR_REDUCED}s`,
-                  initialTranslateY: 'translate-y-3',
-                });
-                return (
-                  <span
-                    key={`tiny-${index}`}
-                    className={cn(
-                      'inline-block char-target',
-                      charAnimProps.className,
-                    )}
-                    style={{
-                      ...charAnimProps.style,
-                      ...(isMounted &&
-                        !prefersReducedMotion && {
-                          transform: `rotateZ(${charRandomRotations[index]}deg)`,
-                        }),
-                    }}
-                  >
-                    {char}
-                  </span>
-                );
-              })}
-              <span
-                className={cn(
-                  'block text-[var(--brand-yellow)] -mt-1 sm:-mt-2 md:-mt-3 lg:-mt-4 headline-stage-text',
-                  stageAnimationProps.className,
-                )}
-                style={{
-                  ...stageAnimationProps.style,
-                  textShadow: '0 0 10px rgba(var(--brand-yellow-rgb), 0.35)',
-                }}
-              >
-                STAGE
-              </span>
+              <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm'>
+                <Sparkles className='w-4 h-4 text-yellow-500' />
+                <span className='text-xs font-bold text-neutral-300 tracking-widest uppercase'>
+                  Erie's Premier Concert Series
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Main Headline */}
+            <h1 className='relative font-bold leading-[0.9] tracking-tighter mb-8'>
+              <motion.div variants={itemVariants} className='overflow-hidden'>
+                <span className='block text-6xl sm:text-7xl md:text-8xl text-neutral-200'>
+                  TINY
+                </span>
+              </motion.div>
+              <motion.div variants={itemVariants} className='overflow-hidden'>
+                <span className='block text-[5rem] sm:text-[6rem] md:text-[8rem] font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-200 to-yellow-600 drop-shadow-sm'>
+                  STAGE
+                </span>
+              </motion.div>
             </h1>
 
-            <h2
-              className={cn(
-                'relative z-[1] text-xl md:text-2xl lg:text-3xl font-medium mb-6 tracking-wider uppercase',
-                'text-[var(--brand-gray-light)]',
-                h2AnimationProps.className,
-              )}
-              style={{
-                ...h2AnimationProps.style,
-                textShadow: '0 1px 3px rgba(var(--brand-black-rgb), 0.5)',
-              }}
+            {/* Subtext */}
+            <motion.p
+              variants={itemVariants}
+              className='text-lg md:text-xl text-neutral-400 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed'
             >
-              Concert Series
-            </h2>
+              Experience the raw power of live music. Stripped down, intimate
+              performances from the most compelling artists in the region.
+            </motion.p>
 
-            <div
-              className={cn(
-                'relative z-[1] flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center lg:justify-start sm:gap-5',
-                buttonsAnimationProps.className,
-              )}
-              style={buttonsAnimationProps.style}
+            {/* Action Buttons */}
+            <motion.div
+              variants={itemVariants}
+              className='flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start'
             >
-              {/* ... (Buttons JSX) ... */}
-              <Link href='/shows' className='block w-full sm:w-auto'>
-                <Button
-                  variant='primary'
-                  className='w-full text-base font-bold px-8 py-3.5 motion-safe:animate-buttonPulseAltOne'
-                >
-                  See Upcoming Shows
-                </Button>
+              <Link
+                href='/shows'
+                className='group w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-neutral-950 font-bold text-lg rounded-full transition-all hover:bg-yellow-400 hover:scale-105 shadow-[0_0_20px_rgba(234,179,8,0.3)]'
+              >
+                See Upcoming Shows
+                <ArrowRight className='ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform' />
               </Link>
-              <Link href='/livestream' className='block w-full sm:w-auto'>
-                <Button
-                  variant='outline'
-                  className='w-full text-base font-bold px-8 py-3.5 motion-safe:animate-buttonPulseAltTwo'
-                  style={{
-                    animationDelay: prefersReducedMotion ? '0s' : '0.25s',
-                  }}
-                >
-                  Watch the Livestream
-                </Button>
+
+              <Link
+                href='/livestream'
+                className='group w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-white/5 text-white font-medium text-lg rounded-full border border-white/10 backdrop-blur-sm transition-all hover:bg-white/10 hover:border-yellow-500/50'
+              >
+                <PlayCircle className='mr-2 w-5 h-5 text-yellow-500 group-hover:scale-110 transition-transform' />
+                Watch Livestream
               </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Decorative Bottom Fade */}
+      <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-neutral-950 to-transparent pointer-events-none z-[5]' />
     </section>
   );
 }
